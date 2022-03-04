@@ -4,7 +4,7 @@ extends EditorScript
 var gus := GodotUniversialSerializer.new()
 func _run() -> void:
 	gus.color_encoding = GUS.ColorEncoding.RGBA_FLOAT
-	_print_result("ignore", null)
+#	_print_result("ignore", null)
 	
 	_test(get_editor_interface())
 	

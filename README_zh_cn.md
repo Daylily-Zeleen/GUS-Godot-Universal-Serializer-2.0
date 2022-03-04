@@ -46,5 +46,5 @@
     scons target=debug
   5. 现在,你能再`\demo\addons\godot_universal_serializer`获得该插件.
 
-# Other:
+# 其他:
 我只是一个c++新手，我无法处理上面提到的编译错误。如果有人能帮我解决这些问题，我将非常感谢。
