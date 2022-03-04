@@ -25,7 +25,7 @@
 #define GODOT_UNIVERSAL_SERIALIZER_H
 
 #include <godot_cpp/classes/object.hpp>
-
+#include <godot_cpp/variant/utility_functions.hpp>
 // #define REAL_T_IS_DOUBLE
 
 // 根据 Godot 对 real_t 的定义选择， 默认 real_t 为 float
@@ -1660,7 +1660,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			r_len ++;
 
 			if ( !d.size()){
-				encode_type_code(EMPTY_DICT, buf);
+				if (buf) encode_type_code(EMPTY_DICT, buf);
 				break;
 			}
 
@@ -1693,9 +1693,10 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			r_len ++;
 
 			if (!v.size()){
-				encode_type_code(EMPTY_ARR, buf);
+				if (buf) *buf = EMPTY_ARR;
 				break;
 			}
+
 			// type
 			if(buf){
 				encode_type_code(ARR_BEGIN, buf);
@@ -1723,7 +1724,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedByteArray data = p_variant;
 			uint32_t datalen = data.size();
 			if (!datalen){
-				encode_type_code(EMPTY_RAW_ARR, buf);
+				if (buf) encode_type_code(EMPTY_RAW_ARR, buf);
 				r_len ++;
 				break;
 			}
@@ -1744,7 +1745,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedInt32Array data = p_variant;
 			uint32_t datalen = data.size();
 			if (!datalen){
-				encode_type_code(EMPTY_INT32_ARR, buf);
+				if (buf) encode_type_code(EMPTY_INT32_ARR, buf);
 				r_len++;
 				break;
 			}
@@ -1764,7 +1765,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedInt64Array data = p_variant;
 			uint32_t datalen = data.size();
 			if (!datalen){
-				encode_type_code(EMPTY_INT64_ARR, buf);
+				if (buf) encode_type_code(EMPTY_INT64_ARR, buf);
 				r_len++;
 				break;
 			}
@@ -1785,7 +1786,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedFloat32Array data = p_variant;
 			uint32_t datalen = data.size();
 			if (!datalen){
-				encode_type_code(EMPTY_FLOAT32_ARR, buf);
+				if (buf) encode_type_code(EMPTY_FLOAT32_ARR, buf);
 				r_len++;
 				break;
 			}
@@ -1806,7 +1807,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedFloat64Array data = p_variant;
 			uint32_t datalen = data.size();
 			if (!datalen){
-				encode_type_code(EMPTY_FLOAT64_ARR, buf);
+				if (buf) encode_type_code(EMPTY_FLOAT64_ARR, buf);
 				r_len++;
 				break;
 			}
@@ -1827,7 +1828,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedStringArray data = p_variant;
 			uint32_t datalen = data.size();
 			if (!datalen){
-				encode_type_code(EMPTY_STR_ARR, buf);
+				if (buf) encode_type_code(EMPTY_STR_ARR, buf);
 				r_len++;
 				break;
 			}
@@ -1869,7 +1870,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedVector2Array data = p_variant;
 			uint32_t len = data.size();
 			if (!len){
-				encode_type_code(EMPTY_VEC2_ARR, buf);
+				if (buf) encode_type_code(EMPTY_VEC2_ARR, buf);
 				r_len++;
 				break;
 			}
@@ -1892,7 +1893,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedVector3Array data = p_variant;
 			uint32_t len = data.size();
 			if (!len){
-				encode_type_code(EMPTY_VEC3_ARR, buf);
+				if (buf) encode_type_code(EMPTY_VEC3_ARR, buf);
 				r_len++;
 				break;
 			}
@@ -1917,7 +1918,7 @@ Error GodotUniversialSerializer::encode_variant(const Variant &p_variant, uint8_
 			PackedColorArray data = p_variant;
 			uint32_t len = data.size();
 			if (!len){
-				encode_type_code(EMPTY_COLOR_ARR, buf);
+				if (buf) encode_type_code(EMPTY_COLOR_ARR, buf);
 				r_len++;
 				break;
 			}
