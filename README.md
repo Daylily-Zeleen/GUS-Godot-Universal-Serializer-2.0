@@ -1,10 +1,10 @@
 
-# GUS - Godot Universal Serializer 2.00 - Godot的通用序列化器 - V2.00
+# GUS - Godot Universal Serializer 2.0.0 - Godot的通用序列化器 - V2.0.0
 
 ![Image text](icon.png)
 
 [中文文档](README_zh_cn.md) <- 点击这里。
-
+  
 A Godot's universal serializer for size optimization.    
 Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 4.x.
 
