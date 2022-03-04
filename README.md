@@ -48,3 +48,10 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 
 # Other:
 I just a c++ beginner, I can't handle above compile error. I will be very grateful to those who deal these problems.
+
+# Benchmark:
+![Image text](benchmark/1.png)
+![Image text](benchmark/2.png)
+![Image text](benchmark/3.png)
+![Image text](benchmark/4.png)
+![Image text](benchmark/5.png)

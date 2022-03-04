@@ -46,5 +46,12 @@
     scons target=debug
   5. 现在,你能再`\demo\addons\godot_universal_serializer`获得该插件.
 
-# Other:
+# 其他:
 我只是一个c++新手，我无法处理上面提到的编译错误。如果有人能帮我解决这些问题，我将非常感谢。
+
+# 基准测试:
+![Image text](benchmark/1.png)
+![Image text](benchmark/2.png)
+![Image text](benchmark/3.png)
+![Image text](benchmark/4.png)
+![Image text](benchmark/5.png)
