@@ -4,7 +4,7 @@ extends EditorScript
 var gus := GodotUniversialSerializer.new()
 func _run() -> void:
 	gus.color_encoding = GUS.ColorEncoding.RGBA_FLOAT
-	await  _print_result("ignore", null)
+	_print_result("ignore", null)
 	
 	_test(get_editor_interface())
 	
@@ -12,36 +12,36 @@ func _run() -> void:
 var tree:SceneTree
 func _test(inside_tree_node:Node)->void:
 	tree = inside_tree_node.get_tree() if inside_tree_node and inside_tree_node.is_inside_tree() else null
-	await _print_result("null" , null)
-	await _print_result("bool" , true)
-	await _print_result("bool" , false)
-	await _print_result("int1" , 0x7a)
-	await _print_result("int2" , 0x5c3b)
-	await _print_result("int3" , -0x7a5390)
-	await _print_result("int4" , 0x6a53c904)
-	await _print_result("int5" , -0x7c340c9041)
-	await _print_result("int6" , 0x5a53c904d054)
-	await _print_result("int7" , 0x3c90a53c90d041)
-	await _print_result("int8" , -0x7aaa53c907a414d0)
-	await _print_result("float" , -105.0532)
-	await _print_result("String" , "test 测试")
-	await _print_result("StringName" , StringName("TestStringName"))
-	await _print_result("Vector2" , Vector2(-423, 46.8005))
-	await _print_result("Vector2i" , Vector2i(-423, 0x5c3b))
-	await _print_result("Vector3" , Vector3(52011,-541.3327,77441))
-	await _print_result("Vector3i" , Vector3i(-423,0x5c3b,52011))
-	await _print_result("Rect2" , Rect2(56.622, -77.85, 8740.2369, 441.044))
-	await _print_result("Rect2i" , Rect2i(randi(), randi(), randi(), randi()))
-	await _print_result("Transform2D" , Transform2D.FLIP_Y.translated(Vector2(513,88.5)))
-	await _print_result("Plane", Plane(-54.55, 876, 2310,744).normalized())
-	await _print_result("Quaternion", Quaternion(-54.55, 876, 2310,744))
-	await _print_result("AABB", AABB(Vector3(-77.85, 8740.2369, 441.044),Vector3(105,50,68)))
-	await _print_result("Basis", Transform3D.FLIP_Y.translated(Vector3(513,-88.5,105)).basis)
-	await _print_result("Transform3D", Transform3D.FLIP_Y.translated(Vector3(513,-88.5,105)))
-	await _print_result("Color", Color.BEIGE)
-	await _print_result("NodePath", inside_tree_node.get_path())
+	_print_result("null" , null)
+	_print_result("bool" , true)
+	_print_result("bool" , false)
+	_print_result("int1" , 0x7a)
+	_print_result("int2" , 0x5c3b)
+	_print_result("int3" , -0x7a5390)
+	_print_result("int4" , 0x6a53c904)
+	_print_result("int5" , -0x7c340c9041)
+	_print_result("int6" , 0x5a53c904d054)
+	_print_result("int7" , 0x3c90a53c90d041)
+	_print_result("int8" , -0x7aaa53c907a414d0)
+	_print_result("float" , -105.0532)
+	_print_result("String" , "test 测试")
+	_print_result("StringName" , StringName("TestStringName"))
+	_print_result("Vector2" , Vector2(-423, 46.8005))
+	_print_result("Vector2i" , Vector2i(-423, 0x5c3b))
+	_print_result("Vector3" , Vector3(52011,-541.3327,77441))
+	_print_result("Vector3i" , Vector3i(-423,0x5c3b,52011))
+	_print_result("Rect2" , Rect2(56.622, -77.85, 8740.2369, 441.044))
+	_print_result("Rect2i" , Rect2i(randi(), randi(), randi(), randi()))
+	_print_result("Transform2D" , Transform2D.FLIP_Y.translated(Vector2(513,88.5)))
+	_print_result("Plane", Plane(-54.55, 876, 2310,744).normalized())
+	_print_result("Quaternion", Quaternion(-54.55, 876, 2310,744))
+	_print_result("AABB", AABB(Vector3(-77.85, 8740.2369, 441.044),Vector3(105,50,68)))
+	_print_result("Basis", Transform3D.FLIP_Y.translated(Vector3(513,-88.5,105)).basis)
+	_print_result("Transform3D", Transform3D.FLIP_Y.translated(Vector3(513,-88.5,105)))
+	_print_result("Color", Color.BEIGE)
+	_print_result("NodePath", inside_tree_node.get_path())
 	var arr = [574,-21.0,Vector2(-423,46.8005),Color.AQUA,"acxx"]
-	await _print_result("Array", arr )
+	_print_result("Array", arr )
 	# 字典测试
 	var dict :={
 		k_str = "value1",
@@ -51,7 +51,7 @@ func _test(inside_tree_node:Node)->void:
 		k_vec3 = Vector3(52011,-541.3327,77441)	
 	}
 	dict[532] = [574,-21.0,Vector2(-423,46.8005),Color.AQUA,"acxx"]
-	await _print_result("Dictionary",dict)
+	_print_result("Dictionary",dict)
 	# 池化数组测试
 	var byte_arr := PackedByteArray()
 	var int32_arr := PackedInt32Array()
@@ -62,6 +62,18 @@ func _test(inside_tree_node:Node)->void:
 	var vector2_arr := PackedVector2Array()
 	var vector3_arr:= PackedVector3Array()
 	var color_arr:= PackedColorArray()
+	
+	_print_result("Empty Array", [])
+	_print_result("Empty Dictionary", {})	
+	_print_result("Empty PackedByteArray",byte_arr)
+	_print_result("Empty PackedInt32Array",int32_arr)
+	_print_result("Empty PackedInt64Array",int32_arr)
+	_print_result("Empty PackedFloat32Array",float32_arr)
+	_print_result("Empty PackedFloat64Array",float32_arr)
+	_print_result("Empty PackedStringArray",string_arr)
+	_print_result("Empty PackedVector2Array",vector2_arr)
+	_print_result("Empty PackedVector3Array",vector3_arr)
+	_print_result("Empty PackedColorArray",color_arr)
 	
 	var i := 4096
 	while i>0:
@@ -76,15 +88,15 @@ func _test(inside_tree_node:Node)->void:
 		color_arr.push_back(Color(randf(),randf(),randf(),randf()))
 		i-=1
 	
-	await _print_result("PackedByteArray",byte_arr)
-	await _print_result("PackedInt32Array",int32_arr)
-	await _print_result("PackedInt64Array",int32_arr)
-	await _print_result("PackedFloat32Array",float32_arr)
-	await _print_result("PackedFloat64Array",float32_arr)
-	await _print_result("PackedStringArray",string_arr)
-	await _print_result("PackedVector2Array",vector2_arr)
-	await _print_result("PackedVector3Array",vector3_arr)
-	await _print_result("PackedColorArray",color_arr)
+	_print_result("PackedByteArray",byte_arr)
+	_print_result("PackedInt32Array",int32_arr)
+	_print_result("PackedInt64Array",int32_arr)
+	_print_result("PackedFloat32Array",float32_arr)
+	_print_result("PackedFloat64Array",float32_arr)
+	_print_result("PackedStringArray",string_arr)
+	_print_result("PackedVector2Array",vector2_arr)
+	_print_result("PackedVector3Array",vector3_arr)
+	_print_result("PackedColorArray",color_arr)
 
 # 序列化与反序列并打印对比结果
 func _print_result(title_name:String, v)->void:
