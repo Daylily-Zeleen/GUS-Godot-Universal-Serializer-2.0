@@ -1,0 +1,8 @@
+[configuration]
+
+entry_symbol = "gus_library_init"
+
+[libraries]
+windows.64.debug = "bin/libgus.windows.template_debug.x86_64.dll"
+windows.64.release = "bin/libgus.windows.template_debug.x86_64.dll"
+

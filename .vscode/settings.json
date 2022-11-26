@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "Enabled",
     "files.associations": {
+        "*.gradle": "bat",
         "chrono": "cpp",
         "memory": "cpp",
         "system_error": "cpp",
@@ -57,6 +58,21 @@
         "ratio": "cpp",
         "utility": "cpp",
         "xtr1common": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "cstddef": "cpp",
+        "bit": "cpp",
+        "cctype": "cpp",
+        "clocale": "cpp",
+        "concepts": "cpp",
+        "cstdint": "cpp",
+        "cstdio": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "cwchar": "cpp",
+        "xstddef": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "unordered_set": "cpp",
+        "*.ixx": "cpp"
     }
 }

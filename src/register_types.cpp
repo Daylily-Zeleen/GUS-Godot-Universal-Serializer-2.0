@@ -36,15 +36,23 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-// #include "example.h"
-#include "godot_universal_serialzer.h"
+// #include <concepts>
+
+// #include <concepts>
+
+#include "gus.h"
+
 using namespace godot;
 
-void register_types() {
-	godot::ClassDB::register_class<GodotUniversialSerializer>();
+void initialize_example_module(ModuleInitializationLevel p_level) {
+	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+	ClassDB::register_abstract_class<GUS>();
 }
 
-void unregister_types() {}
+void uninitialize_example_module(ModuleInitializationLevel p_level) {
+}
 
 extern "C" {
 
@@ -52,12 +60,12 @@ extern "C" {
 
 GDNativeBool GDN_EXPORT gus_library_init(const GDNativeInterface *p_interface,
 		const GDNativeExtensionClassLibraryPtr p_library, GDNativeInitialization *r_initialization) {
-
 	// p_interface
 	godot::GDExtensionBinding::InitObject init_obj(p_interface, p_library, r_initialization);
 
-	init_obj.register_scene_initializer(register_types);
-	init_obj.register_scene_terminator(unregister_types);
+	init_obj.register_initializer(initialize_example_module);
+	init_obj.register_terminator(uninitialize_example_module);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
 
 	return init_obj.init();
 }
