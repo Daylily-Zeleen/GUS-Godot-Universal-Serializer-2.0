@@ -1251,7 +1251,7 @@ _INLINE_ void cal_size(const Variant &p_val, INTEGRAL_T &r_len) {
 			cal_size(arr, r_len);
 		} break;
 		case Variant::PACKED_VECTOR2_ARRAY: {
-			auto arr = p_val.operator godot::PackedVector3Array();
+			auto arr = p_val.operator godot::PackedVector2Array();
 			r_len++;
 			if (arr.is_empty()) {
 				return;

@@ -352,7 +352,8 @@ template <typename TElementConponent, uint8_t element_conponent_count>
 _INLINE_ void encode(buffer_ptr &p_buf, const GodotFixedElementLenthArray auto &p_val) {
 	auto size = p_val.size();
 	encode_varint(p_buf, size);
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = p_val.ptr();
 	size_t increase_len = element_conponent_count * sizeof(TElementConponent) * size;
 	memcpy(p_buf, ptr, increase_len);
@@ -375,7 +376,8 @@ _INLINE_ void decode(buffer_ptr &p_buf, GodotFixedElementLenthArray auto &r_val)
 	decltype(r_val.size()) size;
 	decode_varint(p_buf, size);
 	r_val.resize(size);
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = r_val.ptrw();
 	size_t len = element_conponent_count * sizeof(TElementConponent) * size;
 	memcpy(ptr, p_buf, len);
@@ -444,7 +446,8 @@ _INLINE_ void decode(buffer_ptr &p_buf, GodotPackedNormalArray auto &r_val) {
 _INLINE_ void cal_size(const GodotPackedIntArray auto &p_val, INTEGRAL_T &r_len) {
 	auto size = p_val.size();
 	cal_size_varint(size, r_len);
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = p_val.ptr();
 	for (decltype(size) i = 0; i < size; i++) {
 		cal_size_varint(p_val[i], r_len);
@@ -453,7 +456,8 @@ _INLINE_ void cal_size(const GodotPackedIntArray auto &p_val, INTEGRAL_T &r_len)
 _INLINE_ void encode(buffer_ptr &p_buf, const GodotPackedIntArray auto &p_val) {
 	auto size = p_val.size();
 	encode_varint(p_buf, size);
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = p_val.ptr();
 	for (decltype(size) i = 0; i < size; i++) {
 		encode_varint(p_buf, p_val[i]);
@@ -473,7 +477,8 @@ _INLINE_ void decode(buffer_ptr &p_buf, GodotPackedIntArray auto &r_val) {
 	decltype(r_val.size()) size;
 	decode_varint(p_buf, size);
 	r_val.resize(size);
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = r_val.ptrw();
 	for (decltype(size) i = 0; i < size; i++) {
 		decode_varint(p_buf, r_val[i]);
@@ -539,7 +544,8 @@ _INLINE_ void decode_color_arr_raw(buffer_ptr &p_buf, PackedColorArray &r_val) {
 }
 _INLINE_ void cal_size_color_arr_hex(const PackedColorArray &p_val, INTEGRAL_T &r_len) {
 	auto size = p_val.size();
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	cal_size_varint(size, r_len);
 	auto ptr = p_val.ptr();
 	for (decltype(size) i = 0; i < size; i++) {
@@ -549,7 +555,8 @@ _INLINE_ void cal_size_color_arr_hex(const PackedColorArray &p_val, INTEGRAL_T &
 _INLINE_ void encode_color_arr_hex(buffer_ptr &p_buf, const PackedColorArray &p_val) {
 	auto size = p_val.size();
 	encode_varint(p_buf, size);
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = p_val.ptr();
 	for (decltype(size) i = 0; i < size; i++) {
 		encode_color_hex(p_buf, p_val[i]);
@@ -569,7 +576,8 @@ _INLINE_ void decode_color_arr_hex(buffer_ptr &p_buf, PackedColorArray &r_val) {
 	decltype(r_val.size()) size;
 	decode_varint(p_buf, size);
 	r_val.resize(size);
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = r_val.ptrw();
 	for (decltype(size) i = 0; i < size; i++) {
 		decode_color_hex(p_buf, r_val[i]);
@@ -578,7 +586,8 @@ _INLINE_ void decode_color_arr_hex(buffer_ptr &p_buf, PackedColorArray &r_val) {
 
 _INLINE_ void cal_size_color_arr_hex64(const PackedColorArray &p_val, INTEGRAL_T &r_len) {
 	auto size = p_val.size();
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	cal_size_varint(size, r_len);
 	auto ptr = p_val.ptr();
 	for (decltype(size) i = 0; i < size; i++) {
@@ -587,7 +596,8 @@ _INLINE_ void cal_size_color_arr_hex64(const PackedColorArray &p_val, INTEGRAL_T
 }
 _INLINE_ void encode_color_arr_hex64(buffer_ptr &p_buf, const PackedColorArray &p_val) {
 	auto size = p_val.size();
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = p_val.ptr();
 	encode_varint(p_buf, size);
 	for (decltype(size) i = 0; i < size; i++) {
@@ -608,7 +618,8 @@ _INLINE_ void decode_color_arr_hex64(buffer_ptr &p_buf, PackedColorArray &r_val)
 	decltype(r_val.size()) size;
 	decode_varint(p_buf, size);
 	r_val.resize(size);
-	if(size == 0) return;
+	if (size == 0)
+		return;
 	auto ptr = r_val.ptrw();
 	for (decltype(size) i = 0; i < size; i++) {
 		decode_color_hex64(p_buf, r_val[i]);
