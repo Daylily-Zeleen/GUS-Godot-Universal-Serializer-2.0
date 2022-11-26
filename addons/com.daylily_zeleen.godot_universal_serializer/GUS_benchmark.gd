@@ -282,7 +282,6 @@ func _print_result(title_name:String, v)->void:
 	var gus_deser_time := Time.get_ticks_usec()
 	var gus_deser = GUS.bytes_to_var(gus_bytes)
 	gus_deser_time = Time.get_ticks_usec() - gus_deser_time
-#	print(gus_bytes)
 	
 	# Native
 	var native_ser_time := Time.get_ticks_usec()
