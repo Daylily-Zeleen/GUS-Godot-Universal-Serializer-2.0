@@ -17,6 +17,7 @@ x64/
 .clang-format
 *.dblite
 CMakeLists.txt
+.sconsign.dblite
 *.APS
 *.rc
 *.sln
