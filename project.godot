@@ -11,22 +11,17 @@ config_version=5
 [application]
 
 config/name="GUS TEST"
-run/main_scene="res://node.tscn"
-config/icon="res://icon.png"
 config/features=PackedStringArray("4.0")
+config/icon="res://icon.png"
 
-[autoload]
+[dotnet]
 
-GUS="*res://addons/godot_universal_serializer/GUS.gd"
+project/assembly_name="GUS TEST"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_universal_serializer/plugin.cfg")
+enabled=PackedStringArray("res://addons/com.daylily_zeleen.godot_universal_serializer/plugin.cfg")
 
 [native_extensions]
 
 paths=["res://example.gdextension"]
-
-[rendering]
-
-environment/defaults/default_environment="res://default_env.tres"

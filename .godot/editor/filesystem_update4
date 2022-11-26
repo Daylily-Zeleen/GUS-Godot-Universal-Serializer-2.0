@@ -1,1 +1,2 @@
-res://addons/godot_universal_serializer/GUS_test.gd
+res://GUS_benchmark.gd
+res://addons/com.daylily_zeleen.godot_universal_serializer/GUS_benchmark.gd

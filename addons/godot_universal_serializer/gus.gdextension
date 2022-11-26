@@ -1,8 +1,0 @@
-[configuration]
-
-entry_symbol = "gus_library_init"
-
-[libraries]
-windows.64.debug = "bin/real_t_is_float/libgus.windows.debug.64.dll"
-windows.64.release = "bin/real_t_is_float/libgus.windows.release.64.dll"
-
