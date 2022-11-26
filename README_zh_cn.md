@@ -50,7 +50,7 @@
 
 # 基准测试 2.1.0:
 ```
-ull - value:<null>
+null - value:<null>
 	[GUS]: 		1 bytes 		ser 5 usec 		deser 2 usec
 	[Native]: 	4 bytes 		ser 2 usec 		deser 2 usec
 	[JSON]:		4 bytes 		ser 8 usec 		deser 5 usec.

@@ -48,7 +48,8 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
   5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer`.
 
 # Benchmark 2.1.0:
-```ull - value:<null>
+```
+null - value:<null>
 	[GUS]: 		1 bytes 		ser 5 usec 		deser 2 usec
 	[Native]: 	4 bytes 		ser 2 usec 		deser 2 usec
 	[JSON]:		4 bytes 		ser 8 usec 		deser 5 usec.
