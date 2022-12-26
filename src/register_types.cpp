@@ -30,15 +30,12 @@
 
 #include "register_types.h"
 
-#include <godot/gdnative_interface.h>
+#include <gdextension_interface.h>
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 
-// #include <concepts>
-
-// #include <concepts>
 
 #include "gus.h"
 
@@ -58,8 +55,8 @@ extern "C" {
 
 // Initialization.
 
-GDNativeBool GDN_EXPORT gus_library_init(const GDNativeInterface *p_interface,
-		const GDNativeExtensionClassLibraryPtr p_library, GDNativeInitialization *r_initialization) {
+GDExtensionBool GDE_EXPORT gus_library_init(const GDExtensionInterface *p_interface,
+		const GDExtensionClassLibraryPtr p_library, GDExtensionInitialization *r_initialization) {
 	// p_interface
 	godot::GDExtensionBinding::InitObject init_obj(p_interface, p_library, r_initialization);
 
