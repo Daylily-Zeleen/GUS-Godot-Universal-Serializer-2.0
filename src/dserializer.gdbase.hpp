@@ -13,13 +13,9 @@ template <typename T>
 concept GodotStr = !BaseType<T> && (std::same_as<T, String> || std::same_as<T, StringName> || std::same_as<T, NodePath>);
 // ����( ���� Quaternion, Color)
 template <typename T>
-concept GodotVec2 = !BaseType<T> && (std::same_as<T, Vector2> || std::same_as<T, Vector2i>);
+concept GodotComponents4 = !BaseType<T> && (std::same_as<T, Quaternion> || std::same_as<T, Color>);
 template <typename T>
-concept GodotVec3 = !BaseType<T> && (std::same_as<T, Vector3> || std::same_as<T, Vector3i>);
-template <typename T>
-concept GodotVec4 = !BaseType<T> && (std::same_as<T, Vector4> || std::same_as<T, Vector4i> || std::same_as<T, Quaternion> || std::same_as<T, Color>);
-template <typename T>
-concept GodotVec = GodotVec2<T> || GodotVec3<T> || GodotVec4<T>;
+concept GodotVec = !BaseType<T> && (std::same_as<T, Vector2> || std::same_as<T, Vector2i> || std::same_as<T, Vector3> || std::same_as<T, Vector3i> || std::same_as<T, Vector4> || std::same_as<T, Vector4i>);
 // Rect2
 template <typename T>
 concept GodotRect2 = !BaseType<T> && (std::same_as<T, Rect2> || std::same_as<T, Rect2i>);
@@ -31,7 +27,7 @@ concept GodotPackedNormalArray = !BaseType<T> && (std::same_as<T, PackedByteArra
 template <typename T>
 concept GodotFixedElementLenthArray = !BaseType<T> && (GodotPackedNormalArray<T> || std::same_as<T, PackedVector2Array> || std::same_as<T, PackedVector3Array> || std::same_as<T, PackedColorArray>);
 
-// godot �ַ���
+// GodotStr
 _INLINE_ void cal_size(const GodotStr auto &p_val, INTEGRAL_T &r_len) {
 	r_len += godot::String(p_val).utf8().length();
 }
@@ -71,73 +67,47 @@ _INLINE_ void decode(buffer_ptr &p_buf, T &r_val) {
 	p_buf += len;
 }
 // ����
-template <uint8_t dimension>
-_INLINE_ void cal_size(const GodotVec auto &p_val, INTEGRAL_T &r_len) {
-	r_len += sizeof(decltype(p_val[0])) * dimension;
+template <GodotVec T>
+_INLINE_ void cal_size(const T &p_val, INTEGRAL_T &r_len) {
+	r_len += (sizeof(decltype(p_val[0])) * T::AXIS_COUNT);
 }
-template <uint8_t dimension>
-_INLINE_ void encode_vec(buffer_ptr &p_buf, const GodotVec auto &p_val) {
-	for (size_t i = 0; i < dimension; i++) {
-		encode(p_buf, p_val[i]);
-	}
+template <GodotVec T>
+_INLINE_ void encode(buffer_ptr &p_buf, const T &p_val) {
+	memcpy(p_buf, &p_val, (T::AXIS_COUNT * sizeof(decltype(p_val[0]))));
+	p_buf += (T::AXIS_COUNT * sizeof(decltype(p_val[0])));
 }
 #ifdef ENCODE_LEN_METHOD
 template <uint8_t dimension>
-_INLINE_ void encode_vec(buffer_ptr &p_buf, const GodotVec auto &p_val, INTEGRAL_T &r_len) {
-	for (size_t i = 0; i < dimension; i++) {
-		encode<decltype((p_val[i]))>(p_buf, p_val[i], r_len);
-	}
+_INLINE_ void encode(buffer_ptr &p_buf, const GodotVec auto &p_val, INTEGRAL_T &r_len) {
+	memcpy(p_buf, &p_val, (T::AXIS_COUNT * sizeof(decltype(p_val[0]))));
+	p_buf += (T::AXIS_COUNT * sizeof(decltype(p_val[0])));
+	r_len += (sizeof(decltype(p_val[0])) * T::AXIS_COUNT);
 }
 #endif
-template <uint8_t dimension>
-_INLINE_ void decode_vec(buffer_ptr &p_buf, GodotVec auto &r_val) {
-	for (size_t i = 0; i < dimension; i++) {
-		decode(p_buf, r_val[i]);
-	}
+template <GodotVec T>
+_INLINE_ void decode(buffer_ptr &p_buf, T &r_val) {
+	memcpy(&r_val, p_buf, (T::AXIS_COUNT * sizeof(decltype(r_val[0]))));
+	p_buf += (T::AXIS_COUNT * sizeof(decltype(r_val[0])));
 }
-// �����ػ�( ���� Quaternion, Color)
 
-_INLINE_ void cal_size(const GodotVec2 auto &p_val, INTEGRAL_T &r_len) {
-	cal_size<2>(p_val, r_len);
+// (Quaternion, Color)
+_INLINE_ void cal_size(const GodotComponents4 auto &p_val, INTEGRAL_T &r_len) {
+	r_len += (sizeof(decltype(p_val[0])) * 4);
 }
-_INLINE_ void encode(buffer_ptr &p_buf, const GodotVec2 auto &p_val) {
-	encode_vec<2>(p_buf, p_val);
-}
-#ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const GodotVec2 auto &p_val, INTEGRAL_T &r_len) {
-	encode_vec<2>(p_buf, p_val, r_len);
-}
-#endif
-_INLINE_ void cal_size(const GodotVec3 auto &p_val, INTEGRAL_T &r_len) {
-	cal_size<3>(p_val, r_len);
-}
-_INLINE_ void encode(buffer_ptr &p_buf, const GodotVec3 auto &p_val) {
-	encode_vec<3>(p_buf, p_val);
+_INLINE_ void encode(buffer_ptr &p_buf, const GodotComponents4 auto &p_val) {
+	memcpy(p_buf, &p_val, (4 * sizeof(decltype(p_val[0]))));
+	p_buf += (4 * sizeof(decltype(p_val[0])));
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const GodotVec3 auto &p_val, INTEGRAL_T &r_len) {
-	encode_vec<3>(p_buf, p_val, r_len);
+_INLINE_ void encode(buffer_ptr &p_buf, const GodotComponents4 auto &p_val, INTEGRAL_T &r_len) {
+	memcpy(p_buf, &p_val, (4 * sizeof(decltype(p_val[0]))));
+	p_buf += (4 * sizeof(decltype(p_val[0])));
+	r_len += (sizeof(decltype(p_val[0])) * 4);
 }
 #endif
-_INLINE_ void cal_size(const GodotVec4 auto &p_val, INTEGRAL_T &r_len) {
-	cal_size<4>(p_val, r_len);
-}
-_INLINE_ void encode(buffer_ptr &p_buf, const GodotVec4 auto &p_val) {
-	encode_vec<4>(p_buf, p_val);
-}
-#ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const GodotVec4 auto &p_val, INTEGRAL_T &r_len) {
-	encode_vec<4>(p_buf, p_val, r_len);
-}
-#endif
-_INLINE_ void decode(buffer_ptr &p_buf, GodotVec2 auto &r_val) {
-	decode_vec<2>(p_buf, r_val);
-}
-_INLINE_ void decode(buffer_ptr &p_buf, GodotVec3 auto &r_val) {
-	decode_vec<3>(p_buf, r_val);
-}
-_INLINE_ void decode(buffer_ptr &p_buf, GodotVec4 auto &r_val) {
-	decode_vec<4>(p_buf, r_val);
+_INLINE_ void decode(buffer_ptr &p_buf, GodotComponents4 auto &r_val) {
+	memcpy(&r_val, p_buf, (4 * sizeof(decltype(r_val[0]))));
+	p_buf += (4 * sizeof(decltype(r_val[0])));
 }
 // Rect2
 _INLINE_ void cal_size(const GodotRect2 auto &p_val, INTEGRAL_T &r_len) {
@@ -291,14 +261,14 @@ _INLINE_ void decode(buffer_ptr &p_buf, Transform3D &r_val) {
 }
 // Color
 _INLINE_ void cal_size_color_raw(const Color &p_val, INTEGRAL_T &r_len) {
-	cal_size<4>(p_val, r_len);
+	cal_size(p_val, r_len);
 }
 _INLINE_ void encode_color_raw(buffer_ptr &p_buf, const Color &p_val) {
 	encode(p_buf, p_val);
 }
 #ifdef ENCODE_LEN_METHOD
 _INLINE_ void encode_color_raw(buffer_ptr &p_buf, const Color &p_val, INTEGRAL_T &r_len) {
-	encode<4>(p_buf, p_val, r_len);
+	encode(p_buf, p_val, r_len);
 }
 #endif
 _INLINE_ void decode_color_raw(buffer_ptr &p_buf, Color &r_val) {
@@ -346,7 +316,7 @@ template <typename TElementConponent, uint8_t element_conponent_count>
 _INLINE_ void cal_size(const GodotFixedElementLenthArray auto &p_val, INTEGRAL_T &r_len) {
 	auto size = p_val.size();
 	cal_size_varint(size, r_len);
-	r_len += element_conponent_count * sizeof(TElementConponent) * size;
+	r_len += (element_conponent_count * sizeof(TElementConponent)) * size;
 }
 template <typename TElementConponent, uint8_t element_conponent_count>
 _INLINE_ void encode(buffer_ptr &p_buf, const GodotFixedElementLenthArray auto &p_val) {
@@ -355,7 +325,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const GodotFixedElementLenthArray auto &
 	if (size == 0)
 		return;
 	auto ptr = p_val.ptr();
-	size_t increase_len = element_conponent_count * sizeof(TElementConponent) * size;
+	size_t increase_len = (element_conponent_count * sizeof(TElementConponent)) * size;
 	memcpy(p_buf, ptr, increase_len);
 	p_buf += increase_len;
 }
@@ -379,7 +349,7 @@ _INLINE_ void decode(buffer_ptr &p_buf, GodotFixedElementLenthArray auto &r_val)
 	if (size == 0)
 		return;
 	auto ptr = r_val.ptrw();
-	size_t len = element_conponent_count * sizeof(TElementConponent) * size;
+	size_t len = (element_conponent_count * sizeof(TElementConponent)) * size;
 	memcpy(ptr, p_buf, len);
 	p_buf += len;
 }
