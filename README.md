@@ -1,5 +1,5 @@
 
-# GUS - Godot Universal Serializer 2.1.0 - Godot的通用序列化器 - V2.1.0
+# GUS - Godot Universal Serializer 2.1.1 - Godot的通用序列化器 - V2.1.1（Godot 4.0 beta10）
 
 ![Image text](icon.png)
 
@@ -17,7 +17,7 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
   You can run the `EditorScript` which named `GUS_benchmark.gd` to view the contrast between `GUS`, `Native`, and `JSON`.
 
 # How to use:
-  1. Download released plugin, install ~~and enable~~ this plugin just like other plugin.
+  1. Download released plugin, install ~~and enable~~ this plugin just like other plugin( If the version is not match, please compile by yourselves).
   2. ~~Modify properties of autoload which named `GUS` as you require.~~
   3. Pass variable which without `Object`, `OID`, `Callable`, `Signal` into `GUS.var_to_bytes()` and get the serialized data, than send to network peer.
   3. After the remote network peer obtains the serialized data, passe it into `GUS.bytes_to_var()` to get the same variable as before serialization.

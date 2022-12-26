@@ -1,5 +1,5 @@
 
-# GUS - Godot Universal Serializer 2.1.0 - Godot的通用序列化器 - V2.1.0
+# GUS - Godot Universal Serializer 2.1.1 - Godot的通用序列化器 - V2.1.1（Godot 4.0 beta10）
 
 ![Image text](icon.png)
 
@@ -18,7 +18,7 @@
   可以通过运行名为`GUS_benchmark.gd`的编辑器脚本来查看 `GUS`、`Native` 以及 `JSON` 这三种方式的剧烈话反序列化测试对比。
 
 # 如何使用:
-  1. 下载发布的插件包，像其他插件一样安装~~和启用~~即可。
+  1. 下载发布的插件包，像其他插件一样安装~~和启用~~即可(如果版本不匹配，请自行编译)。
   2. ~~根据你的需求代码修改名为`GUS`的Autoload的属性.~~
   3. 传递不包含`Object`、 `OID`、 `Callable`以及 `Signal`的变量给 `GUS.var_to_bytes()`并获取序列化后数据，然后发送给其他网络对等体。
   3. 远端的网络对等体获取到序列化后数据，传递给`GUS.bytes_to_var()`,即可获得与序列化前相同的变量。
