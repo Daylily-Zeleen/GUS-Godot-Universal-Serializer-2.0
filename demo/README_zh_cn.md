@@ -1,4 +1,4 @@
-# GUS - Godot Universal Serializer 2.1.1 - Godot的通用序列化器 - V2.1.1（Godot 4.0 beta10）
+# GUS - Godot Universal Serializer 2.1.2 - Godot的通用序列化器 - V2.1.2（Godot 4.0 beta13）
 
 ![Image text](icon.png)
 
