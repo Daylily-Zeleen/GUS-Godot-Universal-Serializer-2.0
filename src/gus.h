@@ -111,8 +111,9 @@ public:
 private:
 	static ColorEncodeType _color_encode_type;
 };
+
 GUS::ColorEncodeType GUS::_color_encode_type = GUS::COLOR_ENCODE_TYPE_RAW;
 
-VARIANT_ENUM_CAST(GUS, ColorEncodeType);
+VARIANT_ENUM_CAST(GUS::ColorEncodeType);
 
 #endif

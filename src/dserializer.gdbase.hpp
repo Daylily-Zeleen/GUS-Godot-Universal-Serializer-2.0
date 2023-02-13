@@ -2,6 +2,7 @@
 #define DSERIALIZER_GDBASE_HPP
 
 #include "dserializer.hpp"
+#include <stdint.h>
 
 #include <godot_cpp/variant/variant.hpp>
 
@@ -30,9 +31,10 @@ concept GodotFixedElementLenthArray = !BaseType<T> && (GodotPackedNormalArray<T>
 // GodotStr
 _INLINE_ void cal_size(const GodotStr auto &p_val, INTEGRAL_T &r_len) {
 	r_len += godot::String(p_val).utf8().length();
+	++r_len;
 }
 _INLINE_ void encode(buffer_ptr &p_buf, const GodotStr auto &p_val) {
-	auto utf8 = static_cast<String>(p_val).utf8();
+	auto utf8 = String(p_val).utf8();
 	auto length = utf8.length();
 	memcpy(p_buf, utf8.get_data(), length);
 #ifdef _DEBUG_
@@ -41,6 +43,8 @@ _INLINE_ void encode(buffer_ptr &p_buf, const GodotStr auto &p_val) {
 	}
 #endif
 	p_buf += length;
+	*p_buf = 0;
+	++p_buf;
 }
 #ifdef ENCODE_LEN_METHOD
 _INLINE_ void encode(buffer_ptr &p_buf, const GodotStr auto &p_val, INTEGRAL_T &r_len) {
@@ -58,12 +62,12 @@ _INLINE_ void encode(buffer_ptr &p_buf, const GodotStr auto &p_val, INTEGRAL_T &
 #endif
 template <GodotStr T>
 _INLINE_ void decode(buffer_ptr &p_buf, T &r_val) {
-	size_t len = 0;
+	int32_t len = 0;
 	while (p_buf[len] != 0) {
 		len++;
 	}
-	len++;
 	r_val = T(String::utf8(reinterpret_cast<char *>(p_buf), len));
+	++len;
 	p_buf += len;
 }
 // ����

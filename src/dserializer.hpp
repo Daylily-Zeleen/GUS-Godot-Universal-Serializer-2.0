@@ -9,7 +9,6 @@
 
 typedef char *cstr_ptr;
 
-
 #define BUFFER_U8
 #ifdef BUFFER_U8
 typedef uint8_t *buffer_ptr;
@@ -50,7 +49,7 @@ concept BaseType =
 		(std::convertible_to<T, int64_t> && std::integral<T>) || (std::convertible_to<T, double> && std::floating_point<T>);
 
 template <typename T>
-concept random_sized_range = std::ranges::random_access_range<T> &&std::ranges::sized_range<T>;
+concept random_sized_range = std::ranges::random_access_range<T> && std::ranges::sized_range<T>;
 
 template <typename T>
 concept pair_t = requires(T t) {
@@ -215,8 +214,6 @@ _INLINE_ void encode_varint(buffer_ptr &p_buf, const INTEGRAL_T &integer, INTEGR
 }
 #endif
 
-
-
 template <typename TInt>
 requires requires {
 	requires std::integral<TInt>;
@@ -315,7 +312,7 @@ _INLINE_ void cal_size(const T *&p_arr, const INTEGRAL_T &p_array_size, INTEGRAL
 }
 template <typename T> // ֻ�����ڼ�ģ��
 _INLINE_ void encode(buffer_ptr &p_buf, const T *&p_arr, const INTEGRAL_T &p_array_size) {
-	encode_varint<INTEGRAL_T>(p_buf, p_array_size);
+	encode_varint<decltype(p_array_size)>(p_buf, p_array_size);
 	for (INTEGRAL_T i = 0; i < p_array_size; i++) {
 		encode<T>(p_buf, p_array_size[i]);
 	}
@@ -332,7 +329,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const T *&p_arr, const INTEGRAL_T &p_arr
 #endif
 template <typename T> // ֻ�����ڼ�ģ��
 _INLINE_ void decode(buffer_ptr &p_buf, T *&r_arr, const INTEGRAL_T &r_array_size) {
-	decode_varint<INTEGRAL_T>(p_buf, r_array_size);
+	decode_varint<decltype(r_array_size)>(p_buf, r_array_size);
 	for (INTEGRAL_T i = 0; i < r_array_size; i++) {
 		decode(p_buf, r_arr[i]);
 	}

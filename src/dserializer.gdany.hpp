@@ -242,7 +242,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const Array &p_val) {
 				encode(p_buf, p_val[i]); // 带类型信息
 			}
 			// 结尾
-			encode_type(p_buf, DType::ARR_DICT_END);
+			encode_type(p_buf, static_cast<uint8_t>(DType::ARR_DICT_END));
 		} break;
 #ifndef ADVANCE
 		case Variant::OBJECT:
@@ -259,7 +259,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const Array &p_val) {
 			switch (type) {
 				case DType::BOOL_T: {
 					for (decltype(size) i = 0; i < size; i++) {
-						encode_type(p_buf, p_val[i] ? DType::BOOL_T : DType::BOOL_F);
+						encode_type(p_buf, static_cast<uint8_t>(p_val[i] ? DType::BOOL_T : DType::BOOL_F));
 					}
 				} break;
 				case DType::ARRAY_BEGIN: {
@@ -328,8 +328,9 @@ _INLINE_ void encode(buffer_ptr &p_buf, const Array &p_val, INTEGRAL_T &r_len) {
 #endif
 _INLINE_ void decode(buffer_ptr &p_buf, Array &p_val, const uint8_t &p_encode_code, const bool &empty) { // 需要类型信息才能解码
 	if (p_encode_code == DType::ARRAY_BEGIN) {
-		if (empty)
+		if (empty) {
 			return;
+		}
 		while (*p_buf != DType::ARR_DICT_END) {
 			Variant element;
 			decode(p_buf, element);
@@ -444,7 +445,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const Dictionary &p_val) {
 		encode(p_buf, keys[i]);
 		encode(p_buf, p_val[keys[i]]);
 	}
-	encode_type(p_buf, DType::ARR_DICT_END);
+	encode_type(p_buf, static_cast<uint8_t>(DType::ARR_DICT_END));
 }
 #ifdef ENCODE_LEN_METHOD
 _INLINE_ void encode(buffer_ptr &p_buf, const Dictionary &p_val, INTEGRAL_T &r_len) {
@@ -606,10 +607,10 @@ _INLINE_ void encode_variant(buffer_ptr &p_buf, const Variant &p_val, const uint
 	switch (type) {
 		case Variant::NIL:
 			// 两种特殊类型，把类型代号序列化即可
-			encode_type(p_buf, DType::NIL);
+			encode_type(p_buf, static_cast<uint8_t>(DType::NIL));
 			break;
 		case Variant::BOOL:
-			encode_type(p_buf, (p_val) ? DType::BOOL_T : DType::BOOL_F);
+			encode_type(p_buf, static_cast<uint8_t>((p_val) ? DType::BOOL_T : DType::BOOL_F));
 			break;
 		case Variant::INT:
 			encode_varint(p_buf, p_val.operator int64_t());
@@ -1291,130 +1292,130 @@ _INLINE_ void cal_size(const Variant &p_val, INTEGRAL_T &r_len) {
 _INLINE_ void encode(buffer_ptr &p_buf, const Variant &p_val) {
 	switch (p_val.get_type()) {
 		case Variant::NIL: {
-			encode_type(p_buf, DType::NIL);
+			encode_type(p_buf, static_cast<uint8_t>(DType::NIL));
 		} break;
 		case Variant::BOOL: {
-			encode_type(p_buf, p_val ? DType::BOOL_T : DType::BOOL_F);
+			encode_type(p_buf, static_cast<uint8_t>(p_val ? DType::BOOL_T : DType::BOOL_F));
 		} break;
 		case Variant::ARRAY: {
 			auto arr = p_val.operator godot::Array();
 			uint8_t arr_encode_code;
 			convert_array_encode_code(arr, arr_encode_code);
 			if (arr.is_empty()) {
-				encode_type(p_buf, arr_encode_code | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(arr_encode_code | 0x80));
 				return;
 			}
-			encode_type(p_buf, arr_encode_code);
+			encode_type(p_buf, static_cast<uint8_t>(arr_encode_code));
 			encode(p_buf, arr);
 		} break;
 		case Variant::FLOAT: {
 			auto f64 = p_val.operator double();
 			auto f32 = p_val.operator float();
 			if (f64 == double(f32)) {
-				encode_type(p_buf, DType::FLOAT32);
+				encode_type(p_buf, static_cast<uint8_t>(DType::FLOAT32));
 				encode(p_buf, f32);
 			} else {
-				encode_type(p_buf, DType::FLOAT64);
+				encode_type(p_buf, static_cast<uint8_t>(DType::FLOAT64));
 				encode(p_buf, f64);
 			}
 		} break;
 		case Variant::COLOR: {
-			encode_type(p_buf, color_encode_code);
+			encode_type(p_buf, static_cast<uint8_t>(color_encode_code));
 			(*encode_color)(p_buf, p_val.operator godot::Color());
 		} break;
 		case Variant::DICTIONARY: {
 			auto dict = p_val.operator godot::Dictionary();
 			if (dict.is_empty()) {
 				// 空字典特化
-				encode_type(p_buf, DType::DICTIONARY_BIGIN | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::DICTIONARY_BIGIN | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::DICTIONARY_BIGIN);
+			encode_type(p_buf, static_cast<uint8_t>(DType::DICTIONARY_BIGIN));
 			encode(p_buf, dict);
 		} break;
 		case Variant::PACKED_BYTE_ARRAY: {
 			auto arr = p_val.operator godot::PackedByteArray();
 			if (arr.is_empty()) {
-				encode_type(p_buf, DType::PACKED_BYTE_ARRAY | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_BYTE_ARRAY | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_BYTE_ARRAY);
+			encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_BYTE_ARRAY));
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_INT32_ARRAY: {
 			auto arr = p_val.operator godot::PackedInt32Array();
 			if (arr.is_empty()) {
-				encode_type(p_buf, DType::PACKED_INT32_ARRAY | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_INT32_ARRAY | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_INT32_ARRAY);
+			encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_INT32_ARRAY));
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
 			auto arr = p_val.operator godot::PackedInt64Array();
 			if (arr.is_empty()) {
-				encode_type(p_buf, DType::PACKED_INT64_ARRAY | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_INT64_ARRAY | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_INT64_ARRAY);
+			encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_INT64_ARRAY));
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			auto arr = p_val.operator godot::PackedFloat32Array();
 			if (arr.is_empty()) {
-				encode_type(p_buf, DType::PACKED_FLOAT32_ARRAY | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_FLOAT32_ARRAY | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_FLOAT32_ARRAY);
+			encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_FLOAT32_ARRAY));
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_FLOAT64_ARRAY: {
 			auto arr = p_val.operator godot::PackedFloat64Array();
 			if (arr.is_empty()) {
-				encode_type(p_buf, DType::PACKED_FLOAT64_ARRAY | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_FLOAT64_ARRAY | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_FLOAT64_ARRAY);
+			encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_FLOAT64_ARRAY));
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_VECTOR2_ARRAY: {
 			auto arr = p_val.operator godot::PackedVector3Array();
 			if (arr.is_empty()) {
-				encode_type(p_buf, DType::PACKED_VECTOR2_ARRAY | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_VECTOR2_ARRAY | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_VECTOR2_ARRAY);
+			encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_VECTOR2_ARRAY));
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_VECTOR3_ARRAY: {
 			auto arr = p_val.operator godot::PackedVector3Array();
 			if (arr.is_empty()) {
-				encode_type(p_buf, DType::PACKED_VECTOR3_ARRAY | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_VECTOR3_ARRAY | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_VECTOR3_ARRAY);
+			encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_VECTOR3_ARRAY));
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_STRING_ARRAY: {
 			auto arr = p_val.operator godot::PackedStringArray();
 			if (arr.is_empty()) {
-				encode_type(p_buf, DType::PACKED_STRING_ARRAY | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_STRING_ARRAY | 0x80));
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_STRING_ARRAY);
+			encode_type(p_buf, static_cast<uint8_t>(DType::PACKED_STRING_ARRAY));
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_COLOR_ARRAY: {
 			auto arr = p_val.operator godot::PackedColorArray();
 			if (arr.is_empty()) {
-				encode_type(p_buf, color_arr_encode_code | 0x80);
+				encode_type(p_buf, static_cast<uint8_t>(color_arr_encode_code | 0x80));
 				return;
 			}
-			encode_type(p_buf, color_arr_encode_code);
+			encode_type(p_buf, static_cast<uint8_t>(color_arr_encode_code));
 			(*encode_color_arr)(p_buf, arr);
 		} break;
 		default: {
-			encode_type(p_buf, p_val.get_type());
+			encode_type(p_buf, static_cast<uint8_t>(p_val.get_type()));
 			encode_variant(p_buf, p_val);
 		} break;
 	}
