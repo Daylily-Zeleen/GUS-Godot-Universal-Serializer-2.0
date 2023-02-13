@@ -1,6 +1,9 @@
 
 # GUS - Godot Universal Serializer 2.1.3 - Godot的通用序列化器 - V2.1.3（Godot 4.0 RC1）
 
+# Current page is `master` branch, the content is c++ source code.
+# You can go to `plugin` branch to browse compiled plugin, or go to release page to download the plugin which compatible to your using Godot version.
+
 ![Image text](icon.png)
 
 [中文文档](README_zh_cn.md) <- 点击这里。
