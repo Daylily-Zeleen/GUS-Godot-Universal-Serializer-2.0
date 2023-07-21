@@ -2,8 +2,6 @@
 
 #include <concepts>
 #include <memory>
-#include <string>
-#include <type_traits>
 
 template <typename T>
 concept EncodingBuffer = std::integral<T> && sizeof(T) == 1 && !std::is_same_v<T, bool>;
@@ -56,6 +54,10 @@ concept Pair = requires(T t) {
 template <typename T>
 concept NormalRange = std::ranges::range<T> && (!std::ranges::random_access_range<T>)&&std::ranges::sized_range<T>;
 #define normal_range_t NormalRange auto
+
+template <typename T>
+concept StdString = std::is_invocable_r_v<const char *, decltype(T::c_str)> && T::length && std::is_constructible_v<T, const char *>;
+#define std_str_t StdString auto
 //==============================================
 
 // Number types
@@ -113,8 +115,7 @@ _INLINE_ TInt decode_zigzag(typename unsigned_int_t(TInt) val) {
 
 template <std::integral TInt>
 _INLINE_ void cal_size_varint(TInt p_integer, integral_t &r_len) {
-	typename unsigned_int_t(TInt) tmp = 0;
-	encode_zigzag(p_integer, tmp);
+	typename unsigned_int_t(TInt) tmp = encode_zigzag(p_integer);
 	while ((tmp >> 7) != 0) {
 		tmp >>= 7;
 		r_len++;
@@ -158,7 +159,7 @@ _INLINE_ void decode_varint(buffer_t *p_buf, TInt &r_val) {
 		i++;
 	}
 	tmp |= (b << (7 * i));
-	r_val = decode_zigzag(tmp);
+	r_val = decode_zigzag<TInt>(tmp);
 }
 
 // === String ===
@@ -190,28 +191,24 @@ _INLINE_ void encode(buffer_t *p_buf, const char *p_cstr, integral_t &r_len) {
 }
 #endif
 
-template <typename std_string = std::string>
-_INLINE_ void cal_size(const std_string &p_str, integral_t &r_len) {
+_INLINE_ void cal_size(const std_str_t &p_str, integral_t &r_len) {
 	r_len += p_str.length();
 }
 
-template <typename std_string = std::string>
-_INLINE_ void encode(buffer_t *p_buf, const std_string &p_str) {
+_INLINE_ void encode(buffer_t *p_buf, const std_str_t &p_str) {
 	memcpy(p_buf, p_str.c_str(), p_str.length());
 	p_buf += p_str.length();
 }
 
 #ifdef ENCODE_LEN_METHOD
-template <typename std_string = std::string>
-_INLINE_ void encode(buffer_t *p_buf, const std_string &p_str, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *p_buf, const std_str_t &p_str, integral_t &r_len) {
 	memcpy(p_buf, p_str.c_str(), p_str.length());
 	p_buf += p_str.length();
 	r_len += p_str.length();
 }
 #endif
 
-template <typename std_string = std::string>
-_INLINE_ void decode(buffer_t *p_buf, std_string &r_val) {
+_INLINE_ void decode(buffer_t *p_buf, std_str_t &r_val) {
 	size_t len = 0;
 	while (*(p_buf + len) != 0) {
 		len++;
@@ -341,9 +338,9 @@ _INLINE_ void decode(buffer_t *p_buf, TContainer &r_container) {
 	for (size_t i = size; i > 0; i--) {
 		TE e;
 		decode(p_buf, e);
-		if constexpr (std::invocable<decltype((TContainer::emplace_back)), TE>) {
+		if constexpr (std::invocable<decltype(TContainer::emplace_back), TE>) {
 			r_container.emplace_back(e);
-		} else if constexpr (std::invocable<decltype((TContainer::emplace)), TE>) {
+		} else if constexpr (std::invocable<decltype(TContainer::emplace), TE>) {
 			r_container.emplace(e);
 		}
 	}

@@ -913,12 +913,12 @@ _INLINE_ void decode_variant(buffer_t *p_buf, Variant &p_val, const uint8_t &typ
 		} break;
 		case DType::FLOAT32: {
 			float real32;
-			decode<float>(p_buf, real32);
+			decode(p_buf, real32);
 			p_val = real32;
 		} break;
 		case DType::FLOAT64: {
 			double real64;
-			decode<double>(p_buf, real64);
+			decode(p_buf, real64);
 			p_val = real64;
 		} break;
 		case DType::STRING: {
@@ -1030,7 +1030,7 @@ _INLINE_ void decode_variant(buffer_t *p_buf, Variant &p_val, const uint8_t &typ
 		case Variant::OBJECT:
 		case Variant::CALLABLE:
 		case Variant::SIGNAL: {
-			ERR_FIAL_MSG("Unsupport RID, OBJECT, CALLABLE and SIGNAL.");
+			ERR_FAIL_MSG("Unsupport RID, OBJECT, CALLABLE and SIGNAL.");
 		} break;
 		default: { // 容器类
 			auto t = type & 0x7f;

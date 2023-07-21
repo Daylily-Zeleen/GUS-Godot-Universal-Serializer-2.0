@@ -39,7 +39,7 @@ void initialize_gus_module(ModuleInitializationLevel p_level) {
 	ClassDB::register_abstract_class<GUS>();
 }
 
-void uninitialize_gus_module(ModuleInitializationLevel p_level);
+void uninitialize_gus_module(ModuleInitializationLevel p_level) {}
 
 extern "C" {
 // Initialization.

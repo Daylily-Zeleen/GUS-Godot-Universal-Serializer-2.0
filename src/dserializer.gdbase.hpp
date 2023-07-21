@@ -39,7 +39,7 @@ _INLINE_ void encode(buffer_t *p_buf, const GodotStr auto &p_val) {
 	auto length = utf8.length();
 	memcpy(p_buf, utf8.get_data(), length);
 #ifdef DEBUG_ENABLED
-	if (!p_buf[lenth - 1] == 0) {
+	if (!p_buf[length - 1] == 0) {
 		throw "ERR utf8";
 	}
 #endif // DEBUG_ENABLED
@@ -54,7 +54,7 @@ _INLINE_ void encode(buffer_t *p_buf, const GodotStr auto &p_val, integral_t &r_
 	auto length = utf8.length();
 	memcpy(p_buf, utf8.get_data(), length);
 #ifdef DEBUG_ENABLED
-	if (!p_buf[lenth - 1] == 0) {
+	if (!p_buf[length - 1] == 0) {
 		throw "ERR utf8";
 	}
 #endif // DEBUG_ENABLED
@@ -522,7 +522,7 @@ _INLINE_ void cal_size_color_arr(const PackedColorArray &p_val, integral_t &r_le
 template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 _INLINE_ void encode_color_arr(buffer_t *p_buf, const PackedColorArray &p_val) {
 	if (encode_type == 0) {
-		encode(p_val, p_val);
+		encode(p_buf, p_val);
 		return;
 	}
 
@@ -542,7 +542,7 @@ _INLINE_ void encode_color_arr(buffer_t *p_buf, const PackedColorArray &p_val) {
 template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 _INLINE_ void encode_color_arr(buffer_t *p_buf, const PackedColorArray &p_val, integral_t &r_len) {
 	if (encode_type == 0) {
-		encode(p_val, p_val, r_len);
+		encode(p_buf, p_val, r_len);
 		return;
 	}
 
