@@ -35,29 +35,31 @@ _INLINE_ void encode(buffer_t *p_buf, const GodotStr auto &p_val) {
 	auto utf8 = String(p_val).utf8();
 	auto length = utf8.length();
 	memcpy(p_buf, utf8.get_data(), length);
-#ifdef _DEBUG_
+#ifdef DEBUG_ENABLED
 	if (!p_buf[lenth - 1] == 0) {
 		throw "ERR utf8";
 	}
-#endif
+#endif // DEBUG_ENABLED
 	p_buf += length;
 	*p_buf = 0;
 	++p_buf;
 }
+
 #ifdef ENCODE_LEN_METHOD
 _INLINE_ void encode(buffer_t *p_buf, const GodotStr auto &p_val, integral_t &r_len) {
 	auto utf8 = static_cast<String>(p_val).utf8();
 	auto length = utf8.length();
 	memcpy(p_buf, utf8.get_data(), length);
-#ifdef _DEBUG_
+#ifdef DEBUG_ENABLED
 	if (!p_buf[lenth - 1] == 0) {
 		throw "ERR utf8";
 	}
-#endif
+#endif // DEBUG_ENABLED
 	p_buf += length;
 	r_len += length;
 }
 #endif
+
 template <GodotStr T>
 _INLINE_ void decode(buffer_t *p_buf, T &r_val) {
 	int32_t len = 0;
@@ -68,7 +70,8 @@ _INLINE_ void decode(buffer_t *p_buf, T &r_val) {
 	++len;
 	p_buf += len;
 }
-// ����
+
+// 
 template <GodotVec T>
 _INLINE_ void cal_size(const T &p_val, integral_t &r_len) {
 	r_len += (sizeof(decltype(p_val[0])) * T::AXIS_COUNT);

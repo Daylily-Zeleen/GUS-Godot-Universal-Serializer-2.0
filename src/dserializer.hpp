@@ -5,12 +5,9 @@
 #include <string>
 #include <type_traits>
 
-#define BUFFER_U8
-#ifdef BUFFER_U8
-using buffer_t = uint8_t;
-#else
-using buffer_t = int8_t;
-#endif
+template <typename T>
+concept EncodingBuffer = std::integral<T> && sizeof(T) == 1 && !std::is_same_v<T, bool>;
+#define buffer_t EncodingBuffer auto
 
 // Should always inline no matter what.
 #ifndef _ALWAYS_INLINE_
@@ -41,8 +38,8 @@ using buffer_t = int8_t;
 namespace dserializer {
 
 template <typename T>
-concept Number =
-		(std::convertible_to<T, int64_t> && std::integral<T>) || (std::convertible_to<T, double> && std::floating_point<T>);
+concept Number = (std::convertible_to<T, int64_t> && std::integral<T>) ||
+		(std::convertible_to<T, double> && std::floating_point<T>);
 #define number_t Number auto
 
 template <typename T>
@@ -57,8 +54,7 @@ concept Pair = requires(T t) {
 #define pair_t Pair auto
 
 template <typename T>
-concept NormalRange =
-		std::ranges::range<T> && (!std::ranges::random_access_range<T>)&&std::ranges::sized_range<T>;
+concept NormalRange = std::ranges::range<T> && (!std::ranges::random_access_range<T>)&&std::ranges::sized_range<T>;
 #define normal_range_t NormalRange auto
 //==============================================
 
@@ -66,6 +62,7 @@ concept NormalRange =
 _INLINE_ void cal_size(number_t p_val, integral_t &r_len) {
 	r_len += sizeof(decltype(p_val));
 }
+
 _INLINE_ void encode(buffer_t *p_buf, const number_t &p_val) {
 	memcpy(p_buf, &p_val, sizeof(decltype(p_val)));
 	p_buf += sizeof(decltype(p_val));
@@ -193,30 +190,34 @@ _INLINE_ void encode(buffer_t *p_buf, const char *p_cstr, integral_t &r_len) {
 }
 #endif
 
-_INLINE_ void cal_size(const std::string &p_str, integral_t &r_len) {
+template <typename std_string = std::string>
+_INLINE_ void cal_size(const std_string &p_str, integral_t &r_len) {
 	r_len += p_str.length();
 }
 
-_INLINE_ void encode(buffer_t *p_buf, const std::string &p_str) {
+template <typename std_string = std::string>
+_INLINE_ void encode(buffer_t *p_buf, const std_string &p_str) {
 	memcpy(p_buf, p_str.c_str(), p_str.length());
 	p_buf += p_str.length();
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const std::string &p_str, integral_t &r_len) {
+template <typename std_string = std::string>
+_INLINE_ void encode(buffer_t *p_buf, const std_string &p_str, integral_t &r_len) {
 	memcpy(p_buf, p_str.c_str(), p_str.length());
 	p_buf += p_str.length();
 	r_len += p_str.length();
 }
 #endif
 
-_INLINE_ void decode(buffer_t *p_buf, std::string &r_val) {
+template <typename std_string = std::string>
+_INLINE_ void decode(buffer_t *p_buf, std_string &r_val) {
 	size_t len = 0;
 	while (*(p_buf + len) != 0) {
 		len++;
 	}
 	len++;
-	r_val = std::string(reinterpret_cast<const char *>(p_buf), len);
+	r_val = std_string(reinterpret_cast<const char *>(p_buf), len);
 	p_buf += len;
 }
 
