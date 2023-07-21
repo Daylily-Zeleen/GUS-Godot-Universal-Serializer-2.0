@@ -65,19 +65,19 @@ concept NormalRange =
 _INLINE_ void cal_size(number_t p_val, integral_t &r_len) {
 	r_len += sizeof(decltype(p_val));
 }
-_INLINE_ void encode(buffer_ptr &p_buf, const number_t &p_val) {
+_INLINE_ void encode(buffer_ptr p_buf, const number_t &p_val) {
 	memcpy(p_buf, &p_val, sizeof(decltype(p_val)));
 	p_buf += sizeof(decltype(p_val));
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const number_t &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_ptr p_buf, const number_t &p_val, integral_t &r_len) {
 	memcpy(p_buf, &p_val, sizeof(decltype(p_val)));
 	p_buf += sizeof(decltype(p_val));
 	r_len += sizeof(decltype(p_val));
 }
 #endif
-_INLINE_ void decode(buffer_ptr &p_buf, number_t &r_val) {
+_INLINE_ void decode(buffer_ptr p_buf, number_t &r_val) {
 	memcpy(&r_val, p_buf, sizeof(decltype(r_val)));
 	p_buf += sizeof(decltype(r_val));
 }
@@ -86,16 +86,16 @@ _INLINE_ void decode(buffer_ptr &p_buf, number_t &r_val) {
 _INLINE_ void cal_size_int(integral_t p_val, integral_t &r_len) {
 	cal_size(p_val, r_len);
 }
-_INLINE_ void encode_int(buffer_ptr &p_buf, const integral_t &p_val) {
+_INLINE_ void encode_int(buffer_ptr p_buf, const integral_t &p_val) {
 	encode(p_buf, p_val);
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode_int(buffer_ptr &p_buf, const integral_t &p_val, integral_t &r_len) {
+_INLINE_ void encode_int(buffer_ptr p_buf, const integral_t &p_val, integral_t &r_len) {
 	encode(p_buf, p_val, r_len);
 }
 #endif
-_INLINE_ void decode_int(buffer_ptr &p_buf, integral_t &r_val) {
+_INLINE_ void decode_int(buffer_ptr p_buf, integral_t &r_val) {
 	decode(p_buf, r_val);
 }
 
@@ -127,7 +127,7 @@ _INLINE_ void cal_size_varint(TInt p_integer, integral_t &r_len) {
 }
 
 template <std::integral TInt>
-_INLINE_ void encode_varint(buffer_ptr &p_buf, TInt integer) {
+_INLINE_ void encode_varint(buffer_ptr p_buf, TInt integer) {
 	typename unsigned_int_t(TInt) tmp = encode_zigzag(integer);
 	while ((tmp >> 7) != 0) {
 		*(p_buf++) = (uint8_t)(tmp | 0x80);
@@ -138,7 +138,7 @@ _INLINE_ void encode_varint(buffer_ptr &p_buf, TInt integer) {
 
 #ifdef ENCODE_LEN_METHOD
 template <std::integral TInt>
-_INLINE_ void encode_varint(buffer_ptr &p_buf, TInt integer, integral_t &r_len) {
+_INLINE_ void encode_varint(buffer_ptr p_buf, TInt integer, integral_t &r_len) {
 	typename unsigned_int_t(TInt) tmp = encode_zigzag(integer);
 	while ((tmp >> 7) != 0) {
 		*(p_buf++) = (uint8_t)(tmp | 0x80);
@@ -151,7 +151,7 @@ _INLINE_ void encode_varint(buffer_ptr &p_buf, TInt integer, integral_t &r_len) 
 #endif
 
 template <std::integral TInt>
-_INLINE_ void decode_varint(buffer_ptr &p_buf, TInt &r_val) {
+_INLINE_ void decode_varint(buffer_ptr p_buf, TInt &r_val) {
 	using tmp_t = typename unsigned_int_t(TInt);
 	tmp_t tmp = 0;
 	uint8_t i = 0;
@@ -184,7 +184,7 @@ _INLINE_ void cal_size(const cstr_ptr &p_cstr, integral_t &r_len) {
 	ptr++;
 	r_len += ptr - p_cstr;
 }
-_INLINE_ void encode(buffer_ptr &p_buf, const cstr_ptr &p_cstr) {
+_INLINE_ void encode(buffer_ptr p_buf, const cstr_ptr &p_cstr) {
 	cstr_ptr ptr = p_cstr;
 	while (*ptr != 0) {
 		*(p_buf++) = *(ptr++);
@@ -192,7 +192,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const cstr_ptr &p_cstr) {
 	*(p_buf++) = *(ptr++);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const cstr_ptr &p_cstr, integral_t &r_len) {
+_INLINE_ void encode(buffer_ptr p_buf, const cstr_ptr &p_cstr, integral_t &r_len) {
 	cstr_ptr ptr = p_cstr;
 	while (*ptr != 0) {
 		*(p_buf++) = *(ptr++);
@@ -204,19 +204,19 @@ _INLINE_ void encode(buffer_ptr &p_buf, const cstr_ptr &p_cstr, integral_t &r_le
 _INLINE_ void cal_size(const std::string &p_str, integral_t &r_len) {
 	r_len += p_str.length();
 }
-_INLINE_ void encode(buffer_ptr &p_buf, const std::string &p_str) {
+_INLINE_ void encode(buffer_ptr p_buf, const std::string &p_str) {
 	memcpy(p_buf, p_str.c_str(), p_str.length());
 	p_buf += p_str.length();
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const std::string &p_str, integral_t &r_len) {
+_INLINE_ void encode(buffer_ptr p_buf, const std::string &p_str, integral_t &r_len) {
 	memcpy(p_buf, p_str.c_str(), p_str.length());
 	p_buf += p_str.length();
 	r_len += p_str.length();
 }
 #endif
-_INLINE_ void decode(buffer_ptr &p_buf, std::string &r_val) {
+_INLINE_ void decode(buffer_ptr p_buf, std::string &r_val) {
 	size_t len = 0;
 	while (*(p_buf + len) != 0) {
 		len++;
@@ -228,14 +228,14 @@ _INLINE_ void decode(buffer_ptr &p_buf, std::string &r_val) {
 
 // ======== ���飬��֧����Ƕ���飨�޷��жϳ��ȣ� ==========
 template <typename T> // ֻ�����ڼ�ģ��
-_INLINE_ void cal_size(const T *&p_arr, const integral_t &p_array_size, integral_t &r_len) {
+_INLINE_ void cal_size(const T *p_arr, integral_t p_array_size, integral_t &r_len) {
 	cal_size(p_array_size, r_len);
 	for (integral_t i = 0; i < p_array_size; i++) {
 		cal_size<T>(p_array_size[i], r_len);
 	}
 }
 template <typename T> // ֻ�����ڼ�ģ��
-_INLINE_ void encode(buffer_ptr &p_buf, const T *&p_arr, const integral_t &p_array_size) {
+_INLINE_ void encode(buffer_ptr p_buf, const T *p_arr, integral_t p_array_size) {
 	encode_varint<decltype(p_array_size)>(p_buf, p_array_size);
 	for (integral_t i = 0; i < p_array_size; i++) {
 		encode<T>(p_buf, p_array_size[i]);
@@ -244,7 +244,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const T *&p_arr, const integral_t &p_arr
 
 #ifdef ENCODE_LEN_METHOD
 template <typename T> // ֻ�����ڼ�ģ��
-_INLINE_ void encode(buffer_ptr &p_buf, const T *&p_arr, const integral_t &p_array_size, integral_t &r_len) {
+_INLINE_ void encode(buffer_ptr p_buf, const T *p_arr, const integral_t &p_array_size, integral_t &r_len) {
 	encode_varint<integral_t>(p_buf, p_array_size, r_len);
 	for (integral_t i = 0; i < p_array_size; i++) {
 		encode<T>(p_buf, p_array_size[i], r_len);
@@ -252,7 +252,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const T *&p_arr, const integral_t &p_arr
 }
 #endif
 template <typename T> // ֻ�����ڼ�ģ��
-_INLINE_ void decode(buffer_ptr &p_buf, T *&r_arr, const integral_t &r_array_size) {
+_INLINE_ void decode(buffer_ptr p_buf, T *r_arr, const integral_t &r_array_size) {
 	decode_varint<decltype(r_array_size)>(p_buf, r_array_size);
 	for (integral_t i = 0; i < r_array_size; i++) {
 		decode(p_buf, r_arr[i]);
@@ -281,19 +281,19 @@ _INLINE_ void cal_size(const pair_t &p_pair, integral_t &r_len) {
 	cal_size(p_pair.first, r_len);
 	cal_size(p_pair.second, r_len);
 }
-_INLINE_ void encode(buffer_ptr &p_buf, const pair_t &p_pair) {
+_INLINE_ void encode(buffer_ptr p_buf, const pair_t &p_pair) {
 	encode(p_buf, p_pair.first);
 	encode(p_buf, p_pair.second);
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const pair_t &p_pair, integral_t &r_len) {
+_INLINE_ void encode(buffer_ptr p_buf, const pair_t &p_pair, integral_t &r_len) {
 	encode(p_buf, p_pair.first, r_len);
 	encode(p_buf, p_pair.second, r_len);
 }
 #endif
 
-_INLINE_ void decode(buffer_ptr &p_buf, const pair_t &p_pair) {
+_INLINE_ void decode(buffer_ptr p_buf, const pair_t &p_pair) {
 	decode(p_buf, p_pair.first);
 	decode(p_buf, p_pair.second);
 }
@@ -306,14 +306,14 @@ _INLINE_ void cal_size(const NormalRange auto &p_container, integral_t &r_len) {
 		cal_size(element, r_len);
 	}
 }
-_INLINE_ void encode(buffer_ptr &p_buf, const NormalRange auto &p_container) {
+_INLINE_ void encode(buffer_ptr p_buf, const NormalRange auto &p_container) {
 	encode(p_buf, p_container.size());
 	for (auto element : p_container) {
 		encode(p_buf, element);
 	}
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const NormalRange auto &p_container, integral_t &r_len) {
+_INLINE_ void encode(buffer_ptr p_buf, const NormalRange auto &p_container, integral_t &r_len) {
 	encode(p_buf, p_container.size(), r_len);
 	for (auto element : p_container) {
 		encode(p_buf, element, r_len);
@@ -329,7 +329,7 @@ _INLINE_ void cal_size(const random_sized_range auto &p_container, integral_t &r
 		cal_size(p_container[i], r_len);
 	}
 }
-_INLINE_ void encode(buffer_ptr &p_buf, const random_sized_range auto &p_container) {
+_INLINE_ void encode(buffer_ptr p_buf, const random_sized_range auto &p_container) {
 	auto size = p_container.size();
 	encode(p_buf, size);
 	for (decltype(size) i = 0; i < size; i++) {
@@ -337,7 +337,7 @@ _INLINE_ void encode(buffer_ptr &p_buf, const random_sized_range auto &p_contain
 	}
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_ptr &p_buf, const random_sized_range auto &p_container, integral_t &r_len) {
+_INLINE_ void encode(buffer_ptr p_buf, const random_sized_range auto &p_container, integral_t &r_len) {
 	auto size = p_container.size();
 	encode(p_buf, size, r_len);
 	for (decltype(size) i = 0; i < size; i++) {
@@ -352,7 +352,7 @@ requires requires(TContainer t) {
 	requires std::default_initializable<TE>;
 	requires std::same_as<decltype((TContainer::value_type)), TE>;
 }
-_INLINE_ void decode(buffer_ptr &p_buf, TContainer &r_container) {
+_INLINE_ void decode(buffer_ptr p_buf, TContainer &r_container) {
 	size_t size;
 	decode<size_t>(p_buf, size);
 #ifdef CLEAR_CONTAINER_BEFOR_DECODE
