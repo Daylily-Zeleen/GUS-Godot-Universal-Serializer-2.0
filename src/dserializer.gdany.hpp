@@ -178,8 +178,9 @@ _INLINE_ void convert_array_encode_code(const godot::Array &p_arr, uint8_t &r_ar
 }
 
 _INLINE_ void cal_size(const Array &p_val, integral_t &r_len) {
-	if (p_val.is_empty())
+	if (p_val.is_empty()) {
 		return;
+	}
 	auto type = p_val.get_typed_builtin();
 	switch (type) {
 		case Variant::NIL: {
@@ -230,9 +231,9 @@ _INLINE_ void cal_size(const Array &p_val, integral_t &r_len) {
 	}
 }
 _INLINE_ void encode(buffer_t *p_buf, const Array &p_val) {
-	if (p_val.is_empty())
+	if (p_val.is_empty()) {
 		return; // 空数组
-
+	}
 	auto type = p_val.get_typed_builtin();
 	switch (type) {
 		case Variant::NIL: {
@@ -356,8 +357,9 @@ _INLINE_ void decode(buffer_t *p_buf, Array &p_val, const uint8_t &p_encode_code
 				break;
 		}
 		// 空数组返回
-		if (empty)
+		if (empty) {
 			return;
+		}
 		// 类型化数组不以结束标志进行判断
 		// 处理大小
 		decltype(p_val.size()) size;
