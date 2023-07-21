@@ -156,6 +156,12 @@ _INLINE_ void convert_array_encode_code(const godot::Array &p_arr, uint8_t &r_ar
 		case Variant::PACKED_COLOR_ARRAY: {
 			r_arr_encode_code = DType::TYPE_MAX + color_arr_encode_code;
 		} break;
+		case Variant::PACKED_INT32_ARRAY: {
+			r_arr_encode_code = DType::TYPE_MAX + (varint_encoding_in_packed_array ? DType::PACKED_INT32_ARRAY_VARINT : DType::PACKED_INT32_ARRAY);
+		} break;
+		case Variant::PACKED_INT64_ARRAY: {
+			r_arr_encode_code = DType::TYPE_MAX + (varint_encoding_in_packed_array ? DType::PACKED_INT64_ARRAY_VARINT : DType::PACKED_INT64_ARRAY);
+		} break;
 		case Variant::RID:
 		case Variant::OBJECT:
 		case Variant::SIGNAL:
@@ -353,6 +359,14 @@ _INLINE_ void decode(buffer_t *p_buf, Array &p_val, const uint8_t &p_encode_code
 			case DType::PACKED_COLOR_ARRAY_HEX64:
 				p_val.set_typed(Variant::PACKED_COLOR_ARRAY, StringName(), Variant());
 				break;
+			case DType::PACKED_INT32_ARRAY:
+			case DType::PACKED_INT32_ARRAY_VARINT:
+				p_val.set_typed(Variant::PACKED_INT32_ARRAY, StringName(), Variant());
+				break;
+			case DType::PACKED_INT64_ARRAY:
+			case DType::PACKED_INT64_ARRAY_VARINT:
+				p_val.set_typed(Variant::PACKED_INT64_ARRAY, StringName(), Variant());
+				break;
 			default:
 				p_val.set_typed(dtype, StringName(), Variant());
 				break;
@@ -543,10 +557,16 @@ _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len, const ui
 			cal_size(p_val.operator godot::PackedByteArray(), r_len);
 		} break;
 		case Variant::PACKED_INT32_ARRAY: {
-			cal_size(p_val.operator godot::PackedInt32Array(), r_len);
+			cal_size_int_arr<false>(p_val.operator godot::PackedInt64Array(), r_len);
+		} break;
+		case DType::PACKED_INT32_ARRAY_VARINT: {
+			cal_size_int_arr<true>(p_val.operator godot::PackedInt32Array(), r_len);
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
-			cal_size(p_val.operator godot::PackedInt64Array(), r_len);
+			cal_size_int_arr<false>(p_val.operator godot::PackedInt64Array(), r_len);
+		} break;
+		case DType::PACKED_INT64_ARRAY_VARINT: {
+			cal_size_int_arr<true>(p_val.operator godot::PackedInt64Array(), r_len);
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			cal_size(p_val.operator godot::PackedFloat32Array(), r_len);
@@ -681,10 +701,16 @@ _INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, const uint8_
 			encode(p_buf, p_val.operator godot::PackedByteArray());
 		} break;
 		case Variant::PACKED_INT32_ARRAY: {
-			encode(p_buf, p_val.operator godot::PackedInt32Array());
+			encode_int_arr<false>(p_buf, p_val.operator godot::PackedInt32Array());
+		} break;
+		case DType::PACKED_INT32_ARRAY_VARINT: {
+			encode_int_arr<true>(p_buf, p_val.operator godot::PackedInt32Array());
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
-			encode(p_buf, p_val.operator godot::PackedInt64Array());
+			encode_int_arr<false>(p_buf, p_val.operator godot::PackedInt64Array());
+		} break;
+		case DType::PACKED_INT64_ARRAY_VARINT: {
+			encode_int_arr<true>(p_buf, p_val.operator godot::PackedInt64Array());
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			encode(p_buf, p_val.operator godot::PackedFloat32Array());
@@ -820,10 +846,16 @@ _INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, const uint8_
 			encode(p_buf, p_val.operator godot::PackedByteArray(), r_len);
 		} break;
 		case Variant::PACKED_INT32_ARRAY: {
-			encode(p_buf, p_val.operator godot::PackedInt32Array(), r_len);
+			encode_int_arr<false>(p_buf, p_val.operator godot::PackedInt32Array(), r_len);
+		} break;
+		case DType::PACKED_INT32_ARRAY_VARINT: {
+			encode_int_arr<true>(p_buf, p_val.operator godot::PackedInt32Array(), r_len);
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
-			encode(p_buf, p_val.operator godot::PackedInt64Array(), r_len);
+			encode_int_arr<false>(p_buf, p_val.operator godot::PackedInt64Array(), r_len);
+		} break;
+		case DType::PACKED_INT64_ARRAY_VARINT: {
+			encode_int_arr<true>(p_buf, p_val.operator godot::PackedInt64Array(), r_len);
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			encode(p_buf, p_val.operator godot::PackedFloat32Array(), r_len);
@@ -1027,7 +1059,16 @@ _INLINE_ void decode_variant(buffer_t *p_buf, Variant &p_val, const uint8_t &typ
 						p_val = godot::PackedInt32Array();
 					} else {
 						godot::PackedInt32Array v;
-						decode(p_buf, v);
+						decode_int_arr<false>(p_buf, v);
+						p_val = v;
+					}
+				} break;
+				case DType::PACKED_INT32_ARRAY_VARINT: {
+					if (empty) {
+						p_val = godot::PackedInt32Array();
+					} else {
+						godot::PackedInt32Array v;
+						decode_int_arr<true>(p_buf, v);
 						p_val = v;
 					}
 				} break;
@@ -1036,7 +1077,16 @@ _INLINE_ void decode_variant(buffer_t *p_buf, Variant &p_val, const uint8_t &typ
 						p_val = godot::PackedInt64Array();
 					} else {
 						godot::PackedInt64Array v;
-						decode(p_buf, v);
+						decode_int_arr<false>(p_buf, v);
+						p_val = v;
+					}
+				} break;
+				case DType::PACKED_INT64_ARRAY_VARINT: {
+					if (empty) {
+						p_val = godot::PackedInt64Array();
+					} else {
+						godot::PackedInt64Array v;
+						decode_int_arr<true>(p_buf, v);
 						p_val = v;
 					}
 				} break;
@@ -1157,14 +1207,24 @@ _INLINE_ void cal_size(const Variant &p_val, integral_t &r_len) {
 			if (arr.is_empty()) {
 				return;
 			}
-			cal_size(arr, r_len);
+
+			if (!varint_encoding_in_packed_array) {
+				cal_size_int_arr<false>(arr, r_len);
+			} else {
+				cal_size_int_arr<true>(arr, r_len);
+			}
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
 			auto arr = p_val.operator godot::PackedInt64Array();
 			if (arr.is_empty()) {
 				return;
 			}
-			cal_size(arr, r_len);
+
+			if (!varint_encoding_in_packed_array) {
+				cal_size_int_arr<false>(arr, r_len);
+			} else {
+				cal_size_int_arr<true>(arr, r_len);
+			}
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			auto arr = p_val.operator godot::PackedFloat32Array();
@@ -1305,8 +1365,13 @@ _INLINE_ void encode(buffer_t *p_buf, const Variant &p_val) {
 				encode_type(p_buf, DType::PACKED_INT32_ARRAY | 0x80);
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_INT32_ARRAY);
-			encode(p_buf, arr);
+			if (!varint_encoding_in_packed_array) {
+				encode_type(p_buf, DType::PACKED_INT32_ARRAY);
+				encode_int_arr<false>(p_buf, arr);
+			} else {
+				encode_type(p_buf, DType::PACKED_INT32_ARRAY_VARINT);
+				encode_int_arr<true>(p_buf, arr);
+			}
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
 			auto arr = p_val.operator godot::PackedInt64Array();
@@ -1314,8 +1379,13 @@ _INLINE_ void encode(buffer_t *p_buf, const Variant &p_val) {
 				encode_type(p_buf, DType::PACKED_INT64_ARRAY | 0x80);
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_INT64_ARRAY);
-			encode(p_buf, arr);
+			if (!varint_encoding_in_packed_array) {
+				encode_type(p_buf, DType::PACKED_INT64_ARRAY);
+				encode_int_arr<false>(p_buf, arr);
+			} else {
+				encode_type(p_buf, DType::PACKED_INT64_ARRAY_VARINT);
+				encode_int_arr<true>(p_buf, arr);
+			}
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			auto arr = p_val.operator godot::PackedFloat32Array();
@@ -1457,8 +1527,13 @@ _INLINE_ void encode(buffer_t *p_buf, const Variant &p_val, integral_t &r_len) {
 				encode_type(p_buf, DType::PACKED_INT32_ARRAY | 0x80, r_len);
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_INT32_ARRAY, r_len);
-			encode(p_buf, arr, r_len);
+			if (!varint_encoding_in_packed_array) {
+				encode_type(p_buf, DType::PACKED_INT32_ARRAY, r_len);
+				encode_int_arr<false>(p_buf, arr, r_len);
+			} else {
+				encode_type(p_buf, DType::PACKED_INT32_ARRAY_VARINT, r_len);
+				encode_int_arr<true>(p_buf, arr, r_len);
+			}
 		} break;
 		case Variant::PACKED_INT64_ARRAY: {
 			auto arr = p_val.operator godot::PackedInt64Array();
@@ -1466,8 +1541,13 @@ _INLINE_ void encode(buffer_t *p_buf, const Variant &p_val, integral_t &r_len) {
 				encode_type(p_buf, DType::PACKED_INT64_ARRAY | 0x80, r_len);
 				return;
 			}
-			encode_type(p_buf, DType::PACKED_INT64_ARRAY, r_len);
-			encode(p_buf, arr, r_len);
+			if (!varint_encoding_in_packed_array) {
+				encode_type(p_buf, DType::PACKED_INT64_ARRAY, r_len);
+				encode_int_arr<false>(p_buf, arr, r_len);
+			} else {
+				encode_type(p_buf, DType::PACKED_INT64_ARRAY_VARINT, r_len);
+				encode_int_arr<true>(p_buf, arr, r_len);
+			}
 		} break;
 		case Variant::PACKED_FLOAT32_ARRAY: {
 			auto arr = p_val.operator godot::PackedFloat32Array();
