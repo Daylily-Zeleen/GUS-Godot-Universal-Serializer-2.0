@@ -2,7 +2,7 @@
 import os
 import sys
 
-env = SConscript("../godot-cpp/SConstruct")
+env = SConscript("godot-cpp/SConstruct")
 
 
 
