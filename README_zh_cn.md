@@ -1,5 +1,5 @@
 
-# GUS - Godot Universal Serializer 2.1.4 - Godot的通用序列化器 - V2.1.4（Godot 4.0 stable）
+# GUS - Godot Universal Serializer 2.1.5 - Godot的通用序列化器 - V2.1.5（Godot 4.1 stable）
 
 # 当前查看为`master`分支，内容为C++ 源码，可以跳转到`plugin`分支直接查看已编译的插件，也可跳转到发布页面下载匹配您使用版本的插件。
 
@@ -36,7 +36,7 @@
   1. ~~如果我找到绑定静态方法给`GDScript`的办法，我将抛弃自动加载`GUS`, 改为静态方法的方式去实现功能。~~
   2. 编译`linux`和`osx`版本(但我碰上了我无法处理的编译错误)。
   3. ~~编译`typeof double real_t`版本以支持自定义构建Godot 4.x版本(但我碰上了我无法处理的编译错误)。~~
-  4. 处理 `Object`、`RID`、`Callable`以及`Signal`。
+  4. ~~处理 `Object`、`RID`、`Callable`以及`Signal`。~~
 
 # 如何编译:
   1. 根据[官方文档](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html)搭建你的编译环境。
