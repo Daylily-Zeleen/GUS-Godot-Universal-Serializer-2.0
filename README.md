@@ -34,9 +34,10 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 	
 # TODO:
   1. ~~If I find the way to bind static method for `GDScript`, I will get rid of the autoload `GUS`.~~
-  2. Compile `linux` and `osx` version( but I encounter error which I can't handle it).
+  2. Compile `linux` and `osx` version.
   3. ~~Compile `typeof double real_t` version to support custom Godot( but I encounter error which I can't handle it, too).~~
   4. ~~Deal `Object`, `RID`, `Callable` and `Signal`.~~
+  5. Handle endian.
 
 # How to compile:
   1. Follow [offical tutorial](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html) to set up you develop enviroment.

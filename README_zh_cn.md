@@ -34,9 +34,10 @@
 	
 # TODO:
   1. ~~如果我找到绑定静态方法给`GDScript`的办法，我将抛弃自动加载`GUS`, 改为静态方法的方式去实现功能。~~
-  2. 编译`linux`和`osx`版本(但我碰上了我无法处理的编译错误)。
+  2. 编译`linux`和`osx`版本。
   3. ~~编译`typeof double real_t`版本以支持自定义构建Godot 4.x版本(但我碰上了我无法处理的编译错误)。~~
   4. ~~处理 `Object`、`RID`、`Callable`以及`Signal`。~~
+  5. 处理大小端。
 
 # 如何编译:
   1. 根据[官方文档](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html)搭建你的编译环境。
