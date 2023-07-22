@@ -1,5 +1,6 @@
 ﻿import os
 import sys
+import zipfile
 import shutil
 from os.path import join as path_join
 
@@ -33,11 +34,9 @@ def main():
         if arg.startswith("target"):
             debug_and_relaese = False
 
+    bin_dir = "bin"
     # Remove all last build files.
-    for f in os.listdir("bin"):
-        for suffix in dynamic_lib_suffixs:
-            if not f.endswith(suffix):
-                continue
+    for f in os.listdir(bin_dir):
         os.remove(path_join(bin_dir, f))
 
     # Buiild.
@@ -50,10 +49,9 @@ def main():
     else:
         print("Building...")
         os.system(args)
-    print("Build finished!")
+    print("Build finished, post processiong...")
 
     # Post process
-    bin_dir = "bin"
     plugin_dir = "demo/addons/com.daylily_zeleen.godot_universal_serializer"
     dynamic_lib_suffixs = [".so", ".dylib", ".wasm", ".dll"]
 
@@ -74,7 +72,25 @@ def main():
     shutil.copyfile("README_zh_cn.md", path_join("demo", "README_zh_cn.md"))
     shutil.copyfile("LICENSE", path_join("demo", "LICENSE"))
 
+    # Zip files.
+    zip_file_path = "bin\com.daylily_zeleen.godot_universal_serializer.zip"
+    if os.path.exists(zip_file_path):
+        os.remove(zip_file_path)
+    zip_file = zipfile.ZipFile(zip_file_path,"w",)
+    zip_files_recursively(zip_file, "demo/addons")
+    zip_file.close()
 
-"com.daylily_zeleen.godot_universal_serializer/bin"
+    print("Done!")
+
+
+def zip_files_recursively(zip_file:zipfile.ZipFile, dir:str):
+    for f in os.listdir(dir):
+        path = path_join(dir, f)
+        if os.path.isdir(path):
+            zip_files_recursively(zip_file, path)
+        else:
+            zip_file.write(path, path.removeprefix("demo/"),)
+
+
 if __name__ == '__main__':
     main()
