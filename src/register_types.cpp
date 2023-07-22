@@ -36,7 +36,7 @@ void initialize_gus_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	ClassDB::register_abstract_class<GUS>();
+	GDREGISTER_ABSTRACT_CLASS(GUS)
 }
 
 void uninitialize_gus_module(ModuleInitializationLevel p_level) {}

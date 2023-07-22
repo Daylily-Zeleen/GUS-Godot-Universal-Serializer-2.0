@@ -6,7 +6,7 @@ func _run() -> void:
 	GUS.set_color_encode_type(GUS.COLOR_ENCODE_TYPE_RAW)
 #	_print_result("ignore", null)
 	
-	_test(get_editor_interface())
+	_test(get_editor_interface().get_base_control())
 	
 	
 var tree:SceneTree

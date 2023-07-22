@@ -25,18 +25,20 @@
 
 #include "dserializer.gdany.hpp"
 
+using namespace godot;
+
 class GUS : public Object {
 	GDCLASS(GUS, Object)
 protected:
 	static void _bind_methods() {
-		godot::ClassDB::bind_static_method(get_class_static(), D_METHOD("get_color_encode_type"), GUS::get_color_encode_type);
-		godot::ClassDB::bind_static_method(get_class_static(), D_METHOD("set_color_encode_type", "color_encode_type"), GUS::set_color_encode_type, DEFVAL(ColorEncodeType::COLOR_ENCODE_TYPE_RAW));
+		ClassDB::bind_static_method(get_class_static(), D_METHOD("get_color_encode_type"), GUS::get_color_encode_type);
+		ClassDB::bind_static_method(get_class_static(), D_METHOD("set_color_encode_type", "color_encode_type"), GUS::set_color_encode_type, DEFVAL(ColorEncodeType::COLOR_ENCODE_TYPE_RAW));
 
-		godot::ClassDB::bind_static_method(get_class_static(), D_METHOD("is_varint_incoding_in_packed_array"), GUS::is_varint_incoding_in_packed_array);
-		godot::ClassDB::bind_static_method(get_class_static(), D_METHOD("set_varint_incoding_in_packed_array", "enabled"), GUS::set_varint_incoding_in_packed_array);
+		ClassDB::bind_static_method(get_class_static(), D_METHOD("is_varint_incoding_in_packed_array"), GUS::is_varint_incoding_in_packed_array);
+		ClassDB::bind_static_method(get_class_static(), D_METHOD("set_varint_incoding_in_packed_array", "enabled"), GUS::set_varint_incoding_in_packed_array);
 
-		godot::ClassDB::bind_static_method(get_class_static(), D_METHOD("var_to_bytes", "var"), GUS::var_to_bytes);
-		godot::ClassDB::bind_static_method(get_class_static(), D_METHOD("bytes_to_var", "bytes"), GUS::bytes_to_var);
+		ClassDB::bind_static_method(get_class_static(), D_METHOD("var_to_bytes", "var"), GUS::var_to_bytes);
+		ClassDB::bind_static_method(get_class_static(), D_METHOD("bytes_to_var", "bytes"), GUS::bytes_to_var);
 
 		BIND_ENUM_CONSTANT(COLOR_ENCODE_TYPE_RAW);
 		BIND_ENUM_CONSTANT(COLOR_ENCODE_TYPE_HEX);
