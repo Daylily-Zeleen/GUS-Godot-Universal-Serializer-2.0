@@ -34,37 +34,27 @@ _INLINE_ void cal_size(const GodotStr auto &p_val, integral_t &r_len) {
 	r_len += godot::String(p_val).utf8().length();
 	++r_len;
 }
-_INLINE_ void encode(buffer_t *p_buf, const GodotStr auto &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotStr auto &p_val) {
 	auto utf8 = String(p_val).utf8();
 	auto length = utf8.length();
 	memcpy(p_buf, utf8.get_data(), length);
-#ifdef DEBUG_ENABLED
-	if (!p_buf[length - 1] == 0) {
-		throw "ERR utf8";
-	}
-#endif // DEBUG_ENABLED
 	p_buf += length;
 	*p_buf = 0;
 	++p_buf;
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const GodotStr auto &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotStr auto &p_val, integral_t &r_len) {
 	auto utf8 = static_cast<String>(p_val).utf8();
 	auto length = utf8.length();
 	memcpy(p_buf, utf8.get_data(), length);
-#ifdef DEBUG_ENABLED
-	if (!p_buf[length - 1] == 0) {
-		throw "ERR utf8";
-	}
-#endif // DEBUG_ENABLED
 	p_buf += length;
 	r_len += length;
 }
 #endif
 
 template <GodotStr T>
-_INLINE_ void decode(buffer_t *p_buf, T &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, T &r_val) {
 	int32_t len = 0;
 	while (p_buf[len] != 0) {
 		len++;
@@ -80,20 +70,20 @@ _INLINE_ void cal_size(const T &p_val, integral_t &r_len) {
 	r_len += (sizeof(decltype(p_val[0])) * T::AXIS_COUNT);
 }
 template <GodotVec T>
-_INLINE_ void encode(buffer_t *p_buf, const T &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const T &p_val) {
 	memcpy(p_buf, &p_val, (T::AXIS_COUNT * sizeof(decltype(p_val[0]))));
 	p_buf += (T::AXIS_COUNT * sizeof(decltype(p_val[0])));
 }
 #ifdef ENCODE_LEN_METHOD
 template <uint8_t dimension>
-_INLINE_ void encode(buffer_t *p_buf, const GodotVec auto &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotVec auto &p_val, integral_t &r_len) {
 	memcpy(p_buf, &p_val, (T::AXIS_COUNT * sizeof(decltype(p_val[0]))));
 	p_buf += (T::AXIS_COUNT * sizeof(decltype(p_val[0])));
 	r_len += (sizeof(decltype(p_val[0])) * T::AXIS_COUNT);
 }
 #endif
 template <GodotVec T>
-_INLINE_ void decode(buffer_t *p_buf, T &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, T &r_val) {
 	memcpy(&r_val, p_buf, (T::AXIS_COUNT * sizeof(decltype(r_val[0]))));
 	p_buf += (T::AXIS_COUNT * sizeof(decltype(r_val[0])));
 }
@@ -102,18 +92,18 @@ _INLINE_ void decode(buffer_t *p_buf, T &r_val) {
 _INLINE_ void cal_size(const GodotComponents4 auto &p_val, integral_t &r_len) {
 	r_len += (sizeof(decltype(p_val[0])) * 4);
 }
-_INLINE_ void encode(buffer_t *p_buf, const GodotComponents4 auto &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotComponents4 auto &p_val) {
 	memcpy(p_buf, &p_val, (4 * sizeof(decltype(p_val[0]))));
 	p_buf += (4 * sizeof(decltype(p_val[0])));
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const GodotComponents4 auto &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotComponents4 auto &p_val, integral_t &r_len) {
 	memcpy(p_buf, &p_val, (4 * sizeof(decltype(p_val[0]))));
 	p_buf += (4 * sizeof(decltype(p_val[0])));
 	r_len += (sizeof(decltype(p_val[0])) * 4);
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, GodotComponents4 auto &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, GodotComponents4 auto &r_val) {
 	memcpy(&r_val, p_buf, (4 * sizeof(decltype(r_val[0]))));
 	p_buf += (4 * sizeof(decltype(r_val[0])));
 }
@@ -122,17 +112,17 @@ _INLINE_ void cal_size(const GodotRect2 auto &p_val, integral_t &r_len) {
 	cal_size(p_val.position, r_len);
 	cal_size(p_val.size, r_len);
 }
-_INLINE_ void encode(buffer_t *p_buf, const GodotRect2 auto &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotRect2 auto &p_val) {
 	encode(p_buf, p_val.position);
 	encode(p_buf, p_val.size);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const GodotRect2 auto &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotRect2 auto &p_val, integral_t &r_len) {
 	encode(p_buf, p_val.position, r_len);
 	encode(p_buf, p_val.size, r_len);
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, GodotRect2 auto &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, GodotRect2 auto &r_val) {
 	decode(p_buf, r_val.position);
 	decode(p_buf, r_val.size);
 }
@@ -142,19 +132,19 @@ _INLINE_ void cal_size(const Transform2D &p_val, integral_t &r_len) {
 	cal_size(p_val[1], r_len);
 	cal_size(p_val[2], r_len);
 }
-_INLINE_ void encode(buffer_t *p_buf, const Transform2D &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const Transform2D &p_val) {
 	encode(p_buf, p_val[0]);
 	encode(p_buf, p_val[1]);
 	encode(p_buf, p_val[2]);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Transform2D &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Transform2D &p_val, integral_t &r_len) {
 	encode(p_buf, p_val[0], r_len);
 	encode(p_buf, p_val[1], r_len);
 	encode(p_buf, p_val[2], r_len);
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, Transform2D &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, Transform2D &r_val) {
 	decode(p_buf, r_val[0]);
 	decode(p_buf, r_val[1]);
 	decode(p_buf, r_val[2]);
@@ -164,17 +154,17 @@ _INLINE_ void cal_size(const Plane &p_val, integral_t &r_len) {
 	cal_size(p_val.normal, r_len);
 	cal_size(p_val.d, r_len);
 }
-_INLINE_ void encode(buffer_t *p_buf, const Plane &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const Plane &p_val) {
 	encode(p_buf, p_val.normal);
 	encode(p_buf, p_val.d);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Plane &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Plane &p_val, integral_t &r_len) {
 	encode(p_buf, p_val.normal, r_len);
 	encode(p_buf, p_val.d, r_len);
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, Plane &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, Plane &r_val) {
 	decode(p_buf, r_val.normal);
 	decode(p_buf, r_val.d);
 }
@@ -185,21 +175,21 @@ _INLINE_ void cal_size(const Projection &p_val, integral_t &r_len) {
 	cal_size(p_val[2], r_len);
 	cal_size(p_val[3], r_len);
 }
-_INLINE_ void encode(buffer_t *p_buf, const Projection &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const Projection &p_val) {
 	encode(p_buf, p_val[0]);
 	encode(p_buf, p_val[1]);
 	encode(p_buf, p_val[2]);
 	encode(p_buf, p_val[3]);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Projection &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Projection &p_val, integral_t &r_len) {
 	encode(p_buf, p_val[0], r_len);
 	encode(p_buf, p_val[1], r_len);
 	encode(p_buf, p_val[2], r_len);
 	encode(p_buf, p_val[3], r_len);
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, Projection &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, Projection &r_val) {
 	decode(p_buf, r_val[0]);
 	decode(p_buf, r_val[1]);
 	decode(p_buf, r_val[2]);
@@ -211,17 +201,17 @@ _INLINE_ void cal_size(const godot::AABB &p_val, integral_t &r_len) {
 	cal_size(p_val.position, r_len);
 	cal_size(p_val.size, r_len);
 }
-_INLINE_ void encode(buffer_t *p_buf, const godot::AABB &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const godot::AABB &p_val) {
 	encode(p_buf, p_val.position);
 	encode(p_buf, p_val.size);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const godot::AABB &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const godot::AABB &p_val, integral_t &r_len) {
 	encode(p_buf, p_val.position, r_len);
 	encode(p_buf, p_val.size, r_len);
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, godot::AABB &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, godot::AABB &r_val) {
 	decode(p_buf, r_val.position);
 	decode(p_buf, r_val.size);
 }
@@ -231,19 +221,19 @@ _INLINE_ void cal_size(const Basis &p_val, integral_t &r_len) {
 	cal_size(p_val[1], r_len);
 	cal_size(p_val[2], r_len);
 }
-_INLINE_ void encode(buffer_t *p_buf, const Basis &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const Basis &p_val) {
 	encode(p_buf, p_val[0]);
 	encode(p_buf, p_val[1]);
 	encode(p_buf, p_val[2]);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Basis &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Basis &p_val, integral_t &r_len) {
 	encode(p_buf, p_val[0], r_len);
 	encode(p_buf, p_val[1], r_len);
 	encode(p_buf, p_val[2], r_len);
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, Basis &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, Basis &r_val) {
 	decode(p_buf, r_val[0]);
 	decode(p_buf, r_val[1]);
 	decode(p_buf, r_val[2]);
@@ -253,18 +243,18 @@ _INLINE_ void cal_size(const Transform3D &p_val, integral_t &r_len) {
 	cal_size(p_val.basis, r_len);
 	cal_size(p_val.origin, r_len);
 }
-_INLINE_ void encode(buffer_t *p_buf, const Transform3D &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const Transform3D &p_val) {
 	encode(p_buf, p_val.basis);
 	encode(p_buf, p_val.origin);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Transform3D &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Transform3D &p_val, integral_t &r_len) {
 	encode(p_buf, p_val.basis, r_len);
 	encode(p_buf, p_val.origin, r_len);
 }
 #endif
 
-_INLINE_ void decode(buffer_t *p_buf, Transform3D &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, Transform3D &r_val) {
 	decode(p_buf, r_val.basis);
 	decode(p_buf, r_val.origin);
 }
@@ -282,7 +272,7 @@ _INLINE_ void cal_size_color(const Color &p_val, integral_t &r_len) {
 }
 
 template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
-_INLINE_ void encode_color(buffer_t *p_buf, const Color &p_val) {
+_INLINE_ void encode_color(buffer_t *&p_buf, const Color &p_val) {
 	if (encode_type == 1) { // Hex
 		encode_int(p_buf, p_val.to_rgba32());
 	} else if (encode_type == 1) { // Hex64
@@ -294,7 +284,7 @@ _INLINE_ void encode_color(buffer_t *p_buf, const Color &p_val) {
 
 #ifdef ENCODE_LEN_METHOD
 template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
-_INLINE_ void encode_color(buffer_t *p_buf, const Color &p_val, integral_t &r_len) {
+_INLINE_ void encode_color(buffer_t *&p_buf, const Color &p_val, integral_t &r_len) {
 	if (encode_type == 1) { // Hex
 		encode_int(p_buf, p_val.to_rgba32(), r_len);
 	} else if (encode_type == 1) { // Hex64
@@ -306,7 +296,7 @@ _INLINE_ void encode_color(buffer_t *p_buf, const Color &p_val, integral_t &r_le
 #endif
 
 template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
-_INLINE_ void decode_color(buffer_t *p_buf, Color &r_val) {
+_INLINE_ void decode_color(buffer_t *&p_buf, Color &r_val) {
 	if (encode_type == 1) { // Hex
 		uint32_t hex;
 		decode_int(p_buf, hex);
@@ -329,7 +319,7 @@ _INLINE_ void cal_size(const GodotFixedElementLenthArray auto &p_val, integral_t
 	r_len += sizeof(element_t) * size;
 }
 
-_INLINE_ void encode(buffer_t *p_buf, const GodotFixedElementLenthArray auto &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotFixedElementLenthArray auto &p_val) {
 	auto size = p_val.size();
 	encode_varint(p_buf, size);
 	if (size == 0) {
@@ -343,7 +333,7 @@ _INLINE_ void encode(buffer_t *p_buf, const GodotFixedElementLenthArray auto &p_
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const GodotFixedElementLenthArray auto &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const GodotFixedElementLenthArray auto &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	encode_varint(p_buf, size);
 	if (size == 0) {
@@ -358,7 +348,7 @@ _INLINE_ void encode(buffer_t *p_buf, const GodotFixedElementLenthArray auto &p_
 }
 #endif
 
-_INLINE_ void decode(buffer_t *p_buf, GodotFixedElementLenthArray auto &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, GodotFixedElementLenthArray auto &r_val) {
 	decltype(r_val.size()) size;
 	decode_varint(p_buf, size);
 	r_val.resize(size);
@@ -386,7 +376,7 @@ _INLINE_ void cal_size(const godot::PackedStringArray &p_val, integral_t &r_len)
 	}
 }
 
-_INLINE_ void encode(buffer_t *p_buf, const godot::PackedStringArray &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const godot::PackedStringArray &p_val) {
 	auto size = p_val.size();
 	encode_varint(p_buf, size);
 	if (size == 0) {
@@ -399,7 +389,7 @@ _INLINE_ void encode(buffer_t *p_buf, const godot::PackedStringArray &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const godot::PackedStringArray &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const godot::PackedStringArray &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto ptr = p_val.ptr();
 	encode_varint(p_buf, size, r_len);
@@ -408,7 +398,7 @@ _INLINE_ void encode(buffer_t *p_buf, const godot::PackedStringArray &p_val, int
 	}
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, godot::PackedStringArray &r_val) {
+_INLINE_ void decode(buffer_t *&p_buf, godot::PackedStringArray &r_val) {
 	decltype(r_val.size()) size;
 	decode_varint(p_buf, size);
 	r_val.resize(size);
@@ -441,7 +431,7 @@ _INLINE_ void cal_size_int_arr(const GodotPackedIntArray auto &p_val, integral_t
 }
 
 template <bool varint_encoding> // If true, use zigzag to encode elements.
-_INLINE_ void encode_int_arr(buffer_t *p_buf, const GodotPackedIntArray auto &p_val) {
+_INLINE_ void encode_int_arr(buffer_t *&p_buf, const GodotPackedIntArray auto &p_val) {
 	auto size = p_val.size();
 	encode_varint(p_buf, size);
 	if (size == 0) {
@@ -454,13 +444,15 @@ _INLINE_ void encode_int_arr(buffer_t *p_buf, const GodotPackedIntArray auto &p_
 		}
 	} else {
 		using int_t = std::remove_const_t<std::remove_pointer_t<decltype(ptr)>>;
-		memcpy(p_buf, ptr, sizeof(int_t) * size);
+		auto len = sizeof(int_t) * size;
+		memcpy(p_buf, ptr, len);
+		p_buf += len;
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 template <bool varint_encoding> // If true, use zigzag to encode elements.
-_INLINE_ void encode_int_arr(buffer_t *p_buf, const GodotPackedIntArray auto &p_val, integral_t &r_len) {
+_INLINE_ void encode_int_arr(buffer_t *&p_buf, const GodotPackedIntArray auto &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto ptr = p_val.ptr();
 	encode_varint(p_buf, size, r_len);
@@ -478,7 +470,7 @@ _INLINE_ void encode_int_arr(buffer_t *p_buf, const GodotPackedIntArray auto &p_
 #endif
 
 template <bool varint_encoding>
-_INLINE_ void decode_int_arr(buffer_t *p_buf, GodotPackedIntArray auto &r_val) {
+_INLINE_ void decode_int_arr(buffer_t *&p_buf, GodotPackedIntArray auto &r_val) {
 	decltype(r_val.size()) size;
 	decode_varint(p_buf, size);
 	r_val.resize(size);
@@ -520,7 +512,7 @@ _INLINE_ void cal_size_color_arr(const PackedColorArray &p_val, integral_t &r_le
 }
 
 template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
-_INLINE_ void encode_color_arr(buffer_t *p_buf, const PackedColorArray &p_val) {
+_INLINE_ void encode_color_arr(buffer_t *&p_buf, const PackedColorArray &p_val) {
 	if (encode_type == 0) {
 		encode(p_buf, p_val);
 		return;
@@ -540,7 +532,7 @@ _INLINE_ void encode_color_arr(buffer_t *p_buf, const PackedColorArray &p_val) {
 
 #ifdef ENCODE_LEN_METHOD
 template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
-_INLINE_ void encode_color_arr(buffer_t *p_buf, const PackedColorArray &p_val, integral_t &r_len) {
+_INLINE_ void encode_color_arr(buffer_t *&p_buf, const PackedColorArray &p_val, integral_t &r_len) {
 	if (encode_type == 0) {
 		encode(p_buf, p_val, r_len);
 		return;
@@ -560,7 +552,7 @@ _INLINE_ void encode_color_arr(buffer_t *p_buf, const PackedColorArray &p_val, i
 #endif
 
 template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
-_INLINE_ void decode_color_arr(buffer_t *p_buf, PackedColorArray &r_val) {
+_INLINE_ void decode_color_arr(buffer_t *&p_buf, PackedColorArray &r_val) {
 	if (encode_type == 0) {
 		decode(p_buf, r_val);
 		return;

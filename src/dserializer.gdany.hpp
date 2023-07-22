@@ -78,49 +78,49 @@ static bool varint_encoding_in_packed_array = false;
 _INLINE_ void cal_size_type(uint8_t p_val, integral_t &r_len) {
 	cal_size_int(p_val, r_len);
 }
-_INLINE_ void encode_type(buffer_t *p_buf, uint8_t p_val) {
+_INLINE_ void encode_type(buffer_t *&p_buf, uint8_t p_val) {
 	encode_int(p_buf, p_val);
 }
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Array &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 	encode_int(p_buf, p_val, r_len);
 }
 #endif // ENCODE_LEN_METHOD
-_INLINE_ void decode_type(buffer_t *p_buf, uint8_t &r_val) {
+_INLINE_ void decode_type(buffer_t *&p_buf, uint8_t &r_val) {
 	decode_int(p_buf, r_val);
 }
 
 //  声明
 _INLINE_ void cal_size(const Array &p_val, integral_t &r_len);
-_INLINE_ void encode(buffer_t *p_buf, const Array &p_val);
+_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val);
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Array &p_val, integral_t &r_len);
+_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
-_INLINE_ void decode(buffer_t *p_buf, Array &p_val, const uint8_t &type_code, const bool &empty); // 数组类解码需要头
+_INLINE_ void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &type_code, const bool &empty); // 数组类解码需要头
 
 _INLINE_ void cal_size(const Dictionary &p_val, integral_t &r_len);
-_INLINE_ void encode(buffer_t *p_buf, const Dictionary &p_val);
+_INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val);
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Dictionary &p_val, integral_t &r_len);
+_INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
-_INLINE_ void decode(buffer_t *p_buf, Dictionary &p_val); // 空字典在外部判断
+_INLINE_ void decode(buffer_t *&p_buf, Dictionary &p_val); // 空字典在外部判断
 
 _INLINE_ void cal_size(const Variant &p_val, integral_t &r_len);
-_INLINE_ void encode(buffer_t *p_buf, const Variant &p_val);
+_INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val);
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Variant &p_val, integral_t &r_len);
+_INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
-_INLINE_ void decode(buffer_t *p_buf, Variant &p_val);
+_INLINE_ void decode(buffer_t *&p_buf, Variant &p_val);
 
 _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len, const uint8_t &type);
 _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len);
-_INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, const uint8_t &type);
-_INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val);
+_INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8_t &type);
+_INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val);
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, integral_t &r_len);
-_INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, const uint8_t &type, integral_t &r_len);
+_INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len);
+_INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8_t &type, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
-_INLINE_ void decode_variant(buffer_t *p_buf, Variant &p_val, const uint8_t &type);
+_INLINE_ void decode_variant(buffer_t *&p_buf, Variant &p_val, const uint8_t &type);
 
 #define convert_to_encode_code(m_type)                     \
 	switch (m_type) {                                      \
@@ -227,7 +227,7 @@ _INLINE_ void cal_size(const Array &p_val, integral_t &r_len) {
 	}
 }
 
-_INLINE_ void encode(buffer_t *p_buf, const Array &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val) {
 	if (p_val.is_empty()) {
 		return;
 	}
@@ -280,7 +280,7 @@ _INLINE_ void encode(buffer_t *p_buf, const Array &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Array &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 	if (p_val.is_empty()) {
 		return;
 	}
@@ -334,7 +334,7 @@ _INLINE_ void encode(buffer_t *p_buf, const Array &p_val, integral_t &r_len) {
 
 #endif
 
-_INLINE_ void decode(buffer_t *p_buf, Array &p_val, const uint8_t &p_encode_code, const bool &p_empty) { // 需要类型信息才能解码
+_INLINE_ void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &p_encode_code, const bool &p_empty) { // 需要类型信息才能解码
 	if (p_encode_code == DType::ARRAY_BEGIN) {
 		if (p_empty) {
 			return;
@@ -426,7 +426,7 @@ _INLINE_ void cal_size(const Dictionary &p_val, integral_t &r_len) {
 	cal_size(DType::ARR_DICT_END, r_len);
 }
 
-_INLINE_ void encode(buffer_t *p_buf, const Dictionary &p_val) {
+_INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val) {
 	auto size = p_val.size();
 	auto keys = p_val.keys();
 	auto values = p_val.values();
@@ -438,7 +438,7 @@ _INLINE_ void encode(buffer_t *p_buf, const Dictionary &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Dictionary &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto keys = p_val.keys();
 	auto values = p_val.values();
@@ -450,7 +450,7 @@ _INLINE_ void encode(buffer_t *p_buf, const Dictionary &p_val, integral_t &r_len
 }
 #endif
 
-_INLINE_ void decode(buffer_t *p_buf, Dictionary &p_val) {
+_INLINE_ void decode(buffer_t *&p_buf, Dictionary &p_val) {
 	while (*p_buf != DType::ARR_DICT_END) {
 		Variant key, value;
 		decode(p_buf, key);
@@ -604,7 +604,7 @@ _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len) {
 	cal_size_variant(p_val, r_len, type);
 }
 
-_INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, const uint8_t &p_type) {
+_INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8_t &p_type) {
 	switch (p_type) {
 		case Variant::NIL: {
 			encode_type(p_buf, static_cast<uint8_t>(DType::NIL));
@@ -742,14 +742,14 @@ _INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, const uint8_
 	}
 }
 
-_INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val) {
+_INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val) {
 	auto type = DType(p_val.get_type());
 	convert_to_encode_code(type);
 	encode_variant(p_buf, p_val, type);
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, const uint8_t &type, integral_t &r_len) {
+_INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8_t &type, integral_t &r_len) {
 	switch (p_type) {
 		case Variant::NIL: {
 			encode_type(p_buf, static_cast<uint8_t>(DType::NIL), r_len);
@@ -887,7 +887,7 @@ _INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, const uint8_
 	}
 }
 
-_INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, integral_t &r_len) {
+_INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len) {
 	auto type = DType(p_val.get_type());
 	convert_to_encode_code(type);
 	encode_variant(p_buf, p_val, type, r_len);
@@ -895,7 +895,7 @@ _INLINE_ void encode_variant(buffer_t *p_buf, const Variant &p_val, integral_t &
 
 #endif
 
-_INLINE_ void decode_variant(buffer_t *p_buf, Variant &p_val, const uint8_t &type) {
+_INLINE_ void decode_variant(buffer_t *&p_buf, Variant &p_val, const uint8_t &type) {
 	switch (type) {
 		case DType::NIL: {
 			p_val = Variant();
@@ -1297,8 +1297,9 @@ _INLINE_ void cal_size(const Variant &p_val, integral_t &r_len) {
 	}
 }
 
-_INLINE_ void encode(buffer_t *p_buf, const Variant &p_val) {
-	switch (p_val.get_type()) {
+_INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val) {
+	uint8_t type = p_val.get_type();
+	switch (type) {
 		case Variant::NIL: {
 			encode_type(p_buf, DType::NIL);
 		} break;
@@ -1406,7 +1407,7 @@ _INLINE_ void encode(buffer_t *p_buf, const Variant &p_val) {
 			encode(p_buf, arr);
 		} break;
 		case Variant::PACKED_VECTOR2_ARRAY: {
-			auto arr = p_val.operator godot::PackedVector3Array();
+			auto arr = p_val.operator godot::PackedVector2Array();
 			if (arr.is_empty()) {
 				encode_type(p_buf, DType::PACKED_VECTOR2_ARRAY | 0x80);
 				return;
@@ -1452,14 +1453,15 @@ _INLINE_ void encode(buffer_t *p_buf, const Variant &p_val) {
 			}
 		} break;
 		default: {
-			encode_type(p_buf, p_val.get_type());
+			convert_to_encode_code(type);
+			encode_type(p_buf, type);
 			encode_variant(p_buf, p_val);
 		} break;
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *p_buf, const Variant &p_val, integral_t &r_len) {
+_INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len) {
 	switch (p_val.get_type()) {
 		case Variant::NIL: {
 			encode_type(p_buf, DType::NIL, r_len);
@@ -1568,7 +1570,7 @@ _INLINE_ void encode(buffer_t *p_buf, const Variant &p_val, integral_t &r_len) {
 			encode(p_buf, arr, r_len);
 		} break;
 		case Variant::PACKED_VECTOR2_ARRAY: {
-			auto arr = p_val.operator godot::PackedVector3Array();
+			auto arr = p_val.operator godot::PackedVector2Array();
 			if (arr.is_empty()) {
 				encode_type(p_buf, DType::PACKED_VECTOR2_ARRAY | 0x80, r_len);
 				return;
@@ -1620,7 +1622,7 @@ _INLINE_ void encode(buffer_t *p_buf, const Variant &p_val, integral_t &r_len) {
 	}
 }
 #endif
-_INLINE_ void decode(buffer_t *p_buf, Variant &p_val) {
+_INLINE_ void decode(buffer_t *&p_buf, Variant &p_val) {
 	uint8_t type;
 	decode_type(p_buf, type);
 	decode_variant(p_buf, p_val, type);
