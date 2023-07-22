@@ -294,13 +294,13 @@ func _print_result(title_name:String, v)->void:
 
 	if typeof(v) == typeof(gus_deser) and str(v) == str(gus_deser): # 检查序列化前后的类型和具体值是否相同
 		if typeof(v) >TYPE_ARRAY or (v is Array and v.is_typed()): # 池化数组不打印具体值（打印溢出
-			print("%s - Size:%d\n\t[GUS]: \t\t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[Native]: \t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[JSON]:\t\t%d bytes \t\tser %d usec \t\tdeser %d usec."%[
+			print("%s - Size:%d\n\t[GUS]: \t\t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[Native]: \t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[JSON]:\t\t%d bytes \t\tser %d usec \t\tdeser %d usec"%[
 					title_name, v.size(), 
 					gus_bytes.size(), gus_ser_time, gus_deser_time ,
 					native_bytes.size() , native_ser_time, native_deser_time,
 					json_bytes.size(), json_ser_time, json_deser_time])
 		else:
-			print("%s - value:%s\n\t[GUS]: \t\t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[Native]: \t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[JSON]:\t\t%d bytes \t\tser %d usec \t\tdeser %d usec."%[
+			print("%s - value:%s\n\t[GUS]: \t\t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[Native]: \t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[JSON]:\t\t%d bytes \t\tser %d usec \t\tdeser %d usec"%[
 					title_name, str(v), 
 					gus_bytes.size(), gus_ser_time, gus_deser_time ,
 					native_bytes.size() , native_ser_time, native_deser_time,
