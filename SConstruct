@@ -28,14 +28,14 @@ else:
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "demo/addons/com.daylily_zeleen.godot_universal_serializer/bin/libgus.{}.{}.framework/libgus.{}.{}".format(
+        "bin/libgus.{}.{}.framework/libgus.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        "demo/addons/com.daylily_zeleen.godot_universal_serializer/bin/libgus{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "bin/libgus{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 
