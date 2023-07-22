@@ -10,7 +10,7 @@ data_*/
 
 .vs/
 .vscode/
-bin/
+/bin/
 out/
 out/*
 x64/
