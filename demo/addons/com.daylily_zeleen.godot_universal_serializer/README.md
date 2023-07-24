@@ -49,12 +49,12 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 			a. Navigate to `godot-cpp` folder.  
 			b. Run command:  
 			```
-			scons generate_bindings=yes build_liberary=yes
+			scons generate_bindings=yes build_library=yes
 			```
-			c. Now you can add `generate_bindings=no build_liberary=no` at next stage to avoid generate bindings and build library every time when compiling `GUS`.  
+			c. Now you can add `generate_bindings=no build_library=no` at next stage to avoid generate bindings and build library every time when compiling `GUS`.  
 
 		- (Recommand) Generate bindings and build library every time when compiling `GUS`, to keep the compiling condition of `godot-cpp` same as `GUS`.  
-		Just skip this stage and add `generate_bindings=yes build_liberary=yes` or ignore these command arguments.   
+		Just skip this stage and add `generate_bindings=yes build_library=yes` or ignore these command arguments.   
 		Don't worry, generate bindings and build library of `godot-cpp` would not take many time if the compile conditions have not change.
   4. Here is a little different from `godot-cpp` to compile `GUS` (of course, you can use `scons` to compile, too).
      To do some post process, I use a tool script to compile `GUS`.
@@ -72,8 +72,8 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 
 	 Specially, if you not specify the argument `target`, this tool will build both `target=template_debug` and `target=template_release`.
 
-  5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer\`, or get the packed addons at `bin\com.daylily_zeleen.godot_universal_serializer.zip`.  
-	 (Notice: if your use `scons` instead of `python build_tool`, you can only get dynamic liberary at `bin` folder.)
+  5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer\`, or get the packed addon at `bin\com.daylily_zeleen.godot_universal_serializer.zip`.  
+	 (Notice: if your use `scons` instead of `python build_tool`, you can only get dynamic library at `bin` folder.)
 
 # Benchmark 2.1.5:
 ```

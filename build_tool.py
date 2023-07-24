@@ -55,7 +55,7 @@ def main():
     plugin_dir = "demo/addons/com.daylily_zeleen.godot_universal_serializer"
     dynamic_lib_suffixs = [".so", ".dylib", ".wasm", ".dll"]
 
-    # Copy dynamic liberary.
+    # Copy dynamic library.
     dst_dir = path_join(plugin_dir, "bin")
     for f in os.listdir("bin"):
         for suffix in dynamic_lib_suffixs:

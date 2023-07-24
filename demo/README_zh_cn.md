@@ -48,11 +48,11 @@
 			a. 导航到`godot-cpp`文件夹。
 			b. 运行以下命令。
 			```
-			scons generate_bindings=yes build_liberary=yes
+			scons generate_bindings=yes build_library=yes
 			```
-			c. 完成以后，您需要在下个步骤的命令中添加参数`generate_bindings=no build_liberary=no`来避免重复构建`GUS`时重复生成`godot-cpp`的绑定与`godot-cpp`的库。
+			c. 完成以后，您需要在下个步骤的命令中添加参数`generate_bindings=no build_library=no`来避免重复构建`GUS`时重复生成`godot-cpp`的绑定与`godot-cpp`的库。
 
-		- （推荐方式）在每次构建`GUS`时重复生成`godot-cpp`的绑定与构建其库，直接跳该步骤，在下个步骤的命令中添加参数`generate_bindings=yes build_liberary=yes`来显式要求该操作，或忽略这些参数以默认方式工作。  
+		- （推荐方式）在每次构建`GUS`时重复生成`godot-cpp`的绑定与构建其库，直接跳该步骤，在下个步骤的命令中添加参数`generate_bindings=yes build_library=yes`来显式要求该操作，或忽略这些参数以默认方式工作。  
 		别担心，只要编译条件没有变化，重复生成与构建不会占用您太多时间。
 	4. 编译`GUS`与编译`godot-cpp`有一点小区别（当然你也可以继续使用`scons`命令进行构建），为了执行一些后处理，我使用一个简单的工具脚本进行编译：  
 	导航到根目录,运行以下命令
