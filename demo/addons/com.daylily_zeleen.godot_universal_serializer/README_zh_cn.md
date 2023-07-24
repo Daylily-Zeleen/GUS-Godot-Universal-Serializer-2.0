@@ -1,7 +1,7 @@
 
 # GUS - Godot Universal Serializer 2.1.5 - Godot的通用序列化器 - V2.1.5（Godot 4.1 stable）
 
-# 当前查看为`master`分支，内容为C++ 源码，可以跳转到`plugin`分支直接查看已编译的插件，也可跳转到发布页面下载匹配您使用版本的插件。
+# `master`分支为C++ 源码，可以跳转到`plugin`分支直接查看已编译的插件，也可跳转到发布页面下载匹配您使用版本的插件。
 
 ![Image text](icon.png)
 
