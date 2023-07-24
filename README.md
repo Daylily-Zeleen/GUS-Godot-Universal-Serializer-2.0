@@ -55,7 +55,7 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 
 		- (Recommand) Generate bindings and build library every time when compiling `GUS`, to keep the compiling condition of `godot-cpp` same as `GUS`.  
 		Just skip this stage and add `generate_bindings=yes build_liberary=yes` or ignore these command arguments.   
-		Don't worry, generate bindings and build library of `godot-cpp` would not take many time if the compile confitions have not change.
+		Don't worry, generate bindings and build library of `godot-cpp` would not take many time if the compile conditions have not change.
   4. Here is a little different from `godot-cpp` to compile `GUS` (of course, you can use `scons` to compile, too).
      To do some post process, I use a tool script to compile `GUS`.
 	 Navigate to root folder, run command as below to compile `GUS`:
@@ -75,7 +75,7 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
   5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer\`, or get the packed addons at `bin\com.daylily_zeleen.godot_universal_serializer.zip`.  
 	 (Notice: if your use `scons` instead of `python build_tool`, you can only get dynamic liberary at `bin` folder.)
 
-# Benchmark 2.1.0:
+# Benchmark 2.1.5:
 ```
 null - value:<null>
 	[GUS]: 		1 bytes 		ser 6 usec 		deser 3 usec

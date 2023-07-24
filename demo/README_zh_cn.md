@@ -69,7 +69,7 @@
 	特别的，如果你没有明确`taget`参数，该脚本工具会同时编译`target=template_debug`和 `target=template_release`两种版本。
 	5. 现在，你可以在`\demo\addons\com.daylily_zeleen.godot_universal_serializer`获得该插件，或在`bin\com.daylily_zeleen.godot_universal_serializer.zip`获得打包好的插件。
 	（注意：如果你使用`scons`命令进行编译，你只能在`bin`文件夹下得到编译好的动态库。
-# 基准测试 2.1.0:
+# 基准测试 2.1.5:
 ```
 null - value:<null>
 	[GUS]: 		1 bytes 		ser 6 usec 		deser 3 usec
