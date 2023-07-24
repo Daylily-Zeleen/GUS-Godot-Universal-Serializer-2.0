@@ -27,29 +27,53 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 
 
 # Be careful:
-  1. ~~The properties of autoload `GUS` between all network peers should keep the same.~~
-  2. `Array` and `Dictionary` should not contain `Object`, `RID`, `Callable` and `Signal`.
-  3. ~~Currently unsupport Godot 4.x which compiled with `typeof double real_t`.~~
-  4. Currently just support platform `windows`.
+  1. `Array` and `Dictionary` should not contain `Object`, `RID`, `Callable` and `Signal`.
+  2. This repo only compile `windos` version, on other platform, you need to compile by yourself (because I have not other device to test).
+  3. ~~The properties of autoload `GUS` between all network peers should keep the same.~~
+  4. ~~Currently unsupport Godot 4.x which compiled with `typeof double real_t`.~~
+  5. ~~Currently just support platform `windows`.~~
+  
 	
 # TODO:
   1. ~~If I find the way to bind static method for `GDScript`, I will get rid of the autoload `GUS`.~~
-  2. Compile `linux` and `osx` version.
+  2. ~~Compile `linux` and `osx` version.~~
   3. ~~Compile `typeof double real_t` version to support custom Godot( but I encounter error which I can't handle it, too).~~
   4. ~~Deal `Object`, `RID`, `Callable` and `Signal`.~~
   5. Handle endian.
 
 # How to compile:
   1. Follow [offical tutorial](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html) to set up you develop enviroment.
-  1. Clone this repository (recursive).
-  3. Navigate to `godot-cpp` folder, and run command as below :
+  2. Clone this repository (with submodule).
+  3. You must generate bindings and build library of `godot-cpp` at least once.   
+		- You can use generate and build manully by steps below:  
+			a. Navigate to `godot-cpp` folder.  
+			b. Run command:  
+			```
+			scons generate_bindings=yes build_liberary=yes
+			```
+			c. Now you can add `generate_bindings=no build_liberary=no` at next stage to avoid generate bindings and build library every time when compiling `GUS`.  
 
-	cd godot-cpp
-	scons
-  4. Navigate to root folder, and run command as below :
-	
-	scons
-  5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer`.
+		- (Recommand) Generate bindings and build library every time when compiling `GUS`, to keep the compiling condition of `godot-cpp` same as `GUS`.  
+		Just skip this stage and add `generate_bindings=yes build_liberary=yes` or ignore these command arguments.   
+		Don't worry, generate bindings and build library of `godot-cpp` would not take many time if the compile confitions have not change.
+  4. Here is a little different from `godot-cpp` to compile `GUS` (of course, you can use `scons` to compile, too).
+     To do some post process, I use a tool script to compile `GUS`.
+	 Navigate to root folder, run command as below to compile `GUS`:
+	 ```
+	 python build_tool.py
+	 ```
+
+	 You can add arguments like to build `godot-cpp` at this stage.
+
+	 To learn more arguments detail, run this command.
+	 ```
+	 python build_tool.py -h
+	 ```
+
+	 Specially, if you not specify the argument `target`, this tool will build both `target=template_debug` and `target=template_release`.
+
+  5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer\`, or get the packed addons at `bin\com.daylily_zeleen.godot_universal_serializer.zip`.  
+	 (Notice: if your use `scons` instead of `python build_tool`, you can only get dynamic liberary at `bin` folder.)
 
 # Benchmark 2.1.0:
 ```
