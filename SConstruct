@@ -31,7 +31,6 @@ else:
         env["CXXFLAGS"] = ["-std=c++2a"]
 
 
-
 if env["platform"] == "macos":
     library = env.SharedLibrary(
         "bin/libgus.{}.{}.framework/libgus.{}.{}".format(

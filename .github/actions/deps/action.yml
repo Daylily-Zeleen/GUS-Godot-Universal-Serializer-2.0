@@ -27,7 +27,7 @@ runs:
         python -c "import sys; print(sys.version)"
         python -m pip install scons==4.4.0
         scons --version
-    
+
     - name: Setup clang-format
       shell: bash
       run: |
