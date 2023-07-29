@@ -13,7 +13,8 @@ def main():
     for arg in sys.argv:
         if arg == "-h" or arg == "--help":
             os.system("scons -h")
-            print('\nIf you have not specify "target" argument, this tool will build both debug and relaese.')
+            print(
+                '\nIf you have not specify "target" argument, this tool will build both debug and relaese.')
             return
 
         if arg.startswith("python"):
@@ -60,7 +61,8 @@ def main():
 
     # Copy readme and license.
     shutil.copyfile("README.md", path_join(plugin_dir, "README.md"))
-    shutil.copyfile("README_zh_cn.md", path_join(plugin_dir, "README_zh_cn.md"))
+    shutil.copyfile("README_zh_cn.md", path_join(
+        plugin_dir, "README_zh_cn.md"))
     shutil.copyfile("LICENSE", path_join(plugin_dir, "LICENSE"))
 
     shutil.copyfile("README.md", path_join("demo", "README.md"))
@@ -84,9 +86,10 @@ def zip_files_recursively(zip_file: zipfile.ZipFile, dir: str):
         if os.path.isdir(path):
             zip_files_recursively(zip_file, path)
         else:
-            if path.startswith("demo/"):
-                path = path.replace("demo/", "", 1)
-            zip_file.write(path, path)
+            src_path = path
+            if src_path.startswith("demo/"):
+                src_path = src_path.replace("demo/", "", 1)
+            zip_file.write(path, src_path)
 
 
 if __name__ == "__main__":
