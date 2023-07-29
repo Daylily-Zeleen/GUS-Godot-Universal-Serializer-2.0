@@ -1,5 +1,5 @@
-name: Physics Server Box2D Build
-description: Build Godot Cpp and the Physics Server 2D Extension.
+name: Godot Universal Serializer 2 Build
+description: Build Godot Cpp and the Godot Universal Serializer 2 Extension.
 
 inputs:
   platform:
@@ -39,7 +39,7 @@ runs:
         SCONS_CACHE_DIR: .scons-cache
       run: |
         cd godot-cpp && scons target=${{ inputs.target }} platform=${{ inputs.platform }} arch=${{ inputs.arch }} generate_bindings=yes ${{ inputs.sconsflags }}
-    - name: Build Physics Server Box2D
+    - name: Build Godot Universal Serializer 2
       shell: sh
       env:
         SCONS_CACHE: .scons-cache
