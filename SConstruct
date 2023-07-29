@@ -36,16 +36,13 @@ bin_dir = "demo/addons/com.daylily_zeleen.godot_universal_serializer2/bin/"
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        bin_dir +
-        "libgus2.{}.{}.framework/libgus.{}.{}".format(
-            env["platform"], env["target"], env["platform"], env["target"]
-        ),
+        bin_dir
+        + "libgus2.{}.{}.framework/libgus.{}.{}".format(env["platform"], env["target"], env["platform"], env["target"]),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        bin_dir +
-        "libgus2{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        bin_dir + "libgus2{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 
