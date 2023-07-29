@@ -31,6 +31,7 @@
 
 #include <godot_cpp/classes/object.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <type_traits>
 
 #include "dserializer.gdany.hpp"
 
@@ -88,19 +89,21 @@ public:
 		return dserializer::varint_encoding_in_packed_array;
 	}
 
-	static godot::PackedByteArray var_to_bytes(const godot::Variant &var) {
+	static godot::PackedByteArray var_to_bytes(const godot::Variant &p_var) {
 		PackedByteArray r;
-		decltype(r.size()) size = 0;
-		dserializer::cal_size(var, size);
+		decltype_pure(r.size()) size = 0;
+		dserializer::cal_size(p_var, size);
 		r.resize(size);
-		buffer_t *buf = r.ptrw();
-		dserializer::encode(buf, var);
+		auto *buf = r.ptrw();
+		dserializer::encode(buf, p_var);
 		return r;
 	}
-	static godot::Variant bytes_to_var(const godot::PackedByteArray &bytes) {
+	static godot::Variant bytes_to_var(const godot::PackedByteArray &p_bytes) {
+		using const_buf_t = decltype_pure(p_bytes.ptr());
+		using buf_t = std::remove_const_t<std::remove_pointer_t<const_buf_t>> *;
+		auto buf = const_cast<buf_t>(p_bytes.ptr());
+
 		Variant r;
-		auto addr = uint64_t(bytes.ptr());
-		auto buf = (uint8_t *)addr;
 		dserializer::decode(buf, r);
 		return r;
 	}

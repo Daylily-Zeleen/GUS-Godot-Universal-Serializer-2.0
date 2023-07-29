@@ -104,51 +104,137 @@ static auto color_encode_code = DType::COLOR;
 static auto color_arr_encode_code = DType::PACKED_COLOR_ARRAY;
 static bool varint_encoding_in_packed_array = false;
 
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void cal_size_type(uint8_t p_val, integral_t &r_len) {
 	cal_size_int(p_val, r_len);
 }
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_type(buffer_t *&p_buf, uint8_t p_val) {
 	encode_int(p_buf, p_val);
 }
+
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 	encode_int(p_buf, p_val, r_len);
 }
 #endif // ENCODE_LEN_METHOD
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void decode_type(buffer_t *&p_buf, uint8_t &r_val) {
 	decode_int(p_buf, r_val);
 }
 
 //  声明
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 void cal_size(const Array &p_val, integral_t &r_len);
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 void encode(buffer_t *&p_buf, const Array &p_val);
+
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &type_code, const bool &empty); // 数组类解码需要头
 
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 void cal_size(const Dictionary &p_val, integral_t &r_len);
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 void encode(buffer_t *&p_buf, const Dictionary &p_val);
+
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 void decode(buffer_t *&p_buf, Dictionary &p_val); // 空字典在外部判断
 
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void cal_size(const Variant &p_val, integral_t &r_len);
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val);
+
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, Variant &p_val);
 
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len, const uint8_t &type);
+
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len);
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8_t &type);
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val);
+
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len);
+
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8_t &type, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void decode_variant(buffer_t *&p_buf, Variant &p_val, const uint8_t &type);
 
 #define convert_to_encode_code(m_type)                     \
@@ -206,6 +292,14 @@ _INLINE_ void convert_array_encode_code(const godot::Array &p_arr, uint8_t &r_ar
 	// 	r_arr_encode_code = (r_arr_encode_code | 0x80);
 }
 
+#if !HAS_CXX20
+#define IS_INTEGRAL_T_NOT_DEVAL(T) std ::enable_if_t<std ::is_integral_v<T>> *_##T
+#define IS_BUFFER_T_NOT_DEVAL(T) std::enable_if_t<sizeof(T) == 1 || !std::is_same_v<T, bool>> *_##T
+#endif // !HAS_CXX20
+
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 void cal_size(const Array &p_val, integral_t &r_len) {
 	if (p_val.is_empty()) {
 		return;
@@ -215,7 +309,7 @@ void cal_size(const Array &p_val, integral_t &r_len) {
 		case Variant::NIL: {
 			// Elements
 			auto size = p_val.size();
-			for (decltype(size) i = 0; i < size; i++) {
+			for (decltype_pure(size) i = 0; i < size; i++) {
 				cal_size(p_val[i], r_len);
 			}
 			// End
@@ -236,18 +330,18 @@ void cal_size(const Array &p_val, integral_t &r_len) {
 					r_len += size;
 				} break;
 				case DType::ARRAY_BEGIN: {
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						cal_size(p_val[i], r_len); // If is Array, it need begining mark.
 					}
 				} break;
 				case DType::DICTIONARY_BIGIN: {
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						cal_size(p_val[i].operator godot::Dictionary(), r_len);
 					}
 				} break;
 				default: {
 					convert_to_encode_code(type);
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						cal_size_variant(p_val[i], r_len, type);
 					}
 				} break;
@@ -256,6 +350,9 @@ void cal_size(const Array &p_val, integral_t &r_len) {
 	}
 }
 
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 void encode(buffer_t *&p_buf, const Array &p_val) {
 	if (p_val.is_empty()) {
 		return;
@@ -265,7 +362,7 @@ void encode(buffer_t *&p_buf, const Array &p_val) {
 	switch (type) {
 		case Variant::NIL: {
 			auto size = p_val.size();
-			for (decltype(size) i = 0; i < size; i++) {
+			for (decltype_pure(size) i = 0; i < size; i++) {
 				encode(p_buf, p_val[i]); // With type code.
 			}
 			// Encode end.
@@ -283,23 +380,23 @@ void encode(buffer_t *&p_buf, const Array &p_val) {
 			// Elements.
 			switch (type) {
 				case DType::BOOL_T: {
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						encode_type(p_buf, p_val[i] ? DType::BOOL_T : DType::BOOL_F);
 					}
 				} break;
 				case DType::ARRAY_BEGIN: {
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						encode(p_buf, p_val[i]); // Array need begin mark.
 					}
 				} break;
 				case DType::DICTIONARY_BIGIN: {
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						encode(p_buf, p_val[i].operator godot::Dictionary());
 					}
 				} break;
 				default: {
 					convert_to_encode_code(type);
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						encode_variant(p_buf, p_val[i], type);
 					}
 				} break;
@@ -309,6 +406,9 @@ void encode(buffer_t *&p_buf, const Array &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T_NOT_DEVAL(TBuffer), IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 	if (p_val.is_empty()) {
 		return;
@@ -318,7 +418,7 @@ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 	switch (type) {
 		case Variant::NIL: {
 			auto size = p_val.size();
-			for (decltype(size) i = 0; i < size; i++) {
+			for (decltype_pure(size) i = 0; i < size; i++) {
 				encode(p_buf, p_val[i], r_len); // With type code.
 			}
 			// Encode end.
@@ -336,23 +436,23 @@ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 			// Elements.
 			switch (type) {
 				case DType::BOOL_T: {
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						encode_type(p_buf, p_val[i] ? DType::BOOL_T : DType::BOOL_F, r_len);
 					}
 				} break;
 				case DType::ARRAY_BEGIN: {
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						encode(p_buf, p_val[i], r_len); // Array need begin mark.
 					}
 				} break;
 				case DType::DICTIONARY_BIGIN: {
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						encode(p_buf, p_val[i].operator godot::Dictionary(), r_len);
 					}
 				} break;
 				default: {
 					convert_to_encode_code(type);
-					for (decltype(size) i = 0; i < size; i++) {
+					for (decltype_pure(size) i = 0; i < size; i++) {
 						encode_variant(p_buf, p_val[i], type, r_len);
 					}
 				} break;
@@ -360,9 +460,11 @@ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 		} break;
 	}
 }
-
 #endif
 
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &p_encode_code, const bool &p_empty) { // 需要类型信息才能解码
 	if (p_encode_code == DType::ARRAY_BEGIN) {
 		if (p_empty) {
@@ -405,35 +507,35 @@ void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &p_encode_code, const 
 		}
 
 		// Size
-		decltype(p_val.size()) size;
+		decltype_pure(p_val.size()) size;
 		decode_varint(p_buf, size);
 		p_val.resize(size);
 		// Elements
 		switch (dtype) {
 			case DType::BOOL_T:
 			case DType::BOOL_F: {
-				for (decltype(p_val.size()) i = 0; i < size; i++) {
+				for (decltype_pure(p_val.size()) i = 0; i < size; i++) {
 					uint8_t t;
 					decode_type(p_buf, t);
 					p_val[i] = t == BOOL_T ? true : false;
 				}
 			} break;
 			case DType::ARRAY_BEGIN: {
-				for (decltype(p_val.size()) i = 0; i < size; i++) {
+				for (decltype_pure(p_val.size()) i = 0; i < size; i++) {
 					Variant arr;
 					decode(p_buf, arr);
 					p_val[i] = arr;
 				}
 			} break;
 			case DType::DICTIONARY_BIGIN: {
-				for (decltype(p_val.size()) i = 0; i < size; i++) {
+				for (decltype_pure(p_val.size()) i = 0; i < size; i++) {
 					Dictionary element;
 					decode(p_buf, element);
 					p_val[i] = element;
 				}
 			} break;
 			default: {
-				for (decltype(p_val.size()) i = 0; i < size; i++) {
+				for (decltype_pure(p_val.size()) i = 0; i < size; i++) {
 					Variant element;
 					decode_variant(p_buf, element, dtype);
 					p_val[i] = element;
@@ -444,22 +546,28 @@ void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &p_encode_code, const 
 }
 
 // Dictionary
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 void cal_size(const Dictionary &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto keys = p_val.keys();
 	auto values = p_val.values();
-	for (decltype(size) i = 0; i < size; i++) {
+	for (decltype_pure(size) i = 0; i < size; i++) {
 		cal_size(keys[i], r_len);
 		cal_size(values[i], r_len);
 	}
 	cal_size(DType::ARR_DICT_END, r_len);
 }
 
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 void encode(buffer_t *&p_buf, const Dictionary &p_val) {
 	auto size = p_val.size();
 	auto keys = p_val.keys();
 	auto values = p_val.values();
-	for (decltype(size) i = 0; i < size; i++) {
+	for (decltype_pure(size) i = 0; i < size; i++) {
 		encode(p_buf, keys[i]);
 		encode(p_buf, values[i]);
 	}
@@ -467,11 +575,14 @@ void encode(buffer_t *&p_buf, const Dictionary &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T_NOT_DEVAL(TBuffer), IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto keys = p_val.keys();
 	auto values = p_val.values();
-	for (decltype(size) i = 0; i < size; i++) {
+	for (decltype_pure(size) i = 0; i < size; i++) {
 		encode(p_buf, keys[i], r_len);
 		encode(p_buf, values[i], r_len);
 	}
@@ -479,6 +590,9 @@ void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len) {
 }
 #endif
 
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 void decode(buffer_t *&p_buf, Dictionary &p_val) {
 	while (*p_buf != DType::ARR_DICT_END) {
 		Variant key, value;
@@ -490,6 +604,9 @@ void decode(buffer_t *&p_buf, Dictionary &p_val) {
 }
 
 // 可变体
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len, const uint8_t &type) {
 	switch (type) {
 		case Variant::NIL:
@@ -627,12 +744,18 @@ _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len, const ui
 	}
 }
 
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len) {
 	auto type = DType(p_val.get_type());
 	convert_to_encode_code(type);
 	cal_size_variant(p_val, r_len, type);
 }
 
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8_t &p_type) {
 	switch (p_type) {
 		case Variant::NIL: {
@@ -771,6 +894,9 @@ _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8
 	}
 }
 
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val) {
 	auto type = DType(p_val.get_type());
 	convert_to_encode_code(type);
@@ -778,6 +904,9 @@ _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T_NOT_DEVAL(TBuffer), IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8_t &type, integral_t &r_len) {
 	switch (p_type) {
 		case Variant::NIL: {
@@ -916,14 +1045,19 @@ _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8
 	}
 }
 
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T_NOT_DEVAL(TBuffer), IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len) {
 	auto type = DType(p_val.get_type());
 	convert_to_encode_code(type);
 	encode_variant(p_buf, p_val, type, r_len);
 }
-
 #endif
 
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void decode_variant(buffer_t *&p_buf, Variant &p_val, const uint8_t &type) {
 	switch (type) {
 		case DType::NIL: {
@@ -1201,6 +1335,9 @@ _INLINE_ void decode_variant(buffer_t *&p_buf, Variant &p_val, const uint8_t &ty
 	}
 }
 
+#if !HAS_CXX20
+template <typename TInt, IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void cal_size(const Variant &p_val, integral_t &r_len) {
 	r_len++;
 
@@ -1326,6 +1463,9 @@ _INLINE_ void cal_size(const Variant &p_val, integral_t &r_len) {
 	}
 }
 
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val) {
 	uint8_t type = p_val.get_type();
 	switch (type) {
@@ -1490,6 +1630,9 @@ _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
+#if !HAS_CXX20
+template <typename TBuffer, typename TInt, IS_BUFFER_T_NOT_DEVAL(TBuffer), IS_INTEGRAL_T_NOT_DEVAL(TInt)>
+#endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len) {
 	switch (p_val.get_type()) {
 		case Variant::NIL: {
@@ -1651,6 +1794,10 @@ _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len) 
 	}
 }
 #endif
+
+#if !HAS_CXX20
+template <typename TBuffer, IS_BUFFER_T_NOT_DEVAL(TBuffer)>
+#endif // !HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, Variant &p_val) {
 	uint8_t type;
 	decode_type(p_buf, type);
