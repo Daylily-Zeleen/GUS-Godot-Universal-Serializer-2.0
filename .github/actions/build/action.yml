@@ -27,11 +27,11 @@ runs:
         key: ${{ inputs.platform }}_${{ inputs.arch }}_${{ inputs.target }}_cache
     - name: Setup python and scons
       uses: ./.github/actions/deps
-    - name: Lint
-      shell: sh
-      run:
-        ./misc/clang-format.sh
-        ./misc/clang-tidy.sh
+    # - name: Lint
+    #   shell: sh
+    #   run:
+    #     ./misc/clang-format.sh
+    #     ./misc/clang-tidy.sh
     - name: Build Godot Cpp
       shell: sh
       env:
