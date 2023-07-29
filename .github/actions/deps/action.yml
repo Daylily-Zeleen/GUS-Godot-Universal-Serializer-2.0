@@ -1,0 +1,66 @@
+name: Setup python and scons
+description: Setup python, install the pip version of scons.
+
+inputs:
+  python-version:
+    description: The python version to use.
+    default: "3.x"
+  python-arch:
+    description: The python architecture.
+    default: "x64"
+
+runs:
+  using: "composite"
+  steps:
+    # Use python 3.x release (works cross platform)
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v4
+      with:
+        # Semantic version range syntax or exact version of a Python version
+        python-version: ${{ inputs.python-version }}
+        # Optional - x64 or x86 architecture, defaults to x64
+        architecture: ${{ inputs.python-arch }}
+
+    - name: Setup scons
+      shell: bash
+      run: |
+        python -c "import sys; print(sys.version)"
+        python -m pip install scons==4.4.0
+        scons --version
+    
+    - name: Setup clang-format
+      shell: bash
+      run: |
+        python -m pip install clang-format
+
+    - name: Upgrade gcc for Linux building (for c++20)
+      if: ${{ matrix.platform == 'linux' }}
+        run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt update
+          sudo apt install gcc-11
+          sudo apt install g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 1
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 1
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 10
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 10
+
+    - name: (Still not work)Upgrade clang for Android building (for c++20)
+      if: ${{ matrix.platform == 'android' }}
+        run: |
+          sudo wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-add-repository -y 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-16 main'
+          sudo apt-get update
+          sudo apt-get install -y clang-16 lldb-16 lld-16
+          sudo update-alternatives --install /usr/bin/clang   clang   /usr/bin/clang-16    1000
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16  1000
+          sudo update-alternatives --install /usr/bin/lldb lldb /usr/bin/lldb-16  1000
+          sudo update-alternatives --install /usr/bin/lld lld /usr/bin/lld-16  1000
+          clang++ -v
+
+      - name: (Still not work)Upgrade clang for macOS/IOS building (for c++20)
+        if: ${{ matrix.platform == 'macos' || matrix.platform == 'ios' }}
+        run: |
+          sudo rm -rf /Library/Developer/CommandLineTools
+          sudo xcode-select --install
+          clang -v

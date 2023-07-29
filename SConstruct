@@ -24,7 +24,7 @@ if env.get("is_msvc", False):
 else:
     if env["platform"] in ["android", "macos", "ios"]:
         # Clang flags
-        env["CXXFLAGS"]= ["-std=c++20"]
+        env["CXXFLAGS"] = ["-std=c++20"]
         env["CXXFLAGS"].append("-v")
     else:
         # g++ flags
