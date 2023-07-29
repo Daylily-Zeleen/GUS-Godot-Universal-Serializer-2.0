@@ -8,14 +8,14 @@
 
 [中文文档](README_zh_cn.md) <- 点击这里。
 
-A Godot's universal serializer for size optimization.    
+A Godot's universal serializer for size optimization.
 Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 4.x.
 
 # Feature:
   1. Without losing type information. Need not type detection and forced typce conversion in cross end transfer，just like local parameter transfer.
   2. Integer are variable length serialization.
   3. The serialized data size is smaller than JSON text to utf8 and the native serialization method `var_to_bytes()`.GUS is especially suitable for the serialization of structured small data transfer in multiplayer games.
-  4. GDExtension plugin, high performance. 
+  4. GDExtension plugin, high performance.
 
   You can run the `EditorScript` which named `GUS_benchmark.gd` to view the contrast between `GUS`, `Native`, and `JSON`.
 
@@ -23,7 +23,7 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
   1. Download released plugin, install ~~and enable~~ this plugin just like other plugin( If the version is not match, please compile by yourselves).
   2. ~~Modify properties of autoload which named `GUS` as you require.~~
   3. Pass variable which without `Object`, `OID`, `Callable`, `Signal` into `GUS.var_to_bytes()` and get the serialized data, than send to network peer.
-  3. After the remote network peer obtains the serialized data, passe it into `GUS.bytes_to_var()` to get the same variable as before serialization.
+  4. After the remote network peer obtains the serialized data, passe it into `GUS.bytes_to_var()` to get the same variable as before serialization.
 
 
 # Be careful:
@@ -32,8 +32,8 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
   3. ~~The properties of autoload `GUS` between all network peers should keep the same.~~
   4. ~~Currently unsupport Godot 4.x which compiled with `typeof double real_t`.~~
   5. ~~Currently just support platform `windows`.~~
-  
-	
+
+
 # TODO:
   1. ~~If I find the way to bind static method for `GDScript`, I will get rid of the autoload `GUS`.~~
   2. ~~Compile `linux` and `osx` version.~~
@@ -44,35 +44,35 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 # How to compile:
   1. Follow [offical tutorial](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html) to set up you develop enviroment.
   2. Clone this repository (with submodule).
-  3. You must generate bindings and build library of `godot-cpp` at least once.   
-		- You can use generate and build manully by steps below:  
-			a. Navigate to `godot-cpp` folder.  
-			b. Run command:  
+  3. You must generate bindings and build library of `godot-cpp` at least once.
+		- You can use generate and build manully by steps below:
+			a. Navigate to `godot-cpp` folder.
+			b. Run command:
 			```
 			scons generate_bindings=yes build_library=yes
 			```
-			c. Now you can add `generate_bindings=no build_library=no` at next stage to avoid generate bindings and build library every time when compiling `GUS`.  
+			c. Now you can add `generate_bindings=no build_library=no` at next stage to avoid generate bindings and build library every time when compiling `GUS`.
 
-		- (Recommand) Generate bindings and build library every time when compiling `GUS`, to keep the compiling condition of `godot-cpp` same as `GUS`.  
-		Just skip this stage and add `generate_bindings=yes build_library=yes` or ignore these command arguments.   
+		- (Recommand) Generate bindings and build library every time when compiling `GUS`, to keep the compiling condition of `godot-cpp` same as `GUS`.
+		Just skip this stage and add `generate_bindings=yes build_library=yes` or ignore these command arguments.
 		Don't worry, generate bindings and build library of `godot-cpp` would not take many time if the compile conditions have not change.
   4. Here is a little different from `godot-cpp` to compile `GUS` (of course, you can use `scons` to compile, too).
      To do some post process, I use a tool script to compile `GUS`.
 	 Navigate to root folder, run command as below to compile `GUS`:
 	 ```
-	 python build_tool.py
+	 python build.py
 	 ```
 
 	 You can add arguments like to build `godot-cpp` at this stage.
 
 	 To learn more arguments detail, run this command.
 	 ```
-	 python build_tool.py -h
+	 python build.py -h
 	 ```
 
 	 Specially, if you not specify the argument `target`, this tool will build both `target=template_debug` and `target=template_release`.
 
-  5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer\`, or get the packed addon at `bin\com.daylily_zeleen.godot_universal_serializer.zip`.  
+  5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer\`, or get the packed addon at `bin\com.daylily_zeleen.godot_universal_serializer.zip`.
 	 (Notice: if your use `scons` instead of `python build_tool`, you can only get dynamic library at `bin` folder.)
 
 # Benchmark 2.1.5:

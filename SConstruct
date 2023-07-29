@@ -5,7 +5,6 @@ import sys
 env = SConscript("godot-cpp/SConstruct")
 
 
-
 # For the reference:
 # - CCFLAGS are compilation flags shared between C and C++
 # - CFLAGS are for C-specific compilation flags
@@ -21,9 +20,9 @@ sources = Glob("src/*.cpp")
 
 # Require C++20
 if env.get("is_msvc", False):
-    env["CXXFLAGS"]=["/std:c++20"]
+    env["CXXFLAGS"] = ["/std:c++20"]
 else:
-    env["CXXFLAGS"]=["-std:c++20"]
+    env["CXXFLAGS"] = ["-std=c++2a"]
 
 
 if env["platform"] == "macos":

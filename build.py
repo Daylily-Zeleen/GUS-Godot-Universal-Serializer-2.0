@@ -1,15 +1,10 @@
-﻿import os
+#!/usr/bin/env python
+
 import sys
+import os
 import zipfile
 import shutil
 from os.path import join as path_join
-
-
-build_debug = True
-build_release = True
-
-arg1 = ""
-arg2 = ""
 
 
 def main():
@@ -18,15 +13,15 @@ def main():
     for arg in sys.argv:
         if arg == "-h" or arg == "--help":
             os.system("scons -h")
-            print("\nIf you have not specify \"target\" argument, this tool will build both debug and relaese. ")
+            print('\nIf you have not specify "target" argument, this tool will build both debug and relaese.')
             return
 
         if arg.startswith("python"):
             continue
-        if arg.count("build_tool.py") > 0:
+        if arg == sys.argv[0]:
             continue
         if arg.count("scons") > 0:
-            print("Should not use \"scons\" argument, skip it.")
+            print('Should not use "scons" argument, skip it.')
             continue
 
         args += " " + arg
@@ -76,21 +71,23 @@ def main():
     zip_file_path = "bin\com.daylily_zeleen.godot_universal_serializer.zip"
     if os.path.exists(zip_file_path):
         os.remove(zip_file_path)
-    zip_file = zipfile.ZipFile(zip_file_path,"w",)
+    zip_file = zipfile.ZipFile(zip_file_path, "w")
     zip_files_recursively(zip_file, "demo/addons")
     zip_file.close()
 
     print("Done!")
 
 
-def zip_files_recursively(zip_file:zipfile.ZipFile, dir:str):
+def zip_files_recursively(zip_file: zipfile.ZipFile, dir: str):
     for f in os.listdir(dir):
         path = path_join(dir, f)
         if os.path.isdir(path):
             zip_files_recursively(zip_file, path)
         else:
-            zip_file.write(path, path.removeprefix("demo/"),)
+            if path.startswith("demo/"):
+                path = path.replace("demo/", "", 1)
+            zip_file.write(path, path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

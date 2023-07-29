@@ -12,15 +12,18 @@ for file in $(find . -name "*.hpp" -print); do
   if [[ "$file" == "./gen/"* || "$file" == "./include/gen/"* ]]; then continue; fi
   # Skip the test project.
   if [[ "$file" == "./test/"* ]]; then continue; fi
+  # Skip if has "#pragma once"
+  pragma_once_line=$(grep -c "#pragma once" $file | sed 's/\([0-9]*\).*/\1/')
+  if [[ $pragma_once_line != 0 ]]; then continue; fi
 
   bname=$(basename $file .hpp)
 
-  # NOTE: The "GODOT_CPP_" prefix is already used by the generated
-  # bindings, so we can't use that. We'll use "GODOT_" instead.
-  prefix="GODOT_"
+  # We needn't prefix.
+  prefix=""
 
   # ^^ is bash builtin for UPPERCASE.
   guard="${prefix}${bname^^}_HPP"
+  guard=${guard//./_}
 
   # Replaces guards to use computed name.
   # We also add some \n to make sure there's a proper separation.

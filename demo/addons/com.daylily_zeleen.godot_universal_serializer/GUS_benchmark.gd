@@ -4,11 +4,9 @@ extends EditorScript
 func _run() -> void:
 	randomize()
 	GUS.set_color_encode_type(GUS.COLOR_ENCODE_TYPE_RAW)
-#	_print_result("ignore", null)
-	
 	_test(get_editor_interface().get_base_control())
-	
-	
+
+
 var tree:SceneTree
 func _test(inside_tree_node:Node)->void:
 	tree = inside_tree_node.get_tree() if inside_tree_node and inside_tree_node.is_inside_tree() else null
@@ -55,7 +53,7 @@ func _test(inside_tree_node:Node)->void:
 	}
 	dict[532] = [574,-21.0, Vector2(-423,46.8005), Color.AQUA,"acxx"]
 	_print_result("Dictionary",dict)
-	
+
 	# 池化数组测试
 	var byte_arr := PackedByteArray()
 	var int32_arr := PackedInt32Array()
@@ -66,9 +64,9 @@ func _test(inside_tree_node:Node)->void:
 	var vector2_arr := PackedVector2Array()
 	var vector3_arr:= PackedVector3Array()
 	var color_arr:= PackedColorArray()
-	
+
 	_print_result("Empty Array", [])
-	_print_result("Empty Dictionary", {})	
+	_print_result("Empty Dictionary", {})
 	_print_result("Empty PackedByteArray",byte_arr)
 	_print_result("Empty PackedInt32Array",int32_arr)
 	_print_result("Empty PackedInt64Array",int64_arr)
@@ -78,7 +76,7 @@ func _test(inside_tree_node:Node)->void:
 	_print_result("Empty PackedVector2Array",vector2_arr)
 	_print_result("Empty PackedVector3Array",vector3_arr)
 	_print_result("Empty PackedColorArray",color_arr)
-	
+
 	var i := 4096
 	while i>0:
 		byte_arr.push_back(randi()%256)
@@ -91,7 +89,7 @@ func _test(inside_tree_node:Node)->void:
 		vector3_arr.push_back(Vector3(i*randf(),i*randf(),i*randf()))
 		color_arr.push_back(Color(randf(),randf(),randf(),randf()))
 		i-=1
-	
+
 	_print_result("PackedByteArray",byte_arr)
 	_print_result("PackedInt32Array",int32_arr)
 	_print_result("PackedInt64Array",int64_arr)
@@ -101,7 +99,7 @@ func _test(inside_tree_node:Node)->void:
 	_print_result("PackedVector2Array",vector2_arr)
 	_print_result("PackedVector3Array",vector3_arr)
 	_print_result("PackedColorArray",color_arr)
-	
+
 	# 类型化数组
 	var typed_arr_bool :Array[bool] = []
 	var typed_arr_int :Array[int] = []
@@ -170,7 +168,7 @@ func _test(inside_tree_node:Node)->void:
 	_print_result("Empty Array[PackedVector2Array]", typed_arr_vector2_arr)
 	_print_result("Empty Array[PackedVector3Array]", typed_arr_vector3_arr)
 	_print_result("Empty Array[PackedColorArray]", typed_arr_color_arr)
-	
+
 	i = 4096
 	while i>0:
 		typed_arr_bool.push_back(randi()%2==0)
@@ -220,7 +218,7 @@ func _test(inside_tree_node:Node)->void:
 			typed_arr_vector3_arr.push_back(PackedVector3Array([rand_vec3(),rand_vec3(),rand_vec3(),rand_vec3()]))
 			typed_arr_color_arr.push_back(PackedColorArray([rand_color(), rand_color(), rand_color(), rand_color(), rand_color()]))
 		i-=1
-		
+
 	_print_result("Array[bool]", typed_arr_bool)
 	_print_result("Array[int]", typed_arr_int)
 	_print_result("Array[float]", typed_arr_float)
@@ -272,9 +270,9 @@ func _print_result(title_name:String, v)->void:
 	json_ser_time = Time.get_ticks_usec() - json_ser_time
 	var json_deser_time := Time.get_ticks_usec()
 	json.parse(json_bytes.get_string_from_utf8())
-	var json_deser = json.get_data() 
-	json_deser_time = Time.get_ticks_usec() - json_deser_time 
-	
+	var json_deser = json.get_data()
+	json_deser_time = Time.get_ticks_usec() - json_deser_time
+
 	# GUS
 	var gus_ser_time := Time.get_ticks_usec()
 	var gus_bytes := GUS.var_to_bytes(v) # GUS 序列化后数据
@@ -282,7 +280,7 @@ func _print_result(title_name:String, v)->void:
 	var gus_deser_time := Time.get_ticks_usec()
 	var gus_deser = GUS.bytes_to_var(gus_bytes)
 	gus_deser_time = Time.get_ticks_usec() - gus_deser_time
-	
+
 	# Native
 	var native_ser_time := Time.get_ticks_usec()
 	var native_bytes := var_to_bytes(v)
@@ -290,18 +288,18 @@ func _print_result(title_name:String, v)->void:
 	var native_deser_time := Time.get_ticks_usec()
 	var native_deser = convert(bytes_to_var(native_bytes),type)
 	native_deser_time = Time.get_ticks_usec() - native_deser_time
-	
+
 
 	if typeof(v) == typeof(gus_deser) and str(v) == str(gus_deser): # 检查序列化前后的类型和具体值是否相同
 		if typeof(v) >TYPE_ARRAY or (v is Array and v.is_typed()): # 池化数组不打印具体值（打印溢出
 			print("%s - Size:%d\n\t[GUS]: \t\t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[Native]: \t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[JSON]:\t\t%d bytes \t\tser %d usec \t\tdeser %d usec"%[
-					title_name, v.size(), 
+					title_name, v.size(),
 					gus_bytes.size(), gus_ser_time, gus_deser_time ,
 					native_bytes.size() , native_ser_time, native_deser_time,
 					json_bytes.size(), json_ser_time, json_deser_time])
 		else:
 			print("%s - value:%s\n\t[GUS]: \t\t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[Native]: \t%d bytes \t\tser %d usec \t\tdeser %d usec\n\t[JSON]:\t\t%d bytes \t\tser %d usec \t\tdeser %d usec"%[
-					title_name, str(v), 
+					title_name, str(v),
 					gus_bytes.size(), gus_ser_time, gus_deser_time ,
 					native_bytes.size() , native_ser_time, native_deser_time,
 					json_bytes.size(), json_ser_time, json_deser_time])

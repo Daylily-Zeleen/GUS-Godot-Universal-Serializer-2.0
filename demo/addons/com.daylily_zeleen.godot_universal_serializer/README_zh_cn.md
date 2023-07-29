@@ -23,7 +23,7 @@
   1. 下载发布的插件包，像其他插件一样安装~~和启用~~即可(如果版本不匹配，请自行编译)。
   2. ~~根据你的需求代码修改名为`GUS`的Autoload的属性.~~
   3. 传递不包含`Object`、 `OID`、 `Callable`以及 `Signal`的变量给 `GUS.var_to_bytes()`并获取序列化后数据，然后发送给其他网络对等体。
-  3. 远端的网络对等体获取到序列化后数据，传递给`GUS.bytes_to_var()`,即可获得与序列化前相同的变量。
+  4. 远端的网络对等体获取到序列化后数据，传递给`GUS.bytes_to_var()`,即可获得与序列化前相同的变量。
 
 
 # 注意:
@@ -32,7 +32,8 @@
   3. ~~不同端的`GUS`属性必须保持一致才能正确反序列化。~~
   4. ~~当前不支持`typeof double real_t`的自定义构建Godot 4.x版本。~~
   5. ~~当前仅支持`windows`.~~
-	
+
+
 # TODO:
   1. ~~如果我找到绑定静态方法给`GDScript`的办法，我将抛弃自动加载`GUS`, 改为静态方法的方式去实现功能。~~
   2. ~~编译`linux`和`osx`版本。~~
@@ -40,11 +41,12 @@
   4. ~~处理 `Object`、`RID`、`Callable`以及`Signal`。~~
   5. 处理大小端。
 
+
 # 如何编译:
   1. 根据[官方文档](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html)搭建你的编译环境。
   2. 克隆这个仓库(以递归方式克隆，以包含子模块)。
-  3. 你必须至少生成一次`godot-cpp`的绑定，并且至少构建一次它的库。  
-		- 你可以手动生成并构建：  
+  3. 你必须至少生成一次`godot-cpp`的绑定，并且至少构建一次它的库。
+		- 你可以手动生成并构建：
 			a. 导航到`godot-cpp`文件夹。
 			b. 运行以下命令。
 			```
@@ -52,18 +54,18 @@
 			```
 			c. 完成以后，您需要在下个步骤的命令中添加参数`generate_bindings=no build_library=no`来避免重复构建`GUS`时重复生成`godot-cpp`的绑定与`godot-cpp`的库。
 
-		- （推荐方式）在每次构建`GUS`时重复生成`godot-cpp`的绑定与构建其库，直接跳该步骤，在下个步骤的命令中添加参数`generate_bindings=yes build_library=yes`来显式要求该操作，或忽略这些参数以默认方式工作。  
+		- （推荐方式）在每次构建`GUS`时重复生成`godot-cpp`的绑定与构建其库，直接跳该步骤，在下个步骤的命令中添加参数`generate_bindings=yes build_library=yes`来显式要求该操作，或忽略这些参数以默认方式工作。
 		别担心，只要编译条件没有变化，重复生成与构建不会占用您太多时间。
-	4. 编译`GUS`与编译`godot-cpp`有一点小区别（当然你也可以继续使用`scons`命令进行构建），为了执行一些后处理，我使用一个简单的工具脚本进行编译：  
+	4. 编译`GUS`与编译`godot-cpp`有一点小区别（当然你也可以继续使用`scons`命令进行构建），为了执行一些后处理，我使用一个简单的工具脚本进行编译：
 	导航到根目录,运行以下命令
 	```
-	python build_tool.py
+	python build.py
 	```
 
 	你可以像在编译`godot-cpp`一样对改命令添加其他参数。
 	你可以使用以下命令来查看更多参数详情:
 	```
-	python build_tool.py -h
+	python build.py -h
 	```
 
 	特别的，如果你没有明确`taget`参数，该脚本工具会同时编译`target=template_debug`和 `target=template_release`两种版本。

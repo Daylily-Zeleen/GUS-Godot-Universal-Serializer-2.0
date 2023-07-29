@@ -14,7 +14,6 @@ data_*/
 out/
 out/*
 x64/
-.clang-format
 .clang-tidy
 *.dblite
 CMakeLists.txt

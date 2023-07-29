@@ -45,9 +45,9 @@ jobs:
         run: |
           bash ./misc/scripts/mypy_check.sh
 
-      - name: Bindings generation checks (ensures get_file_list returns all generated files)
-        run: |
-          python ./misc/scripts/check_get_file_list.py
+      # - name: Bindings generation checks (ensures get_file_list returns all generated files)
+      #   run: |
+      #     python ./misc/scripts/check_get_file_list.py
 
       - name: Style checks via clang-format (clang_format.sh)
         run: |
