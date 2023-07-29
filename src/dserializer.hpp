@@ -243,7 +243,7 @@ _INLINE_ void decode(buffer_t *&p_buf, std_str_t &r_val) {
 		len++;
 	}
 	len++;
-	r_val = std_string(reinterpret_cast<const char *>(p_buf), len);
+	r_val = decltype(r_val)(reinterpret_cast<const char *>(p_buf));
 	p_buf += len;
 }
 

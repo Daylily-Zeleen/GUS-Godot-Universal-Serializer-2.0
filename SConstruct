@@ -25,6 +25,11 @@ else:
     env["CXXFLAGS"] = ["-std=c++2a"]
 
 
+# Clang flags
+if env["platform"] in ["android", "macos", "ios"]:
+    env["CXXFLAGS"].append("-std=c++20")
+    env["CXXFLAGS"].append("-v")
+
 if env["platform"] == "macos":
     library = env.SharedLibrary(
         "bin/libgus.{}.{}.framework/libgus.{}.{}".format(

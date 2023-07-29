@@ -120,19 +120,19 @@ _INLINE_ void decode_type(buffer_t *&p_buf, uint8_t &r_val) {
 }
 
 //  声明
-_INLINE_ void cal_size(const Array &p_val, integral_t &r_len);
-_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val);
+void cal_size(const Array &p_val, integral_t &r_len);
+void encode(buffer_t *&p_buf, const Array &p_val);
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len);
+void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
-_INLINE_ void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &type_code, const bool &empty); // 数组类解码需要头
+void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &type_code, const bool &empty); // 数组类解码需要头
 
-_INLINE_ void cal_size(const Dictionary &p_val, integral_t &r_len);
-_INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val);
+void cal_size(const Dictionary &p_val, integral_t &r_len);
+void encode(buffer_t *&p_buf, const Dictionary &p_val);
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len);
+void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len);
 #endif // ENCODE_LEN_METHOD
-_INLINE_ void decode(buffer_t *&p_buf, Dictionary &p_val); // 空字典在外部判断
+void decode(buffer_t *&p_buf, Dictionary &p_val); // 空字典在外部判断
 
 _INLINE_ void cal_size(const Variant &p_val, integral_t &r_len);
 _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val);
@@ -206,7 +206,7 @@ _INLINE_ void convert_array_encode_code(const godot::Array &p_arr, uint8_t &r_ar
 	// 	r_arr_encode_code = (r_arr_encode_code | 0x80);
 }
 
-_INLINE_ void cal_size(const Array &p_val, integral_t &r_len) {
+void cal_size(const Array &p_val, integral_t &r_len) {
 	if (p_val.is_empty()) {
 		return;
 	}
@@ -256,7 +256,7 @@ _INLINE_ void cal_size(const Array &p_val, integral_t &r_len) {
 	}
 }
 
-_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val) {
+void encode(buffer_t *&p_buf, const Array &p_val) {
 	if (p_val.is_empty()) {
 		return;
 	}
@@ -309,7 +309,7 @@ _INLINE_ void encode(buffer_t *&p_buf, const Array &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
+void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 	if (p_val.is_empty()) {
 		return;
 	}
@@ -363,7 +363,7 @@ _INLINE_ void encode(buffer_t *&p_buf, const Array &p_val, integral_t &r_len) {
 
 #endif
 
-_INLINE_ void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &p_encode_code, const bool &p_empty) { // 需要类型信息才能解码
+void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &p_encode_code, const bool &p_empty) { // 需要类型信息才能解码
 	if (p_encode_code == DType::ARRAY_BEGIN) {
 		if (p_empty) {
 			return;
@@ -444,7 +444,7 @@ _INLINE_ void decode(buffer_t *&p_buf, Array &p_val, const uint8_t &p_encode_cod
 }
 
 // Dictionary
-_INLINE_ void cal_size(const Dictionary &p_val, integral_t &r_len) {
+void cal_size(const Dictionary &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto keys = p_val.keys();
 	auto values = p_val.values();
@@ -455,7 +455,7 @@ _INLINE_ void cal_size(const Dictionary &p_val, integral_t &r_len) {
 	cal_size(DType::ARR_DICT_END, r_len);
 }
 
-_INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val) {
+void encode(buffer_t *&p_buf, const Dictionary &p_val) {
 	auto size = p_val.size();
 	auto keys = p_val.keys();
 	auto values = p_val.values();
@@ -467,7 +467,7 @@ _INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val) {
 }
 
 #ifdef ENCODE_LEN_METHOD
-_INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len) {
+void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto keys = p_val.keys();
 	auto values = p_val.values();
@@ -479,7 +479,7 @@ _INLINE_ void encode(buffer_t *&p_buf, const Dictionary &p_val, integral_t &r_le
 }
 #endif
 
-_INLINE_ void decode(buffer_t *&p_buf, Dictionary &p_val) {
+void decode(buffer_t *&p_buf, Dictionary &p_val) {
 	while (*p_buf != DType::ARR_DICT_END) {
 		Variant key, value;
 		decode(p_buf, key);
