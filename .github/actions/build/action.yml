@@ -30,8 +30,8 @@ runs:
     - name: Lint
       shell: sh
       run:
-        ./scripts/clang-format.sh
-        ./scripts/clang-tidy.sh
+        ./misc/clang-format.sh
+        ./misc/clang-tidy.sh
     - name: Build Godot Cpp
       shell: sh
       env:
