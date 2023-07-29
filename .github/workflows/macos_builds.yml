@@ -16,6 +16,7 @@ jobs:
       matrix:
         target: [template_debug, template_release]
         arch: [universal]
+        shlibsuffix: "framework"
 
     steps:
       - uses: actions/checkout@v3
@@ -39,8 +40,10 @@ jobs:
           APPLE_DEV_TEAM_ID: ${{ secrets.PROD_MACOS_NOTARIZATION_TEAM_ID }}
           APPLE_DEV_PASSWORD: ${{ secrets.PROD_MACOS_NOTARIZATION_PWD }}
           APPLE_DEV_APP_ID: ${{ secrets.PROD_MACOS_APPLE_DEV_APP_ID }}
-        run: ./misc/ci-sign-macos.ps1 dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus.macos.${{ matrix.target }}.framework
+        run: ./misc/ci-sign-macos.ps1 dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus2.macos.${{ matrix.target }}.framework
         if: ${{ env.APPLE_DEV_ID }}
 
       - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/upload
+        with:
+          artifact_file_suffix: macos.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}

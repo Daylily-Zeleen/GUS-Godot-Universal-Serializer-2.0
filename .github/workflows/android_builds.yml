@@ -15,6 +15,7 @@ jobs:
       matrix:
         target: [template_debug, template_release]
         arch: [arm64, x86_64]
+        shlibsuffix: "so"
 
     steps:
       - uses: actions/checkout@v3
@@ -36,3 +37,5 @@ jobs:
 
       - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/upload
+        with:
+          artifact_file_suffix: android.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}

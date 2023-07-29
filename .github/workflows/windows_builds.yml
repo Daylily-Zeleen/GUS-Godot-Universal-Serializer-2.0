@@ -15,6 +15,7 @@ jobs:
       matrix:
         target: [template_debug, template_release]
         arch: [x86_32, x86_64]
+        shlibsuffix: "dll"
 
     steps:
       - uses: actions/checkout@v3
@@ -33,3 +34,5 @@ jobs:
 
       - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/upload
+        with:
+          artifact_file_suffix: windows.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
