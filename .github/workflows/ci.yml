@@ -115,8 +115,8 @@ jobs:
       - name: macOS/IOS dependencies(update clang for c++20)
         if: ${{ matrix.platform == 'macos' || matrix.platform == 'ios' }}
         run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew install llvm-16
+          sudo rm -rf /Library/Developer/CommandLineTools
+          sudo xcode-select --install
           clang -v
 
       - name: Android dependencies(update clang for c++20)
