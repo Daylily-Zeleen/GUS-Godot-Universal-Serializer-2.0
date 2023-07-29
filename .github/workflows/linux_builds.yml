@@ -15,7 +15,7 @@ jobs:
       matrix:
         target: [template_debug, template_release]
         arch: [x86_64]
-        shlibsuffix: "so"
+        shlibsuffix: ["so"]
 
     steps:
       - uses: actions/checkout@v3

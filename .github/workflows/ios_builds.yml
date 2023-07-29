@@ -15,7 +15,7 @@ jobs:
       matrix:
         target: [template_debug, template_release]
         arch: [arm64]
-        shlibsuffix: "dylib"
+        shlibsuffix: ["dylib"]
 
     steps:
       - uses: actions/checkout@v3

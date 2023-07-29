@@ -29,7 +29,7 @@ def main():
         if arg.startswith("target"):
             debug_and_relaese = False
 
-    bin_dir = "demo/addons/com.daylily_zeleen.godot_universal_serializer2/bin/"
+    bin_dir = "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/"
     # Remove all last build files.
     for f in os.listdir(bin_dir):
         os.remove(path_join(bin_dir, f))
@@ -47,7 +47,7 @@ def main():
     print("Build finished, post processiong...")
 
     # Post process
-    plugin_dir = "demo/addons/com.daylily_zeleen.godot_universal_serializer"
+    plugin_dir = "demo/addons/com.daylily_zeleen.godot_universal_serializer2"
     dynamic_lib_suffixs = [".so", ".dylib", ".wasm", ".dll"]
 
     # Copy dynamic library.
@@ -59,7 +59,7 @@ def main():
             shutil.copyfile(path_join(bin_dir, f), path_join(dst_dir, f))
 
     # Copy readme and license.
-    dist_dir = "dist/addons/com.daylily_zeleen.godot_universal_serializer"
+    dist_dir = "dist/addons/com.daylily_zeleen.godot_universal_serializer2"
     shutil.copyfile("README.md", path_join(dist_dir, "README.md"))
     shutil.copyfile("README_zh_cn.md", path_join(dist_dir, "README_zh_cn.md"))
     shutil.copyfile("LICENSE", path_join(dist_dir, "LICENSE"))
@@ -73,7 +73,7 @@ def main():
     shutil.copyfile("LICENSE", path_join("demo", "LICENSE"))
 
     # Zip files.
-    zip_file_path = "bin\com.daylily_zeleen.godot_universal_serializer.zip"
+    zip_file_path = "bin\com.daylily_zeleen.godot_universal_serializer2.zip"
     if os.path.exists(zip_file_path):
         os.remove(zip_file_path)
     zip_file = zipfile.ZipFile(zip_file_path, "w")

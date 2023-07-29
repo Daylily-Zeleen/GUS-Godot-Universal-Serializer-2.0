@@ -16,7 +16,7 @@ jobs:
       matrix:
         target: [template_debug, template_release]
         arch: [universal]
-        shlibsuffix: "framework"
+        shlibsuffix: ["framework"]
 
     steps:
       - uses: actions/checkout@v3
