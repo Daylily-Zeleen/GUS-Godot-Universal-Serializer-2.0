@@ -17,7 +17,7 @@ jobs:
       - name: Make apt sources.list use the default Ubuntu repositories
         run: |
           sudo rm -f /etc/apt/sources.list.d/*
-          sudo cp -f misc/ci/sources.list /etc/apt/sources.list
+          sudo cp -f godot-cpp/misc/ci/sources.list /etc/apt/sources.list
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main"
           sudo apt-get update
@@ -31,24 +31,20 @@ jobs:
 
       - name: File formatting checks (file_format.sh)
         run: |
-          bash ./misc/scripts/file_format.sh
+          bash ./godot-cpp/misc/scripts/file_format.sh
 
       - name: Header guards formatting checks (header_guards.sh)
         run: |
-          bash ./misc/scripts/header_guards.sh
+          bash ./misc/header_guards.sh
 
       - name: Python style checks via black (black_format.sh)
         run: |
-          bash ./misc/scripts/black_format.sh
+          bash ./godot-cpp/misc/scripts/black_format.sh
 
       - name: Python scripts static analysis (mypy_check.sh)
         run: |
-          bash ./misc/scripts/mypy_check.sh
-
-      # - name: Bindings generation checks (ensures get_file_list returns all generated files)
-      #   run: |
-      #     python ./misc/scripts/check_get_file_list.py
+          bash ./godot-cpp/misc/scripts/mypy_check.sh
 
       - name: Style checks via clang-format (clang_format.sh)
         run: |
-          bash ./misc/scripts/clang_format.sh
+          bash ./godot-cpp/misc/scripts/clang_format.sh

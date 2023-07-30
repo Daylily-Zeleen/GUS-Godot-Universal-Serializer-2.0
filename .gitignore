@@ -24,7 +24,14 @@ CMakeLists.txt
 *.vcxproj
 *.vcxproj.*
 
-resource.h
+# Binaries
+*.dll
+*.so
+*.dylib
 *.pdb
-
 *.obj
+
+# Project specific
+/dist/addons/com.daylily_zeleen.godot_universal_serializer2/README.md
+/dist/addons/com.daylily_zeleen.godot_universal_serializer2/README_zh_cn.md
+/dist/addons/com.daylily_zeleen.godot_universal_serializer2/LICENSE

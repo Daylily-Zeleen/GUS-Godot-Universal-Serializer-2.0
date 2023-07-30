@@ -46,54 +46,34 @@ def main():
         os.system(args)
     print("Build finished, post processiong...")
 
-    # Post process
-    plugin_dir = "demo/addons/com.daylily_zeleen.godot_universal_serializer2"
+    # == Post process ==
+    # Copy dynamic library to dist dir.
     dynamic_lib_suffixs = [".so", ".dylib", ".wasm", ".dll"]
+    dist_dir = "dist/addons/com.daylily_zeleen.godot_universal_serializer2/"
+    dist_bin_dir = path_join(dist_dir, "bin")
 
-    # Copy dynamic library.
-    dst_dir = path_join(plugin_dir, "bin")
-    for f in os.listdir(bin_dir):
+    for f in os.listdir("bin/"):
         for suffix in dynamic_lib_suffixs:
             if not f.endswith(suffix):
                 continue
-            shutil.copyfile(path_join(bin_dir, f), path_join(dst_dir, f))
+            path = path_join(bin_dir, f)
+            dist_path = path_join(dist_bin_dir, f)
+            if os.path.isfile(path):
+                shutil.copyfile(path, dist_path)
+            else:
+                shutil.copytree(path, dist_path)
 
-    # Copy readme and license.
-    dist_dir = "dist/addons/com.daylily_zeleen.godot_universal_serializer2"
+    # Copy readme and license to dist path.
     shutil.copyfile("README.md", path_join(dist_dir, "README.md"))
     shutil.copyfile("README_zh_cn.md", path_join(dist_dir, "README_zh_cn.md"))
     shutil.copyfile("LICENSE", path_join(dist_dir, "LICENSE"))
 
-    shutil.copyfile("README.md", path_join(plugin_dir, "README.md"))
-    shutil.copyfile("README_zh_cn.md", path_join(plugin_dir, "README_zh_cn.md"))
-    shutil.copyfile("LICENSE", path_join(plugin_dir, "LICENSE"))
-
-    shutil.copyfile("README.md", path_join("demo", "README.md"))
-    shutil.copyfile("README_zh_cn.md", path_join("demo", "README_zh_cn.md"))
-    shutil.copyfile("LICENSE", path_join("demo", "LICENSE"))
-
-    # Zip files.
-    zip_file_path = "bin\com.daylily_zeleen.godot_universal_serializer2.zip"
-    if os.path.exists(zip_file_path):
-        os.remove(zip_file_path)
-    zip_file = zipfile.ZipFile(zip_file_path, "w")
-    zip_files_recursively(zip_file, "dist")
-    zip_file.close()
+    # Copy plugins to demo for test.
+    if os.path.exists("demo/addons/"):
+        os.removedirs("demo/addons/")
+    shutil.copytree("dist/addons", "demo/addons")
 
     print("Done!")
-
-
-def zip_files_recursively(zip_file: zipfile.ZipFile, dir: str):
-    dist_addons_dir = path_join(dir, "/addons")
-    for f in os.listdir(dist_addons_dir):
-        path = path_join(dist_addons_dir, f)
-        if os.path.isdir(path):
-            zip_files_recursively(zip_file, path)
-        else:
-            src_path = path
-            if src_path.startswith(dir):
-                src_path = src_path.replace(dir, "", 1)
-            zip_file.write(path, src_path)
 
 
 if __name__ == "__main__":

@@ -18,6 +18,13 @@ runs:
       run: |
         cp -r bin/libgus2.${{ inputs.artifact_file_suffix }} dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus2.${{ inputs.artifact_file_suffix }}
 
+    - name: Copy readme and license.
+      shell: sh
+      run: |
+        cp README.md dist/addons/com.daylily_zeleen.godot_universal_serializer2/README.md
+        cp README_zh_cn.md dist/addons/com.daylily_zeleen.godot_universal_serializer2/README_zh_cn.md
+        cp LICENSE dist/addons/com.daylily_zeleen.godot_universal_serializer2/LICENSE
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:

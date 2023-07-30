@@ -19,17 +19,11 @@ env.Append(CPPPATH=["src/"])
 # sources = Glob("src/*.cpp")
 sources = Glob("src/*.cpp")
 
-# # Require C++20
+# Optionally C++20
 # if env.get("is_msvc", False):
 #     env["CXXFLAGS"] = ["/std:c++20"]
 # else:
-#     if env["platform"] in ["android", "macos", "ios"]:
-#         # Clang flags
-#         env["CXXFLAGS"] = ["-std=c++20"]
-#         env["CXXFLAGS"].append("-v")
-#     else:
-#         # g++ flags
-#         env["CXXFLAGS"] = ["-std=c++2a"]
+#     env["CXXFLAGS"] = ["-std=c++2a"]
 
 
 if env["platform"] == "macos":
