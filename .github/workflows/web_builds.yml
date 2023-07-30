@@ -17,6 +17,7 @@ jobs:
       matrix:
         target: [template_debug, template_release]
         arch: [wasm32]
+        shlibsuffix: [wasm]
 
     steps:
       - uses: actions/checkout@v3
