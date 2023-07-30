@@ -1,0 +1,9 @@
+﻿/.vscode
+/demo
+/godot-cpp
+/src
+/dist
+/bin
+.clang-tidy
+.sconsign.dblite
+vc140.pdb
