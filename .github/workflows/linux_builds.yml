@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         target: [template_debug, template_release]
-        arch: [x86_64, arm64, rv64 ]
+        arch: [x86_64]
         shlibsuffix: [so]
 
     steps:

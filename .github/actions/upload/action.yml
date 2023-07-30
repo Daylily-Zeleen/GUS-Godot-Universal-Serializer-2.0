@@ -1,6 +1,14 @@
 name: Godot Universal Serializer 2 Upload
 description: Upload Godot Cpp and the Godot Universal Serializer 2 Extension.
 
+inputs:
+  platform:
+    required: true
+    description: Target platform.
+  artifact_file_suffix:
+    default: ''
+    description: Target artifact file suffix.
+
 runs:
   using: composite
   steps:
