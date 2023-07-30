@@ -32,19 +32,16 @@ sources = Glob("src/*.cpp")
 #         env["CXXFLAGS"] = ["-std=c++2a"]
 
 
-bin_dir = "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/"
-
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        bin_dir
-        + "libgus2.{}.{}.framework/libguss.{}.{}".format(
+        "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus2.{}.{}.framework/libguss.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
     )
 else:
     library = env.SharedLibrary(
-        bin_dir + "libgus2{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "bin/libgus2{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
         source=sources,
     )
 

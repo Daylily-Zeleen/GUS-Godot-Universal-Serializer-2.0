@@ -15,7 +15,7 @@ jobs:
       matrix:
         target: [template_debug, template_release]
         arch: [arm64]
-        shlibsuffix: ["dylib"]
+        shlibsuffix: [dylib]
 
     steps:
       - uses: actions/checkout@v3
@@ -32,4 +32,5 @@ jobs:
       - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/upload
         with:
+          platform: ios
           artifact_file_suffix: ios.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}

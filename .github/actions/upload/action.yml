@@ -4,10 +4,16 @@ description: Upload Godot Cpp and the Godot Universal Serializer 2 Extension.
 runs:
   using: composite
   steps:
+    - name: Copy dynamic library to dist dir.
+      shell: sh
+      if: ${{ inputs.platform != 'macos' }}
+      run: |
+        cp -r bin/libgus2.${{ inputs.artifact_file_suffix }} dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus2.${{ inputs.artifact_file_suffix }}
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: Godot Universal Serializer 2
         path: |
-          ${{ github.workspace }}/dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus2.${{ inputs.artifact_file_suffix }}
+          ${{ github.workspace }}/dist/**
         retention-days: 14

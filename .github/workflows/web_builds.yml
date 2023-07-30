@@ -44,5 +44,6 @@ jobs:
       - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/upload
         with:
+          platform: javascript
           artifact_file_suffix: javascript.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
 

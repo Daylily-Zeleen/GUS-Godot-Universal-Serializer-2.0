@@ -14,8 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         target: [template_debug, template_release]
-        arch: [x86_64]
-        shlibsuffix: ["so"]
+        arch: [x86_64, arm64, rv64 ]
+        shlibsuffix: [so]
 
     steps:
       - uses: actions/checkout@v3
@@ -33,5 +33,6 @@ jobs:
       - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/upload
         with:
+          platform: linux
           artifact_file_suffix: linux.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
 

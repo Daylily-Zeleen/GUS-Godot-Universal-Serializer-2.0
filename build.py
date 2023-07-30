@@ -29,7 +29,7 @@ def main():
         if arg.startswith("target"):
             debug_and_relaese = False
 
-    bin_dir = "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/"
+    bin_dir = "bin/"  # "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/"
     # Remove all last build files.
     for f in os.listdir(bin_dir):
         os.remove(path_join(bin_dir, f))
