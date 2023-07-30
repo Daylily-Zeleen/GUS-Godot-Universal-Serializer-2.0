@@ -81,6 +81,18 @@ using Integral = T;
 #define integral_t Integral<TInt>
 #endif // HAS_CXX20
 
+_INLINE_ void memcpy_reverse(
+		void *p_dst,
+		void const *p_src,
+		size_t p_size) {
+	assert(p_dst);
+	assert(p_src);
+	for (p_size -= 1; p_size >= 0; --p_size) {
+		*(char *)p_dst = ((char *)(p_src))[p_size];
+		p_dst = (char *)p_dst + 1;
+	}
+}
+
 #define decltype_pure(m_var) std::remove_const_t<std::remove_reference_t<std::remove_pointer_t<decltype(m_var)>>>
 
 // #define ENCODE_LEN_METHOD
@@ -160,18 +172,6 @@ template <typename TNumber, typename TInt, IS_BUFFER_T(TNumber), IS_INTEGRAL_T(T
 #endif // !HAS_CXX20
 _INLINE_ void cal_size(number_t p_val, integral_t &r_len) {
 	r_len += sizeof(decltype_pure(p_val));
-}
-
-_INLINE_ void memcpy_reverse(
-		_Out_writes_bytes_all_(_Size) void *p_dst,
-		_In_reads_bytes_(_Size) void const *p_src,
-		_In_ size_t p_size) {
-	assert(p_dst);
-	assert(p_src);
-	for (p_size -= 1; p_size >= 0; --p_size) {
-		*(char *)p_dst = ((char *)(p_src))[p_size];
-		p_dst = (char *)p_dst + 1;
-	}
 }
 
 #define MEMCPY(m_keep_order, m_dst, m_src, m_size) \
