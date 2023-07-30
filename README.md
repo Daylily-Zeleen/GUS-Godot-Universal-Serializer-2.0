@@ -1,9 +1,6 @@
 
 # GUS - Godot Universal Serializer 2.1.5 - Godot的通用序列化器 - V2.1.5（Godot 4.1 stable）
 
-# `master` branch is c++ source code。
-# You can go to `plugin` branch to browse compiled plugin, or go to release page to download the plugin which compatible to your using Godot version.
-
 ![Image text](icon.png)
 
 [中文文档](README_zh_cn.md) <- 点击这里。
@@ -20,26 +17,17 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
   You can run the `EditorScript` which named `GUS_benchmark.gd` to view the contrast between `GUS`, `Native`, and `JSON`.
 
 # How to use:
-  1. Download released plugin, install ~~and enable~~ this plugin just like other plugin( If the version is not match, please compile by yourselves).
-  2. ~~Modify properties of autoload which named `GUS` as you require.~~
-  3. Pass variable which without `Object`, `OID`, `Callable`, `Signal` into `GUS.var_to_bytes()` and get the serialized data, than send to network peer.
-  4. After the remote network peer obtains the serialized data, passe it into `GUS.bytes_to_var()` to get the same variable as before serialization.
+  1. Pass variable which without `Object`, `OID`, `Callable`, `Signal` into `GUS.var_to_bytes()` and get the serialized data, than send to network peer.
+  2. After the remote network peer obtains the serialized data, passe it into `GUS.bytes_to_var()` to get the same variable as before serialization.
 
 
 # Be careful:
   1. `Array` and `Dictionary` should not contain `Object`, `RID`, `Callable` and `Signal`.
-  2. This repo only compile `windos` version, on other platform, you need to compile by yourself (because I have not other device to test).
-  3. ~~The properties of autoload `GUS` between all network peers should keep the same.~~
-  4. ~~Currently unsupport Godot 4.x which compiled with `typeof double real_t`.~~
-  5. ~~Currently just support platform `windows`.~~
+
 
 
 # TODO:
-  1. ~~If I find the way to bind static method for `GDScript`, I will get rid of the autoload `GUS`.~~
-  2. ~~Compile `linux` and `osx` version.~~
-  3. ~~Compile `typeof double real_t` version to support custom Godot( but I encounter error which I can't handle it, too).~~
-  4. ~~Deal `Object`, `RID`, `Callable` and `Signal`.~~
-  5. Handle endian.
+  1. Handle endian.
 
 # How to compile:
   1. Follow [offical tutorial](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html) to set up you develop enviroment.

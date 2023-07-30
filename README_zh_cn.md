@@ -1,8 +1,6 @@
 
 # GUS - Godot Universal Serializer 2.1.5 - Godot的通用序列化器 - V2.1.5（Godot 4.1 stable）
 
-# `master`分支为C++ 源码，可以跳转到`plugin`分支直接查看已编译的插件，也可跳转到发布页面下载匹配您使用版本的插件。
-
 ![Image text](icon.png)
 
 [English doc](README.md) <- click here。
@@ -20,26 +18,17 @@
   可以通过运行名为`GUS_benchmark.gd`的编辑器脚本来查看 `GUS`、`Native` 以及 `JSON` 这三种方式的剧烈话反序列化测试对比。
 
 # 如何使用:
-  1. 下载发布的插件包，像其他插件一样安装~~和启用~~即可(如果版本不匹配，请自行编译)。
-  2. ~~根据你的需求代码修改名为`GUS`的Autoload的属性.~~
-  3. 传递不包含`Object`、 `OID`、 `Callable`以及 `Signal`的变量给 `GUS.var_to_bytes()`并获取序列化后数据，然后发送给其他网络对等体。
-  4. 远端的网络对等体获取到序列化后数据，传递给`GUS.bytes_to_var()`,即可获得与序列化前相同的变量。
+  1. 传递不包含`Object`、 `OID`、 `Callable`以及 `Signal`的变量给 `GUS.var_to_bytes()`并获取序列化后数据，然后发送给其他网络对等体。
+  2. 远端的网络对等体获取到序列化后数据，传递给`GUS.bytes_to_var()`,即可获得与序列化前相同的变量。
 
 
 # 注意:
   1. `Array` 和 `Dictionary` 不能包含 `Object`、`RID`、`Callable`以及`Signal`。
-  2. 该参考只编译了`windows`版本，如果您使用其他平台，需要自行构建（因为我没有其他平台的设备进行测试）。
-  3. ~~不同端的`GUS`属性必须保持一致才能正确反序列化。~~
-  4. ~~当前不支持`typeof double real_t`的自定义构建Godot 4.x版本。~~
-  5. ~~当前仅支持`windows`.~~
+
 
 
 # TODO:
-  1. ~~如果我找到绑定静态方法给`GDScript`的办法，我将抛弃自动加载`GUS`, 改为静态方法的方式去实现功能。~~
-  2. ~~编译`linux`和`osx`版本。~~
-  3. ~~编译`typeof double real_t`版本以支持自定义构建Godot 4.x版本(但我碰上了我无法处理的编译错误)。~~
-  4. ~~处理 `Object`、`RID`、`Callable`以及`Signal`。~~
-  5. 处理大小端。
+  1. 处理大小端。
 
 
 # 如何编译:
