@@ -31,7 +31,7 @@ jobs:
 
       - name: File formatting checks (file_format.sh)
         run: |
-          bash ./godot-cpp/misc/scripts/file_format.sh
+          bash ./misc/scripts/file_format.sh
 
       - name: Header guards formatting checks (header_guards.sh)
         run: |
@@ -39,12 +39,12 @@ jobs:
 
       - name: Python style checks via black (black_format.sh)
         run: |
-          bash ./godot-cpp/misc/scripts/black_format.sh
+          bash ./misc/scripts/black_format.sh
 
       - name: Python scripts static analysis (mypy_check.sh)
         run: |
-          bash ./godot-cpp/misc/scripts/mypy_check.sh
+          bash ./misc/scripts/mypy_check.sh
 
       - name: Style checks via clang-format (clang_format.sh)
         run: |
-          bash ./godot-cpp/misc/scripts/clang_format.sh
+          bash ./misc/scripts/clang_format.sh

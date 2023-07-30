@@ -60,7 +60,7 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 
   5. Now, you can get the addon which be located at `dist`.
 
-	 **Notice**: 
+	 **Notice**:
 	 - If your use `scons` instead of `python build_tool`, you can only get dynamic library at `bin` folder.
 	 - If build for `macos`, its binaries will generate at `dist` directly.
 
