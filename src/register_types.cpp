@@ -35,6 +35,7 @@ void initialize_gus_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+	GUS::initialize();
 	GDREGISTER_ABSTRACT_CLASS(GUS)
 }
 

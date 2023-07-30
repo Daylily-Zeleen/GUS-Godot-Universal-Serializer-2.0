@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include <iterator>
 #if _HAS_CXX20
 #include <concepts>
 #define HAS_CXX20
@@ -37,6 +36,7 @@
 #include <type_traits>
 #endif // _HAS_CXX20
 
+#include <assert.h>
 #include <memory>
 
 #if HAS_CXX20
@@ -45,7 +45,7 @@ concept EncodingBuffer = std::integral<T> && sizeof(T) == 1 && !std::is_same_v<T
 #define buffer_t EncodingBuffer auto
 #else // HAS_CXX20
 #define IS_BUFFER_T(T) std::enable_if_t<sizeof(T) == 1 || !std::is_same_v<T, bool>> *_##T = nullptr
-template <typename T, IS_BUFFER_T(T)>
+template <typename T> //, IS_BUFFER_T(T)>
 using EncodingBuffer = T;
 #define buffer_t EncodingBuffer<TBuffer>
 #endif // HAS_CXX20
@@ -162,30 +162,55 @@ _INLINE_ void cal_size(number_t p_val, integral_t &r_len) {
 	r_len += sizeof(decltype_pure(p_val));
 }
 
+_INLINE_ void memcpy_reverse(
+		_Out_writes_bytes_all_(_Size) void *p_dst,
+		_In_reads_bytes_(_Size) void const *p_src,
+		_In_ size_t p_size) {
+	assert(p_dst);
+	assert(p_src);
+	for (p_size -= 1; p_size >= 0; --p_size) {
+		*(char *)p_dst = ((char *)(p_src))[p_size];
+		p_dst = (char *)p_dst + 1;
+	}
+}
+
+#define MEMCPY(m_keep_order, m_dst, m_src, m_size) \
+	if constexpr (m_keep_order) {                  \
+		memcpy(m_dst, m_src, m_size);              \
+	} else {                                       \
+		memcpy_reverse(m_dst, m_src, m_size);      \
+	}
+
 #if !HAS_CXX20
-template <typename TBuffer, typename TNumber, IS_BUFFER_T(TBuffer), IS_NUMBER_T(TNumber)>
+template <bool little_endin, typename TBuffer, typename TNumber, IS_BUFFER_T(TBuffer), IS_NUMBER_T(TNumber)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const number_t &p_val) {
-	memcpy(p_buf, &p_val, sizeof(decltype_pure(p_val)));
+	MEMCPY(little_endin || sizeof(p_val) == 1, p_buf, &p_val, sizeof(decltype_pure(p_val)));
 	p_buf += sizeof(decltype_pure(p_val));
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
 template <typename TBuffer, typename TNumber, typename TInt, IS_BUFFER_T(TBuffer), IS_NUMBER_T(TNumber), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, number_t p_val, integral_t &r_len) {
-	memcpy(p_buf, &p_val, sizeof(decltype_pure(p_val)));
+	MEMCPY(little_endin || sizof(p_val) == 1, p_buf, &p_val, sizeof(decltype_pure(p_val)));
 	p_buf += sizeof(decltype_pure(p_val));
 	r_len += sizeof(decltype_pure(p_val));
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TNumber, IS_BUFFER_T(TBuffer), IS_NUMBER_T(TNumber)>
+template <bool little_endin, typename TBuffer, typename TNumber, IS_BUFFER_T(TBuffer), IS_NUMBER_T(TNumber)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, number_t &r_val) {
-	memcpy(&r_val, p_buf, sizeof(decltype_pure(r_val)));
+	MEMCPY(little_endin || sizeof(r_val) == 1, &r_val, p_buf, sizeof(decltype_pure(r_val)));
 	p_buf += sizeof(decltype_pure(r_val));
 }
 
@@ -200,59 +225,76 @@ _INLINE_ void cal_size_int(integral_t p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode_int(buffer_t *&p_buf, const integral_t &p_val) {
-	encode(p_buf, p_val);
+	encode<little_endin>(p_buf, p_val);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TNumber, typename TInt, IS_BUFFER_T(TBuffer), IS_NUMBER_T(TNumber), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TNumber, typename TInt, IS_BUFFER_T(TBuffer), IS_NUMBER_T(TNumber), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode_int(buffer_t *&p_buf, integral_t p_val, integral_t &r_len) {
-	encode(p_buf, p_val, r_len);
+	encode<little_endin>(p_buf, p_val, r_len);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void decode_int(buffer_t *&p_buf, integral_t &r_val) {
-	decode(p_buf, r_val);
+	decode<little_endin>(p_buf, r_val);
 }
 
 // ======== Varint Zigzag ========
 #define unsigned_int_t(int_t) std::make_unsigned<int_t>::type
 
 #if !HAS_CXX20
-template <typename TInt, IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TInt, IS_INTEGRAL_T(TInt)>
 _INLINE_ auto encode_zigzag(integral_t p_val) {
 #else // !HAS_CXX20
-template <std::integral TInt>
+template <bool little_endin, std::integral TInt>
 _INLINE_ auto encode_zigzag(TInt p_val) {
 #endif // !HAS_CXX20
 	using ret_t = typename unsigned_int_t(TInt);
+	if constexpr (!little_endin && sizeof(p_val) > 1) {
+		auto tmp = p_val;
+		memcpy_reverse(&p_val, &tmp, sizeof(p_val));
+	}
 	return (ret_t)((p_val << 1) ^ (p_val >> (sizeof(ret_t) * 8 - 1)));
 }
 
 #if !HAS_CXX20
-template <typename TInt, IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TInt, IS_INTEGRAL_T(TInt)>
 #else // !HAS_CXX20
-template <std::integral TInt>
+template <bool little_endin, std::integral TInt>
 #endif // !HAS_CXX20
-_INLINE_ TInt decode_zigzag(typename unsigned_int_t(TInt) val) {
-	return (TInt)((val >> 1) ^ -(val & 1));
+_INLINE_ TInt decode_zigzag(typename unsigned_int_t(TInt) p_val) {
+	auto ret = (TInt)((p_val >> 1) ^ -(p_val & 1));
+	if constexpr (!little_endin && sizeof(p_val) > 1) {
+		auto tmp = ret;
+		memcpy_reverse(&ret, &tmp, sizeof(p_val));
+		return ret;
+	} else {
+		return ret;
+	}
 }
 
 #if !HAS_CXX20
-template <typename TInt, typename TR, IS_INTEGRAL_T(TInt), IS_INTEGRAL_T(TR)>
+template <bool little_endin, typename TInt, typename TR, IS_INTEGRAL_T(TInt), IS_INTEGRAL_T(TR)>
 _INLINE_ void cal_size_varint(Integral<TInt> p_integer, Integral<TR> &r_len) {
 #else // !HAS_CXX20
-template <std::integral TInt>
+template <bool little_endin, std::integral TInt>
 _INLINE_ void cal_size_varint(TInt p_integer, integral_t &r_len) {
 #endif // !HAS_CXX20
-	typename unsigned_int_t(TInt) tmp = encode_zigzag(p_integer);
+	typename unsigned_int_t(TInt) tmp = encode_zigzag<little_endin>(p_integer);
 	while ((tmp >> 7) != 0) {
 		tmp >>= 7;
 		r_len++;
@@ -261,12 +303,13 @@ _INLINE_ void cal_size_varint(TInt p_integer, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
 _INLINE_ void encode_varint(buffer_t *&p_buf, integral_t p_integer) {
 #else // !HAS_CXX20
+template <bool little_endin>
 _INLINE_ void encode_varint(buffer_t *&p_buf, integral_t p_integer) {
 #endif // !HAS_CXX20
-	typename unsigned_int_t(decltype_pure(p_integer)) tmp = encode_zigzag(p_integer);
+	typename unsigned_int_t(decltype_pure(p_integer)) tmp = encode_zigzag<little_endin>(p_integer);
 	while ((tmp >> 7) != 0) {
 		*(p_buf++) = (uint8_t)(tmp | 0x80);
 		tmp >>= 7;
@@ -276,13 +319,13 @@ _INLINE_ void encode_varint(buffer_t *&p_buf, integral_t p_integer) {
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, typename TR, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt), IS_INTEGRAL_T(TR)>
+template <bool little_endin, typename TBuffer, typename TInt, typename TR, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt), IS_INTEGRAL_T(TR)>
 _INLINE_ void encode_varint(buffer_t *&p_buf, Integral<TInt> &p_integer, Integral<TR> &r_len) {
 #else // !HAS_CXX20
-template <std::integral TInt>
+template <bool little_endin, std::integral TInt>
 _INLINE_ void encode_varint(buffer_t *&p_buf, TInt integer, integral_t &r_len) {
 #endif // !HAS_CXX20
-	typename unsigned_int_t(TInt) tmp = encode_zigzag(integer);
+	typename unsigned_int_t(TInt) tmp = encode_zigzag<little_endin>(integer);
 	while ((tmp >> 7) != 0) {
 		*(p_buf++) = (uint8_t)(tmp | 0x80);
 		tmp >>= 7;
@@ -294,10 +337,10 @@ _INLINE_ void encode_varint(buffer_t *&p_buf, TInt integer, integral_t &r_len) {
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
 _INLINE_ void decode_varint(buffer_t *&p_buf, integral_t &r_val) {
 #else // !HAS_CXX20
-template <std::integral TInt>
+template <bool little_endin, std::integral TInt>
 _INLINE_ void decode_varint(buffer_t *&p_buf, TInt &r_val) {
 #endif // !HAS_CXX20
 	using tmp_t = typename unsigned_int_t(TInt);
@@ -310,7 +353,7 @@ _INLINE_ void decode_varint(buffer_t *&p_buf, TInt &r_val) {
 		i++;
 	}
 	tmp |= (b << (7 * i));
-	r_val = decode_zigzag<TInt>(tmp);
+	r_val = decode_zigzag<little_endin, TInt>(tmp);
 }
 
 // === String ===
@@ -327,7 +370,9 @@ _INLINE_ void cal_size(const char *p_cstr, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const char *p_cstr) {
 	const char *ptr = p_cstr;
@@ -339,7 +384,9 @@ _INLINE_ void encode(buffer_t *&p_buf, const char *p_cstr) {
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const char *p_cstr, integral_t &r_len) {
 	const char *ptr = p_cstr;
@@ -359,7 +406,9 @@ _INLINE_ void cal_size(const std_str_t &p_str, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TStdStr, IS_BUFFER_T(TBuffer), IS_STD_STR_T(TStdStr)>
+template <bool little_endin, typename TBuffer, typename TStdStr, IS_BUFFER_T(TBuffer), IS_STD_STR_T(TStdStr)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const std_str_t &p_str) {
 	memcpy(p_buf, p_str.c_str(), p_str.length());
@@ -368,7 +417,9 @@ _INLINE_ void encode(buffer_t *&p_buf, const std_str_t &p_str) {
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TStdStr, typename TInt, IS_BUFFER_T(TBuffer), IS_STD_STR_T(TStdStr), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TStdStr, typename TInt, IS_BUFFER_T(TBuffer), IS_STD_STR_T(TStdStr), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const std_str_t &p_str, integral_t &r_len) {
 	memcpy(p_buf, p_str.c_str(), p_str.length());
@@ -378,7 +429,9 @@ _INLINE_ void encode(buffer_t *&p_buf, const std_str_t &p_str, integral_t &r_len
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TStdStr, IS_BUFFER_T(TBuffer), IS_STD_STR_T(TStdStr)>
+template <bool little_endin, typename TBuffer, typename TStdStr, IS_BUFFER_T(TBuffer), IS_STD_STR_T(TStdStr)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, std_str_t &r_val) {
 	size_t len = 0;
@@ -405,41 +458,42 @@ _INLINE_ void cal_size(const T *p_arr, integral_t p_array_size, integral_t &r_le
 }
 
 #if !HAS_CXX20
-template <typename T, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, typename T, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
 #else // !HAS_CXX20
-template <typename T>
+template <bool little_endin, typename T>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const T *p_arr, integral_t p_array_size) {
-	encode_varint<decltype_pure(p_array_size)>(p_buf, p_array_size);
+	encode_varint<little_endin, decltype_pure(p_array_size)>(p_buf, p_array_size);
 	for (integral_t i = 0; i < p_array_size; i++) {
-		encode<T>(p_buf, p_array_size[i]);
+		encode<little_endin, T>(p_buf, p_arr[i]);
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename T, typename TBuffer, typename TInt, typename TR, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt), IS_INTEGRAL_T(TR)>
+template <bool little_endin, typename TBuffer, typename TInt, typename TR, typename T, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt), IS_INTEGRAL_T(TR)>
+_INLINE_ void encode(buffer_t *&p_buf, const T *p_arr, integral_t p_array_size, Integral<TR> &r_len) {
 #else // !HAS_CXX20
-template <typename T>
-#endif // !HAS_CXX20
+template <bool little_endin, typename T>
 _INLINE_ void encode(buffer_t *&p_buf, const T *p_arr, integral_t p_array_size, integral_t &r_len) {
-	encode_varint<integral_t>(p_buf, p_array_size, r_len);
+#endif // !HAS_CXX20
+	encode_varint<little_endin, decltype_pure(p_array_size)>(p_buf, p_array_size, r_len);
 	for (integral_t i = 0; i < p_array_size; i++) {
-		encode<T>(p_buf, p_array_size[i], r_len);
+		encode<little_endin, T>(p_buf, p_arr[i], r_len);
 	}
 }
 #endif
 
 // Your should ensure the passed "r_arr" size is larger than "r_array_size".
 #if !HAS_CXX20
-template <typename T, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, typename T, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
 #else // !HAS_CXX20
-template <typename T>
+template <bool little_endin, typename T>
 #endif // !HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, T *r_arr, integral_t r_array_size) {
-	decode_varint<decltype_pure(r_array_size)>(p_buf, r_array_size);
+	decode_varint<little_endin, decltype_pure(r_array_size)>(p_buf, r_array_size);
 	for (integral_t i = 0; i < r_array_size; i++) {
-		decode(p_buf, r_arr[i]);
+		decode<little_endin>(p_buf, r_arr[i]);
 	}
 }
 
@@ -453,29 +507,35 @@ _INLINE_ void cal_size(const pair_t &p_pair, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TPair, IS_BUFFER_T(TBuffer), IS_PAIR_T(TPair)>
+template <bool little_endin, typename TBuffer, typename TPair, IS_BUFFER_T(TBuffer), IS_PAIR_T(TPair)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const pair_t &p_pair) {
-	encode(p_buf, p_pair.first);
-	encode(p_buf, p_pair.second);
+	encode<little_endin>(p_buf, p_pair.first);
+	encode<little_endin>(p_buf, p_pair.second);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TPair, typename TInt, IS_BUFFER_T(TBuffer), IS_PAIR_T(TPair), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TPair, typename TInt, IS_BUFFER_T(TBuffer), IS_PAIR_T(TPair), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const pair_t &p_pair, integral_t &r_len) {
-	encode(p_buf, p_pair.first, r_len);
-	encode(p_buf, p_pair.second, r_len);
+	encode<little_endin>(p_buf, p_pair.first, r_len);
+	encode<little_endin>(p_buf, p_pair.second, r_len);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TPair, IS_BUFFER_T(TBuffer), IS_PAIR_T(TPair)>
+template <bool little_endin, typename TBuffer, typename TPair, IS_BUFFER_T(TBuffer), IS_PAIR_T(TPair)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, pair_t &r_pair) {
-	decode(p_buf, r_pair.first);
-	decode(p_buf, r_pair.second);
+	decode<little_endin>(p_buf, r_pair.first);
+	decode<little_endin>(p_buf, r_pair.second);
 }
 
 // Normal Rnage containers.
@@ -491,23 +551,27 @@ _INLINE_ void cal_size(const normal_range_t &p_container, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TNormalRange, IS_BUFFER_T(TBuffer), IS_NORMAL_RANGE_T(TNormalRange)>
+template <bool little_endin, typename TBuffer, typename TNormalRange, IS_BUFFER_T(TBuffer), IS_NORMAL_RANGE_T(TNormalRange)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const normal_range_t &p_container) {
-	encode(p_buf, p_container.size());
+	encode<little_endin>(p_buf, p_container.size());
 	for (auto element : p_container) {
-		encode(p_buf, element);
+		encode<little_endin>(p_buf, element);
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TNormalRange, typename TInt, IS_BUFFER_T(TBuffer), IS_NORMAL_RANGE_T(TNormalRange), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TNormalRange, typename TInt, IS_BUFFER_T(TBuffer), IS_NORMAL_RANGE_T(TNormalRange), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const normal_range_t &p_container, integral_t &r_len) {
-	encode(p_buf, p_container.size(), r_len);
+	encode<little_endin>(p_buf, p_container.size(), r_len);
 	for (auto element : p_container) {
-		encode(p_buf, element, r_len);
+		encode<little_endin>(p_buf, element, r_len);
 	}
 }
 #endif
@@ -525,33 +589,37 @@ _INLINE_ void cal_size(const random_sized_range_t &p_container, integral_t &r_le
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TRandomSizedRange, IS_BUFFER_T(TBuffer), IS_RANDOMSIZED_RANGE_T(TRandomSizedRange)>
+template <bool little_endin, typename TBuffer, typename TRandomSizedRange, IS_BUFFER_T(TBuffer), IS_RANDOMSIZED_RANGE_T(TRandomSizedRange)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const random_sized_range_t &p_container) {
 	auto size = p_container.size();
-	encode(p_buf, size);
+	encode<little_endin>(p_buf, size);
 	for (decltype_pure(size) i = 0; i < size; i++) {
-		encode(p_buf, p_container[i]);
+		encode<little_endin>(p_buf, p_container[i]);
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TRandomSizedRange, typename TInt, IS_BUFFER_T(TBuffer), IS_RANDOMSIZED_RANGE_T(TRandomSizedRange), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TRandomSizedRange, typename TInt, IS_BUFFER_T(TBuffer), IS_RANDOMSIZED_RANGE_T(TRandomSizedRange), IS_INTEGRAL_T(TInt)>
+#else // !HAS_CXX20
+template <bool little_endin>
 #endif // !HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const random_sized_range_t &p_container, integral_t &r_len) {
 	auto size = p_container.size();
-	encode(p_buf, size, r_len);
+	encode<little_endin>(p_buf, size, r_len);
 	for (decltype_pure(size) i = 0; i < size; i++) {
-		encode(p_buf, p_container[i], r_len);
+		encode<little_endin>(p_buf, p_container[i], r_len);
 	}
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TContainer, typename TE, IS_BUFFER_T(TBuffer), std::enable_if<std::is_default_constructible_v<TE> && std::is_same_v<decltype((TContainer::value_type)), TE>> *dammpy = nullptr>
+template <bool little_endin, typename TBuffer, typename TContainer, typename TE, IS_BUFFER_T(TBuffer), std::enable_if<std::is_default_constructible_v<TE> && std::is_same_v<decltype((TContainer::value_type)), TE>> *dammpy = nullptr>
 #else // !HAS_CXX20
-template <typename TContainer, std::default_initializable TE>
+template <bool little_endin, typename TContainer, std::default_initializable TE>
 requires requires(TContainer t) {
 	requires std::ranges::range<TContainer>;
 	requires std::default_initializable<TE>;
@@ -560,13 +628,10 @@ requires requires(TContainer t) {
 #endif // !HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, TContainer &r_container) {
 	size_t size;
-	decode<size_t>(p_buf, size);
-#ifdef CLEAR_CONTAINER_BEFOR_DECODE
-	r_container.clear();
-#endif
+	decode<little_endin, size_t>(p_buf, size);
 	for (size_t i = size; i > 0; i--) {
 		TE e;
-		decode(p_buf, e);
+		decode<little_endin>(p_buf, e);
 		if constexpr (std::is_invocable_v<decltype(TContainer::emplace_back), TE>) {
 			r_container.emplace_back(e);
 		} else if constexpr (std::is_invocable_v<decltype(TContainer::emplace), TE>) {

@@ -20,7 +20,7 @@ project/assembly_name="GUS TEST"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/com.daylily_zeleen.godot_universal_serializer/plugin.cfg")
+enabled=PackedStringArray()
 
 [native_extensions]
 

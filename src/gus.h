@@ -50,6 +50,8 @@ protected:
 		ClassDB::bind_static_method(get_class_static(), D_METHOD("var_to_bytes", "var"), GUS::var_to_bytes);
 		ClassDB::bind_static_method(get_class_static(), D_METHOD("bytes_to_var", "bytes"), GUS::bytes_to_var);
 
+		ClassDB::bind_static_method(get_class_static(), D_METHOD("is_big_endin_device"), GUS::is_big_endin_device);
+
 		BIND_ENUM_CONSTANT(COLOR_ENCODE_TYPE_RAW);
 		BIND_ENUM_CONSTANT(COLOR_ENCODE_TYPE_HEX);
 		BIND_ENUM_CONSTANT(COLOR_ENCODE_TYPE_HEX64);
@@ -90,28 +92,59 @@ public:
 	}
 
 	static godot::PackedByteArray var_to_bytes(const godot::Variant &p_var) {
-		PackedByteArray r;
-		decltype_pure(r.size()) size = 0;
-		dserializer::cal_size(p_var, size);
-		r.resize(size);
-		auto *buf = r.ptrw();
-		dserializer::encode(buf, p_var);
-		return r;
+		return (*var_to_bytes_ptr)(p_var);
 	}
-	static godot::Variant bytes_to_var(const godot::PackedByteArray &p_bytes) {
-		using const_buf_t = decltype_pure(p_bytes.ptr());
-		using buf_t = std::remove_const_t<std::remove_pointer_t<const_buf_t>> *;
-		auto buf = const_cast<buf_t>(p_bytes.ptr());
 
-		Variant r;
-		dserializer::decode(buf, r);
-		return r;
+	static godot::Variant bytes_to_var(const godot::PackedByteArray &p_bytes) {
+		return (*bytes_to_var_ptr)(p_bytes);
+	}
+
+	static bool is_big_endin_device() { return big_endin; }
+
+	static void initialize() {
+		int i = 1;
+		big_endin = (*(char *)&i == 0);
+		if (big_endin) {
+			var_to_bytes_ptr = &_var_to_bytes<false>;
+			bytes_to_var_ptr = &_bytes_to_var<false>;
+		} else {
+			var_to_bytes_ptr = &_var_to_bytes<true>;
+			bytes_to_var_ptr = &_bytes_to_var<true>;
+		}
 	}
 
 private:
 	static ColorEncodeType color_encode_type;
+	static decltype(&var_to_bytes) var_to_bytes_ptr;
+	static decltype(&bytes_to_var) bytes_to_var_ptr;
+	static bool big_endin;
+
+	template <bool little_endin>
+	static godot::PackedByteArray _var_to_bytes(const godot::Variant &p_var) {
+		PackedByteArray r;
+		decltype_pure(r.size()) size = 0;
+		dserializer::cal_size<little_endin>(p_var, size);
+		r.resize(size);
+		auto *buf = r.ptrw();
+		dserializer::encode<little_endin>(buf, p_var);
+		return r;
+	}
+
+	template <bool little_endin>
+	static godot::Variant _bytes_to_var(const godot::PackedByteArray &p_bytes) {
+		using const_buf_t = decltype_pure(p_bytes.ptr());
+		using buf_t = std::remove_const_t<std::remove_pointer_t<const_buf_t>>;
+		auto buf = const_cast<buf_t *>(p_bytes.ptr());
+
+		Variant r;
+		dserializer::decode<little_endin>(buf, r);
+		return r;
+	}
 };
 
 GUS::ColorEncodeType GUS::color_encode_type = GUS::COLOR_ENCODE_TYPE_RAW;
+decltype(&GUS::var_to_bytes) GUS::var_to_bytes_ptr = nullptr;
+decltype(&GUS::bytes_to_var) GUS::bytes_to_var_ptr = nullptr;
+bool GUS::big_endin = false;
 
 VARIANT_ENUM_CAST(GUS::ColorEncodeType);

@@ -123,7 +123,9 @@ _INLINE_ void cal_size(const godot_str_t &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotStr, IS_BUFFER_T(TBuffer), IS_GODOT_STR_T(TGodotStr)>
+template <bool little_endin, typename TBuffer, typename TGodotStr, IS_BUFFER_T(TBuffer), IS_GODOT_STR_T(TGodotStr)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_str_t &p_val) {
 	auto utf8 = String(p_val).utf8();
@@ -136,7 +138,9 @@ _INLINE_ void encode(buffer_t *&p_buf, const godot_str_t &p_val) {
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotStr, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_STR_T(TGodotStr), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TGodotStr, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_STR_T(TGodotStr), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_str_t &p_val, integral_t &r_len) {
 	auto utf8 = static_cast<String>(p_val).utf8();
@@ -148,7 +152,9 @@ _INLINE_ void encode(buffer_t *&p_buf, const godot_str_t &p_val, integral_t &r_l
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotStr, IS_BUFFER_T(TBuffer), IS_GODOT_STR_T(TGodotStr)>
+template <bool little_endin, typename TBuffer, typename TGodotStr, IS_BUFFER_T(TBuffer), IS_GODOT_STR_T(TGodotStr)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, godot_str_t &r_val) {
 	int32_t len = 0;
@@ -168,30 +174,60 @@ _INLINE_ void cal_size(const godot_vec_t &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotVec, IS_BUFFER_T(TBuffer), IS_GODOT_VEC_T(TGodotVec)>
+template <bool little_endin, typename TBuffer, typename TGodotVec, IS_BUFFER_T(TBuffer), IS_GODOT_VEC_T(TGodotVec)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_vec_t &p_val) {
-	memcpy(p_buf, &p_val, (decltype_pure(p_val)::AXIS_COUNT * sizeof(decltype_pure(p_val[0]))));
-	p_buf += (decltype_pure(p_val)::AXIS_COUNT * sizeof(decltype_pure(p_val[0])));
+	using vec_t = decltype_pure(p_val);
+	if constexpr (little_endin) {
+		memcpy(p_buf, &p_val, vec_t::AXIS_COUNT * sizeof(decltype_pure(p_val[0])));
+		p_buf += vec_t::AXIS_COUNT * sizeof(decltype_pure(p_val[0]));
+	} else {
+		for (uint8_t i = 0; i < vec_t::AXIS_COUNT; ++i) {
+			memcpy_reverse(p_buf, &p_val[i], sizeof(p_val[0]));
+			p_buf += sizeof(p_val[0]);
+		}
+	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotVec, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_VEC_T(TGodotVec), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TGodotVec, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_VEC_T(TGodotVec), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_vec_t &p_val, integral_t &r_len) {
-	memcpy(p_buf, &p_val, (decltype_pure(p_val)::AXIS_COUNT * sizeof(decltype_pure(p_val[0]))));
-	p_buf += (decltype_pure(p_val)::AXIS_COUNT * sizeof(decltype_pure(p_val[0])));
+	using vec_t = decltype_pure(p_val);
+	if constexpr (little_endin) {
+		memcpy(p_buf, &p_val, (vec_t::AXIS_COUNT * sizeof(decltype_pure(p_val[0]))));
+		p_buf += vec_t::AXIS_COUNT * sizeof(decltype_pure(p_val[0]));
+	} else {
+		for (uint8_t i = 0; i < vec_t::AXIS_COUNT; ++i) {
+			memcpy_reverse(p_buf, &p_val[i], sizeof(p_val[0]));
+			p_buf += sizeof(p_val[0]);
+		}
+	}
 	r_len += (decltype_pure(p_val)::AXIS_COUNT * sizeof(decltype_pure(p_val[0])));
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotVec, IS_BUFFER_T(TBuffer), IS_GODOT_VEC_T(TGodotVec)>
+template <bool little_endin, typename TBuffer, typename TGodotVec, IS_BUFFER_T(TBuffer), IS_GODOT_VEC_T(TGodotVec)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, godot_vec_t &r_val) {
-	memcpy(&r_val, p_buf, (decltype_pure(r_val)::AXIS_COUNT * sizeof(decltype_pure(r_val[0]))));
-	p_buf += (decltype_pure(r_val)::AXIS_COUNT * sizeof(decltype_pure(r_val[0])));
+	using vec_t = decltype_pure(r_val);
+	if constexpr (little_endin) {
+		memcpy(&r_val, p_buf, vec_t::AXIS_COUNT * sizeof(decltype_pure(r_val[0])));
+		p_buf += vec_t::AXIS_COUNT * sizeof(decltype_pure(r_val[0]));
+	} else {
+		for (uint8_t i = 0; i < vec_t::AXIS_COUNT; ++i) {
+			memcpy_reverse(&r_val[i], p_buf, sizeof(r_val[0]));
+			p_buf += sizeof(r_val[0]);
+		}
+	}
 }
 
 // (Quaternion, Color)
@@ -203,30 +239,57 @@ _INLINE_ void cal_size(const godot_components4_t &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotComponents4, IS_BUFFER_T(TBuffer), IS_GODOT_COMPONENTS4_T(TGodotComponents4)>
+template <bool little_endin, typename TBuffer, typename TGodotComponents4, IS_BUFFER_T(TBuffer), IS_GODOT_COMPONENTS4_T(TGodotComponents4)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_components4_t &p_val) {
-	memcpy(p_buf, &p_val, (4 * sizeof(decltype_pure(p_val[0]))));
-	p_buf += (4 * sizeof(decltype_pure(p_val[0])));
+	if constexpr (little_endin) {
+		memcpy(p_buf, &p_val, (4 * sizeof(decltype_pure(p_val[0]))));
+		p_buf += (4 * sizeof(decltype_pure(p_val[0])));
+	} else {
+		for (uint8_t i = 0; i < 4; ++i) {
+			memcpy_reverse(p_buf, &p_val[i], sizeof(p_val[0]));
+			p_buf += sizeof(p_val[0]);
+		}
+	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotComponents4, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_COMPONENTS4_T(TGodotComponents4), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TGodotComponents4, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_COMPONENTS4_T(TGodotComponents4), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_components4_t &p_val, integral_t &r_len) {
-	memcpy(p_buf, &p_val, (4 * sizeof(decltype_pure(p_val[0]))));
-	p_buf += (4 * sizeof(decltype_pure(p_val[0])));
+	if constexpr (little_endin) {
+		memcpy(p_buf, &p_val, (4 * sizeof(decltype_pure(p_val[0]))));
+		p_buf += (4 * sizeof(decltype_pure(p_val[0])));
+	} else {
+		for (uint8_t i = 0; i < 4; ++i) {
+			memcpy_reverse(p_buf, &p_val[i], sizeof(p_val[0]));
+			p_buf += sizeof(p_val[0]);
+		}
+	}
 	r_len += (sizeof(decltype_pure(p_val[0])) * 4);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotComponents4, IS_BUFFER_T(TBuffer), IS_GODOT_COMPONENTS4_T(TGodotComponents4)>
+template <bool little_endin, typename TBuffer, typename TGodotComponents4, IS_BUFFER_T(TBuffer), IS_GODOT_COMPONENTS4_T(TGodotComponents4)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, godot_components4_t &r_val) {
-	memcpy(&r_val, p_buf, (4 * sizeof(decltype_pure(r_val[0]))));
-	p_buf += (4 * sizeof(decltype_pure(r_val[0])));
+	if constexpr (little_endin) {
+		memcpy(&r_val, p_buf, (4 * sizeof(decltype_pure(r_val[0]))));
+		p_buf += (4 * sizeof(decltype_pure(r_val[0])));
+	} else {
+		for (uint8_t i = 0; i < 4; ++i) {
+			memcpy_reverse(&r_val[i], p_buf, sizeof(decltype(r_val[0])));
+			p_buf += sizeof(decltype(r_val[0]));
+		}
+	}
 }
 
 // Rect2
@@ -239,29 +302,35 @@ _INLINE_ void cal_size(const godot_rect2_t &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotRect2, IS_BUFFER_T(TBuffer), IS_GODOT_RECT2_T(TGodotRect2)>
+template <bool little_endin, typename TBuffer, typename TGodotRect2, IS_BUFFER_T(TBuffer), IS_GODOT_RECT2_T(TGodotRect2)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_rect2_t &p_val) {
-	encode(p_buf, p_val.position);
-	encode(p_buf, p_val.size);
+	encode<little_endin>(p_buf, p_val.position);
+	encode<little_endin>(p_buf, p_val.size);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotRect2, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_RECT2_T(TGodotRect2), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TGodotRect2, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_RECT2_T(TGodotRect2), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_rect2_t &p_val, integral_t &r_len) {
-	encode(p_buf, p_val.position, r_len);
-	encode(p_buf, p_val.size, r_len);
+	encode<little_endin>(p_buf, p_val.position, r_len);
+	encode<little_endin>(p_buf, p_val.size, r_len);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotRect2, IS_BUFFER_T(TBuffer), IS_GODOT_RECT2_T(TGodotRect2)>
+template <bool little_endin, typename TBuffer, typename TGodotRect2, IS_BUFFER_T(TBuffer), IS_GODOT_RECT2_T(TGodotRect2)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, godot_rect2_t &r_val) {
-	decode(p_buf, r_val.position);
-	decode(p_buf, r_val.size);
+	decode<little_endin>(p_buf, r_val.position);
+	decode<little_endin>(p_buf, r_val.size);
 }
 
 // Transform2D
@@ -275,32 +344,38 @@ _INLINE_ void cal_size(const Transform2D &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Transform2D &p_val) {
-	encode(p_buf, p_val[0]);
-	encode(p_buf, p_val[1]);
-	encode(p_buf, p_val[2]);
+	encode<little_endin>(p_buf, p_val[0]);
+	encode<little_endin>(p_buf, p_val[1]);
+	encode<little_endin>(p_buf, p_val[2]);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Transform2D &p_val, integral_t &r_len) {
-	encode(p_buf, p_val[0], r_len);
-	encode(p_buf, p_val[1], r_len);
-	encode(p_buf, p_val[2], r_len);
+	encode<little_endin>(p_buf, p_val[0], r_len);
+	encode<little_endin>(p_buf, p_val[1], r_len);
+	encode<little_endin>(p_buf, p_val[2], r_len);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, Transform2D &r_val) {
-	decode(p_buf, r_val[0]);
-	decode(p_buf, r_val[1]);
-	decode(p_buf, r_val[2]);
+	decode<little_endin>(p_buf, r_val[0]);
+	decode<little_endin>(p_buf, r_val[1]);
+	decode<little_endin>(p_buf, r_val[2]);
 }
 
 // PLANE
@@ -313,29 +388,35 @@ _INLINE_ void cal_size(const Plane &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Plane &p_val) {
-	encode(p_buf, p_val.normal);
-	encode(p_buf, p_val.d);
+	encode<little_endin>(p_buf, p_val.normal);
+	encode<little_endin>(p_buf, p_val.d);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Plane &p_val, integral_t &r_len) {
-	encode(p_buf, p_val.normal, r_len);
-	encode(p_buf, p_val.d, r_len);
+	encode<little_endin>(p_buf, p_val.normal, r_len);
+	encode<little_endin>(p_buf, p_val.d, r_len);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, Plane &r_val) {
-	decode(p_buf, r_val.normal);
-	decode(p_buf, r_val.d);
+	decode<little_endin>(p_buf, r_val.normal);
+	decode<little_endin>(p_buf, r_val.d);
 }
 
 // Projection
@@ -350,35 +431,41 @@ _INLINE_ void cal_size(const Projection &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Projection &p_val) {
-	encode(p_buf, p_val[0]);
-	encode(p_buf, p_val[1]);
-	encode(p_buf, p_val[2]);
-	encode(p_buf, p_val[3]);
+	encode<little_endin>(p_buf, p_val[0]);
+	encode<little_endin>(p_buf, p_val[1]);
+	encode<little_endin>(p_buf, p_val[2]);
+	encode<little_endin>(p_buf, p_val[3]);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Projection &p_val, integral_t &r_len) {
-	encode(p_buf, p_val[0], r_len);
-	encode(p_buf, p_val[1], r_len);
-	encode(p_buf, p_val[2], r_len);
-	encode(p_buf, p_val[3], r_len);
+	encode<little_endin>(p_buf, p_val[0], r_len);
+	encode<little_endin>(p_buf, p_val[1], r_len);
+	encode<little_endin>(p_buf, p_val[2], r_len);
+	encode<little_endin>(p_buf, p_val[3], r_len);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, Projection &r_val) {
-	decode(p_buf, r_val[0]);
-	decode(p_buf, r_val[1]);
-	decode(p_buf, r_val[2]);
-	decode(p_buf, r_val[3]);
+	decode<little_endin>(p_buf, r_val[0]);
+	decode<little_endin>(p_buf, r_val[1]);
+	decode<little_endin>(p_buf, r_val[2]);
+	decode<little_endin>(p_buf, r_val[3]);
 }
 
 // AABB
@@ -391,29 +478,35 @@ _INLINE_ void cal_size(const godot::AABB &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot::AABB &p_val) {
-	encode(p_buf, p_val.position);
-	encode(p_buf, p_val.size);
+	encode<little_endin>(p_buf, p_val.position);
+	encode<little_endin>(p_buf, p_val.size);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot::AABB &p_val, integral_t &r_len) {
-	encode(p_buf, p_val.position, r_len);
-	encode(p_buf, p_val.size, r_len);
+	encode<little_endin>(p_buf, p_val.position, r_len);
+	encode<little_endin>(p_buf, p_val.size, r_len);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, godot::AABB &r_val) {
-	decode(p_buf, r_val.position);
-	decode(p_buf, r_val.size);
+	decode<little_endin>(p_buf, r_val.position);
+	decode<little_endin>(p_buf, r_val.size);
 }
 
 // Basis
@@ -427,32 +520,38 @@ _INLINE_ void cal_size(const Basis &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Basis &p_val) {
-	encode(p_buf, p_val[0]);
-	encode(p_buf, p_val[1]);
-	encode(p_buf, p_val[2]);
+	encode<little_endin>(p_buf, p_val[0]);
+	encode<little_endin>(p_buf, p_val[1]);
+	encode<little_endin>(p_buf, p_val[2]);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Basis &p_val, integral_t &r_len) {
-	encode(p_buf, p_val[0], r_len);
-	encode(p_buf, p_val[1], r_len);
-	encode(p_buf, p_val[2], r_len);
+	encode<little_endin>(p_buf, p_val[0], r_len);
+	encode<little_endin>(p_buf, p_val[1], r_len);
+	encode<little_endin>(p_buf, p_val[2], r_len);
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, Basis &r_val) {
-	decode(p_buf, r_val[0]);
-	decode(p_buf, r_val[1]);
-	decode(p_buf, r_val[2]);
+	decode<little_endin>(p_buf, r_val[0]);
+	decode<little_endin>(p_buf, r_val[1]);
+	decode<little_endin>(p_buf, r_val[2]);
 }
 
 // Transform3D
@@ -465,28 +564,35 @@ _INLINE_ void cal_size(const Transform3D &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Transform3D &p_val) {
-	encode(p_buf, p_val.basis);
-	encode(p_buf, p_val.origin);
+	encode<little_endin>(p_buf, p_val.basis);
+	encode<little_endin>(p_buf, p_val.origin);
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const Transform3D &p_val, integral_t &r_len) {
-	encode(p_buf, p_val.basis, r_len);
-	encode(p_buf, p_val.origin, r_len);
+	encode<little_endin>(p_buf, p_val.basis, r_len);
+	encode<little_endin>(p_buf, p_val.origin, r_len);
 }
 #endif
+
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, Transform3D &r_val) {
-	decode(p_buf, r_val.basis);
-	decode(p_buf, r_val.origin);
+	decode<little_endin>(p_buf, r_val.basis);
+	decode<little_endin>(p_buf, r_val.origin);
 }
 
 // Color
@@ -506,87 +612,100 @@ _INLINE_ void cal_size_color(const Color &p_val, integral_t &r_len) {
 }
 
 #if !HAS_CXX20
-template <uint8_t encode_type, typename TBuffer, IS_BUFFER_T(TBuffer)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type, class TBuffer, IS_BUFFER_T(TBuffer)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #else //!HAS_CXX20
-template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #endif //!HAS_CXX20
 _INLINE_ void encode_color(buffer_t *&p_buf, const Color &p_val) {
 	if (encode_type == 1) { // Hex
-		encode_int(p_buf, p_val.to_rgba32());
+		encode_int<little_endin>(p_buf, p_val.to_rgba32());
 	} else if (encode_type == 1) { // Hex64
-		encode_int(p_buf, p_val.to_rgba64());
+		encode_int<little_endin>(p_buf, p_val.to_rgba64());
 	} else { // raw
-		encode(p_buf, p_val);
+		encode<little_endin>(p_buf, p_val);
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <uint8_t encode_type, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type, class TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #else //!HAS_CXX20
-template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #endif //!HAS_CXX20
 _INLINE_ void encode_color(buffer_t *&p_buf, const Color &p_val, integral_t &r_len) {
 	if (encode_type == 1) { // Hex
-		encode_int(p_buf, p_val.to_rgba32(), r_len);
+		encode_int<little_endin>(p_buf, p_val.to_rgba32(), r_len);
 	} else if (encode_type == 1) { // Hex64
-		encode_int(p_buf, p_val.to_rgba64(), r_len);
+		encode_int<little_endin>(p_buf, p_val.to_rgba64(), r_len);
 	} else { // raw
-		encode(p_buf, p_val, r_len);
+		encode<little_endin>(p_buf, p_val, r_len);
 	}
 }
 #endif
 
 #if !HAS_CXX20
-template <uint8_t encode_type, typename TBuffer, IS_BUFFER_T(TBuffer)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type, class TBuffer, IS_BUFFER_T(TBuffer)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #else //!HAS_CXX20
-template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #endif //!HAS_CXX20
 _INLINE_ void decode_color(buffer_t *&p_buf, Color &r_val) {
 	if (encode_type == 1) { // Hex
 		uint32_t hex;
-		decode_int(p_buf, hex);
+		decode_int<little_endin>(p_buf, hex);
 		r_val = Color::hex(hex);
 	} else if (encode_type == 1) { // Hex64
 		uint64_t hex64;
-		decode_int(p_buf, hex64);
+		decode_int<little_endin>(p_buf, hex64);
 		r_val = Color::hex64(hex64);
 	} else { // raw
-		decode(p_buf, r_val);
+		decode<little_endin>(p_buf, r_val);
 	}
 }
 
 // =================
 // GodotFixedElementLenthArray
 #if !HAS_CXX20
-template <typename TGodotFixedElementLengthArray, typename TInt, IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(TGodotFixedElementLengthArray), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TGodotFixedElementLengthArray, typename TInt, IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(TGodotFixedElementLengthArray), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void cal_size(const godot_fixed_element_length_array_t &p_val, integral_t &r_len) {
 	auto size = p_val.size();
-	cal_size_varint(size, r_len);
+	cal_size_varint<little_endin>(size, r_len);
 	using element_t = decltype_pure(p_val.ptr());
 	r_len += sizeof(element_t) * size;
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotFixedElementLengthArray, IS_BUFFER_T(TBuffer), IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(TGodotFixedElementLengthArray)>
+template <bool little_endin, typename TBuffer, typename TGodotFixedElementLengthArray, IS_BUFFER_T(TBuffer), IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(TGodotFixedElementLengthArray)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_fixed_element_length_array_t &p_val) {
 	auto size = p_val.size();
-	encode_varint(p_buf, size);
+	encode_varint<little_endin>(p_buf, size);
 	if (size == 0) {
 		return;
 	}
 	auto ptr = p_val.ptr();
 	using element_t = decltype_pure(ptr);
-	size_t increase_len = sizeof(element_t) * size;
-	memcpy(p_buf, ptr, increase_len);
-	p_buf += increase_len;
+	if constexpr (little_endin) {
+		size_t increase_len = sizeof(element_t) * size;
+		memcpy(p_buf, ptr, increase_len);
+		p_buf += increase_len;
+	} else {
+		for (decltype(size) i = 0; i < size; ++i) {
+			memcpy_reverse(p_buf, &ptr[i], sizeof(element_t));
+			p_buf += sizeof(element_t);
+		}
+	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotFixedElementLengthArray, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(TGodotFixedElementLengthArray), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TGodotFixedElementLengthArray, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(TGodotFixedElementLengthArray), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot_fixed_element_length_array_t &p_val, integral_t &r_len) {
 	auto size = p_val.size();
@@ -597,37 +716,55 @@ _INLINE_ void encode(buffer_t *&p_buf, const godot_fixed_element_length_array_t 
 	auto ptr = p_val.ptr();
 	using element_t = decltype_pure(ptr);
 	size_t increase_len = sizeof(element_t) * size;
-	memcpy(p_buf, ptr, increase_len);
-	p_buf += increase_len;
+	if constexpr (little_endin) {
+		memcpy(p_buf, ptr, increase_len);
+		p_buf += increase_len;
+	} else {
+		for (decltype(size) i = 0; i < size; ++i) {
+			memcpy_reverse(p_buf, &ptr[i], sizeof(element_t));
+			p_buf += sizeof(element_t);
+		}
+	}
 	r_len += increase_len;
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, typename TGodotFixedElementLengthArray, IS_BUFFER_T(TBuffer), IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(TGodotFixedElementLengthArray)>
+template <bool little_endin, typename TBuffer, typename TGodotFixedElementLengthArray, IS_BUFFER_T(TBuffer), IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(TGodotFixedElementLengthArray)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, godot_fixed_element_length_array_t &r_val) {
 	decltype_pure(r_val.size()) size;
-	decode_varint(p_buf, size);
+	decode_varint<little_endin>(p_buf, size);
 	r_val.resize(size);
 	if (size == 0) {
 		return;
 	}
 	auto ptr = r_val.ptrw();
 	using element_t = decltype_pure(ptr);
-	size_t len = sizeof(element_t) * size;
-	memcpy(ptr, p_buf, len);
-	p_buf += len;
+	if constexpr (little_endin) {
+		size_t len = sizeof(element_t) * size;
+		memcpy(ptr, p_buf, len);
+		p_buf += len;
+	} else {
+		for (decltype(size) i = 0; i < size; ++i) {
+			memcpy_reverse(&p_buf[i], p_buf, sizeof(element_t));
+			p_buf += sizeof(element_t);
+		}
+	}
 }
 // =================
 
 // Special:: godot::PackedStringArray
 #if !HAS_CXX20
-template <typename TInt, IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TInt, IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void cal_size(const godot::PackedStringArray &p_val, integral_t &r_len) {
 	auto size = p_val.size();
-	cal_size_varint(size, r_len);
+	cal_size_varint<little_endin>(size, r_len);
 	if (size == 0) {
 		return;
 	}
@@ -638,66 +775,72 @@ _INLINE_ void cal_size(const godot::PackedStringArray &p_val, integral_t &r_len)
 }
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot::PackedStringArray &p_val) {
 	auto size = p_val.size();
-	encode_varint(p_buf, size);
+	encode_varint<little_endin>(p_buf, size);
 	if (size == 0) {
 		return;
 	}
 	auto ptr = p_val.ptr();
 	for (decltype_pure(size) i = 0; i < size; i++) {
-		encode(p_buf, p_val[i]);
+		encode<little_endin>(p_buf, p_val[i]);
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void encode(buffer_t *&p_buf, const godot::PackedStringArray &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto ptr = p_val.ptr();
-	encode_varint(p_buf, size, r_len);
+	encode_varint<little_endin>(p_buf, size, r_len);
 	for (decltype_pure(size) i = 0; i < size; i++) {
-		encode(p_buf, p_val[i], r_len);
+		encode<little_endin>(p_buf, p_val[i], r_len);
 	}
 }
 #endif
 
 #if !HAS_CXX20
-template <typename TBuffer, IS_BUFFER_T(TBuffer)>
+template <bool little_endin, typename TBuffer, IS_BUFFER_T(TBuffer)>
+#else //!HAS_CXX20
+template <bool little_endin>
 #endif //!HAS_CXX20
 _INLINE_ void decode(buffer_t *&p_buf, godot::PackedStringArray &r_val) {
 	decltype_pure(r_val.size()) size;
-	decode_varint(p_buf, size);
+	decode_varint<little_endin>(p_buf, size);
 	r_val.resize(size);
 	if (size == 0) {
 		return;
 	}
 	auto ptr = r_val.ptrw();
 	for (decltype_pure(size) i = 0; i < size; i++) {
-		decode(p_buf, r_val[i]);
+		decode<little_endin>(p_buf, r_val[i]);
 	}
 }
 
 // Special:: GodotPackedIntArray
 #if !HAS_CXX20
-template <bool varint_encoding, typename TGodotPackedIntArray, typename TInt, IS_GODOT_PACKED_INT_ARRAY_T(TGodotPackedIntArray), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, bool varint_encoding, typename TGodotPackedIntArray, typename TInt, IS_GODOT_PACKED_INT_ARRAY_T(TGodotPackedIntArray), IS_INTEGRAL_T(TInt)>
 #else // //!HAS_CXX20
-template <bool varint_encoding> // If true, use zigzag to encode elements.
+template <bool little_endin, bool varint_encoding> // If true, use zigzag to encode elements.
 #endif //!HAS_CXX20
 _INLINE_ void cal_size_int_arr(const godot_packed_int_array_t &p_val, integral_t &r_len) {
 	auto size = p_val.size();
-	cal_size_varint(size, r_len);
+	cal_size_varint<little_endin>(size, r_len);
 	if (size == 0) {
 		return;
 	}
 	auto ptr = p_val.ptr();
 	if constexpr (varint_encoding) {
 		for (decltype_pure(size) i = 0; i < size; i++) {
-			cal_size_varint(p_val[i], r_len);
+			cal_size_varint<little_endin>(p_val[i], r_len);
 		}
 	} else {
 		using int_t = decltype_pure(ptr);
@@ -706,60 +849,75 @@ _INLINE_ void cal_size_int_arr(const godot_packed_int_array_t &p_val, integral_t
 }
 
 #if !HAS_CXX20
-template <bool varint_encoding, typename TBuffer, typename TGodotPackedIntArray, IS_BUFFER_T(TBuffer), IS_GODOT_PACKED_INT_ARRAY_T(TGodotPackedIntArray)>
+template <bool little_endin, bool varint_encoding, typename TBuffer, typename TGodotPackedIntArray, IS_BUFFER_T(TBuffer), IS_GODOT_PACKED_INT_ARRAY_T(TGodotPackedIntArray)>
 #else // //!HAS_CXX20
-template <bool varint_encoding> // If true, use zigzag to encode elements.
+template <bool little_endin, bool varint_encoding> // If true, use zigzag to encode elements.
 #endif //!HAS_CXX20
 _INLINE_ void encode_int_arr(buffer_t *&p_buf, const godot_packed_int_array_t &p_val) {
 	auto size = p_val.size();
-	encode_varint(p_buf, size);
+	encode_varint<little_endin>(p_buf, size);
 	if (size == 0) {
 		return;
 	}
 	auto ptr = p_val.ptr();
 	if constexpr (varint_encoding) {
 		for (decltype_pure(size) i = 0; i < size; i++) {
-			encode_varint(p_buf, p_val[i]);
+			encode_varint<little_endin>(p_buf, p_val[i]);
 		}
 	} else {
 		using int_t = decltype_pure(ptr);
-		auto len = sizeof(int_t) * size;
-		memcpy(p_buf, ptr, len);
-		p_buf += len;
+		if constexpr (little_endin) {
+			auto len = sizeof(int_t) * size;
+			memcpy(p_buf, ptr, len);
+			p_buf += len;
+		} else {
+			for (decltype(size) i = 0; i < size; ++i) {
+				memcpy_reverse(p_buf, &ptr[i], sizeof(int_t));
+				p_buf += sizeof(int_t);
+			}
+		}
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <bool varint_encoding, typename TBuffer, typename TGodotPackedIntArray, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_PACKED_INT_ARRAY_T(TGodotPackedIntArray), IS_INTEGRAL_T(TInt)>
+template <bool little_endin, bool varint_encoding, typename TBuffer, typename TGodotPackedIntArray, typename TInt, IS_BUFFER_T(TBuffer), IS_GODOT_PACKED_INT_ARRAY_T(TGodotPackedIntArray), IS_INTEGRAL_T(TInt)>
 #else // //!HAS_CXX20
-template <bool varint_encoding> // If true, use zigzag to encode elements.
+template <bool little_endin, bool varint_encoding> // If true, use zigzag to encode elements.
 #endif //!HAS_CXX20
 _INLINE_ void encode_int_arr(buffer_t *&p_buf, const godot_packed_int_array_t &p_val, integral_t &r_len) {
 	auto size = p_val.size();
 	auto ptr = p_val.ptr();
-	encode_varint(p_buf, size, r_len);
+	encode_varint<little_endin>(p_buf, size, r_len);
 	if constexpr (varint_encoding) {
 		for (decltype_pure(size) i = 0; i < size; i++) {
-			encode_varint(p_buf, p_val[i], r_len);
+			encode_varint<little_endin>(p_buf, p_val[i], r_len);
 		}
 	} else {
 		using int_t = decltype_pure(ptr);
-		auto len = sizeof(int_t) * size;
-		memcpy(p_buf, ptr, len);
+		if constexpr (little_endin) {
+			auto len = sizeof(int_t) * size;
+			memcpy(p_buf, ptr, len);
+			p_buf += len;
+		} else {
+			for (decltype(size) i = 0; i < size; ++i) {
+				memcpy_reverse(p_buf, &ptr[i], sizeof(int_t));
+				p_buf += sizeof(int_t);
+			}
+		}
 		r_len += len;
 	}
 }
 #endif
 
 #if !HAS_CXX20
-template <bool varint_encoding, typename TBuffer, typename TGodotPackedIntArray, IS_BUFFER_T(TBuffer), IS_GODOT_PACKED_INT_ARRAY_T(TGodotPackedIntArray)>
+template <bool little_endin, bool varint_encoding, typename TBuffer, typename TGodotPackedIntArray, IS_BUFFER_T(TBuffer), IS_GODOT_PACKED_INT_ARRAY_T(TGodotPackedIntArray)>
 #else // //!HAS_CXX20
-template <bool varint_encoding> // If true, use zigzag to encode elements.
+template <bool little_endin, bool varint_encoding> // If true, use zigzag to encode elements.
 #endif //!HAS_CXX20
 _INLINE_ void decode_int_arr(buffer_t *&p_buf, godot_packed_int_array_t &r_val) {
 	decltype_pure(r_val.size()) size;
-	decode_varint(p_buf, size);
+	decode_varint<little_endin>(p_buf, size);
 	r_val.resize(size);
 	if (size == 0) {
 		return;
@@ -767,30 +925,37 @@ _INLINE_ void decode_int_arr(buffer_t *&p_buf, godot_packed_int_array_t &r_val) 
 	auto ptr = r_val.ptrw();
 	if constexpr (varint_encoding) {
 		for (decltype_pure(size) i = 0; i < size; i++) {
-			decode_varint(p_buf, r_val[i]);
+			decode_varint<little_endin>(p_buf, r_val[i]);
 		}
 	} else {
 		using int_t = decltype_pure(ptr);
-		auto len = sizeof(int_t) * size;
-		memcpy(ptr, p_buf, len);
-		p_buf += len;
+		if constexpr (little_endin) {
+			auto len = sizeof(int_t) * size;
+			memcpy(ptr, p_buf, len);
+			p_buf += len;
+		} else {
+			for (decltype(size) i = 0; i < size; ++i) {
+				memcpy_reverse(&ptr[i], p_buf, sizeof(int_t));
+				p_buf += sizeof(int_t);
+			}
+		}
 	}
 }
 
 // Special: PackedColorArray
 #if !HAS_CXX20
-template <uint8_t encode_type, typename TInt, IS_INTEGRAL_T(TInt)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type, typename TInt, IS_INTEGRAL_T(TInt)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #else // //!HAS_CXX20
-template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #endif //!HAS_CXX20
 _INLINE_ void cal_size_color_arr(const PackedColorArray &p_val, integral_t &r_len) {
 	if (encode_type == 0) {
-		cal_size(p_val, r_len);
+		cal_size<little_endin>(p_val, r_len);
 		return;
 	}
 
 	auto size = p_val.size();
-	cal_size_varint(size, r_len);
+	cal_size_varint<little_endin>(size, r_len);
 	if (size == 0) {
 		return;
 	}
@@ -803,73 +968,73 @@ _INLINE_ void cal_size_color_arr(const PackedColorArray &p_val, integral_t &r_le
 }
 
 #if !HAS_CXX20
-template <uint8_t encode_type, typename TBuffer, IS_BUFFER_T(TBuffer)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type, typename TBuffer, IS_BUFFER_T(TBuffer)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #else // //!HAS_CXX20
-template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #endif //!HAS_CXX20
 _INLINE_ void encode_color_arr(buffer_t *&p_buf, const PackedColorArray &p_val) {
 	if (encode_type == 0) {
-		encode(p_buf, p_val);
+		encode<little_endin>(p_buf, p_val);
 		return;
 	}
 
 	auto size = p_val.size();
-	encode_varint(p_buf, size);
+	encode_varint<little_endin>(p_buf, size);
 	if (size == 0) {
 		return;
 	}
 
 	auto ptr = p_val.ptr();
 	for (decltype_pure(size) i = 0; i < size; i++) {
-		encode_color<encode_type>(p_buf, ptr[i]);
+		encode_color<little_endin, encode_type>(p_buf, ptr[i]);
 	}
 }
 
 #ifdef ENCODE_LEN_METHOD
 #if !HAS_CXX20
-template <uint8_t encode_type, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type, typename TBuffer, typename TInt, IS_BUFFER_T(TBuffer), IS_INTEGRAL_T(TInt)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #else // //!HAS_CXX20
-template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #endif //!HAS_CXX20
 _INLINE_ void encode_color_arr(buffer_t *&p_buf, const PackedColorArray &p_val, integral_t &r_len) {
 	if (encode_type == 0) {
-		encode(p_buf, p_val, r_len);
+		encode<little_endin>(p_buf, p_val, r_len);
 		return;
 	}
 
 	auto size = p_val.size();
-	encode_varint(p_buf, size, r_len);
+	encode_varint<little_endin>(p_buf, size, r_len);
 	if (size == 0) {
 		return;
 	}
 
 	auto ptr = p_val.ptr();
 	for (decltype_pure(size) i = 0; i < size; i++) {
-		encode_color<encode_type>(p_buf, ptr[i], r_len);
+		encode_color<little_endin, encode_type, decltype_pure(p_buf)>(p_buf, ptr[i], r_len);
 	}
 }
 #endif
 
 #if !HAS_CXX20
-template <uint8_t encode_type, typename TBuffer, IS_BUFFER_T(TBuffer)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type, typename TBuffer, IS_BUFFER_T(TBuffer)> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #else // //!HAS_CXX20
-template <uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
+template <bool little_endin, uint8_t encode_type> // 0 - rgba (4*4), 1 - hex (8), 2 - hex64 (8)
 #endif //!HAS_CXX20
 _INLINE_ void decode_color_arr(buffer_t *&p_buf, PackedColorArray &r_val) {
 	if (encode_type == 0) {
-		decode(p_buf, r_val);
+		decode<little_endin>(p_buf, r_val);
 		return;
 	}
 
 	decltype_pure(r_val.size()) size;
-	decode_varint(p_buf, size);
+	decode_varint<little_endin>(p_buf, size);
 	r_val.resize(size);
 	if (size == 0) {
 		return;
 	}
 	auto ptr = r_val.ptrw();
 	for (decltype_pure(size) i = 0; i < size; i++) {
-		decode_color<encode_type>(p_buf, ptr[i]);
+		decode_color<little_endin, encode_type>(p_buf, ptr[i]);
 	}
 }
 
