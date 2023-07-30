@@ -1,5 +1,5 @@
 
-# GUS - Godot Universal Serializer 2.1.5 - Godot的通用序列化器 - V2.1.5（Godot 4.1 stable）
+# GUS - Godot Universal Serializer 2.1.6 - Godot的通用序列化器 - V2.1.6（Godot 4.1 stable）
 
 ![Image text](icon.png)
 
@@ -26,11 +26,6 @@
   1. `Array` 和 `Dictionary` 不能包含 `Object`、`RID`、`Callable`以及`Signal`。
 
 
-
-# TODO:
-  1. 处理大小端。
-
-
 # 如何编译:
   1. 根据[官方文档](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html)搭建你的编译环境。
   2. 克隆这个仓库(以递归方式克隆，以包含子模块)。
@@ -45,21 +40,26 @@
 
 		- （推荐方式）在每次构建`GUS`时重复生成`godot-cpp`的绑定与构建其库，直接跳该步骤，在下个步骤的命令中添加参数`generate_bindings=yes build_library=yes`来显式要求该操作，或忽略这些参数以默认方式工作。
 		别担心，只要编译条件没有变化，重复生成与构建不会占用您太多时间。
-	4. 编译`GUS`与编译`godot-cpp`有一点小区别（当然你也可以继续使用`scons`命令进行构建），为了执行一些后处理，我使用一个简单的工具脚本进行编译：
-	导航到根目录,运行以下命令
-	```
-	python build.py
-	```
+  4. 编译`GUS`与编译`godot-cpp`有一点小区别（当然你也可以继续使用`scons`命令进行构建），为了执行一些后处理，我使用一个简单的工具脚本进行编译:
+	 导航到根目录,运行以下命令
+		```
+		python build.py
+		```
 
-	你可以像在编译`godot-cpp`一样对改命令添加其他参数。
-	你可以使用以下命令来查看更多参数详情:
-	```
-	python build.py -h
-	```
+	 你可以像在编译`godot-cpp`一样对改命令添加其他参数。
+	 你可以使用以下命令来查看更多参数详情:
+		```
+		python build.py -h
+		```
 
-	特别的，如果你没有明确`taget`参数，该脚本工具会同时编译`target=template_debug`和 `target=template_release`两种版本。
-	5. 现在，你可以在`\demo\addons\com.daylily_zeleen.godot_universal_serializer`获得该插件，或在`bin\com.daylily_zeleen.godot_universal_serializer.zip`获得打包好的插件。
-	（注意：如果你使用`scons`命令进行编译，你只能在`bin`文件夹下得到编译好的动态库。
+	 **特别的**:
+	 - 如果你没有明确`taget`参数，该脚本工具会同时编译`target=template_debug`和 - target=template_release`两种版本。
+	 - 如果添加了`dev_build=yes`参数，将在后处理复制二进制文件步骤中将该库文件名的``.dev.`替换为`.`供测试使用，避免修改`gus2.gdextension`文件。
+  5. 现在，你可以在`dist`获得该插件。
+
+	 **注意**:
+	如果你使用`scons`命令进行编译，你只能在`bin`文件夹下得到编译好的动态库，如果为`macsos`构建，其二进制文件将直接于`dist`目录下生成。
+
 # 基准测试 2.1.5:
 ```
 null - value:<null>

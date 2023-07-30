@@ -1,5 +1,5 @@
 
-# GUS - Godot Universal Serializer 2.1.5 - Godot的通用序列化器 - V2.1.5（Godot 4.1 stable）
+# GUS - Godot Universal Serializer 2.1.6 - Godot的通用序列化器 - V2.1.6（Godot 4.1 stable）
 
 ![Image text](icon.png)
 
@@ -24,10 +24,6 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 # Be careful:
   1. `Array` and `Dictionary` should not contain `Object`, `RID`, `Callable` and `Signal`.
 
-
-
-# TODO:
-  1. Handle endian.
 
 # How to compile:
   1. Follow [offical tutorial](https://docs.godotengine.org/zh_CN/stable/development/compiling/index.html) to set up you develop enviroment.
@@ -58,10 +54,15 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 	 python build.py -h
 	 ```
 
-	 Specially, if you not specify the argument `target`, this tool will build both `target=template_debug` and `target=template_release`.
+	 **Specially**:
+	 - If you not specify the argument `target`, this tool will build both `target=template_debug` and `target=template_release`.
+	 - If you add argument `dev_build`, this tool will copy and rename the built shared libraries to `dist` folder with replacing `.dev.` to `.` (in order to avoid edit `gus2.gdextension`).
 
-  5. Now, you can get the addon which be located at `\demo\addons\com.daylily_zeleen.godot_universal_serializer\`, or get the packed addon at `bin\com.daylily_zeleen.godot_universal_serializer.zip`.
-	 (Notice: if your use `scons` instead of `python build_tool`, you can only get dynamic library at `bin` folder.)
+  5. Now, you can get the addon which be located at `dist`.
+
+	 **Notice**: 
+	 - If your use `scons` instead of `python build_tool`, you can only get dynamic library at `bin` folder.
+	 - If build for `macos`, its binaries will generate at `dist` directly.
 
 # Benchmark 2.1.5:
 ```
