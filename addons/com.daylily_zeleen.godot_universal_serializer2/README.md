@@ -1,5 +1,5 @@
 
-# GUS - Godot Universal Serializer 2.1.6 - Godot的通用序列化器 - V2.1.6（Godot 4.1 stable）
+# GUS - Godot Universal Serializer 2 - Godot的通用序列化器2
 
 ![Image text](icon.png)
 
