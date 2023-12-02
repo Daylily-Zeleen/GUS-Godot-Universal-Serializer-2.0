@@ -21,11 +21,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+
       - name: Set up Java 11
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 11
+
+      - name: Android dependencies
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r23c
+          link-to-sdk: true
 
       - name: Build ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/build

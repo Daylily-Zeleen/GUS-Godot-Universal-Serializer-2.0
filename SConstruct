@@ -28,7 +28,7 @@ sources = Glob("src/*.cpp")
 
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus2.{}.{}.framework/libguss.{}.{}".format(
+        "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus2.{}.{}.framework/libgus2.{}.{}".format(
             env["platform"], env["target"], env["platform"], env["target"]
         ),
         source=sources,
