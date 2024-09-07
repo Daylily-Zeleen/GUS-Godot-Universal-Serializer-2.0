@@ -64,6 +64,10 @@ Support all data types except `Object`, `RID`, `Callable` and `Signal` in Godot 
 	 - If your use `scons` instead of `python build_tool`, you can only get dynamic library at `bin` folder.
 	 - If build for `macos`, its binaries will generate at `dist` directly.
 
+## Others
+
+If this plugin can help you, please consider to [buy me a coffee](https://afdian.com/a/Daylily-Zeleen).
+
 # Benchmark 2.1.5:
 ```
 null - value:<null>
