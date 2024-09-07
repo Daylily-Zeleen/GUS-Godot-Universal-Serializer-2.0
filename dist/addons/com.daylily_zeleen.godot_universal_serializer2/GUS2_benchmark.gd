@@ -63,6 +63,7 @@ func _test(inside_tree_node:Node)->void:
 	var string_arr := PackedStringArray()
 	var vector2_arr := PackedVector2Array()
 	var vector3_arr:= PackedVector3Array()
+	var vector4_arr:= PackedVector4Array()
 	var color_arr:= PackedColorArray()
 
 	_print_result("Empty Array", [])
@@ -75,6 +76,7 @@ func _test(inside_tree_node:Node)->void:
 	_print_result("Empty PackedStringArray",string_arr)
 	_print_result("Empty PackedVector2Array",vector2_arr)
 	_print_result("Empty PackedVector3Array",vector3_arr)
+	_print_result("Empty PackedVector4Array",vector4_arr)
 	_print_result("Empty PackedColorArray",color_arr)
 
 	var i := 4096
@@ -87,6 +89,7 @@ func _test(inside_tree_node:Node)->void:
 		string_arr.push_back(str(i*10))
 		vector2_arr.push_back(Vector2(i*randf(),i*randf()))
 		vector3_arr.push_back(Vector3(i*randf(),i*randf(),i*randf()))
+		vector4_arr.push_back(Vector4(i*randf(),i*randf(),i*randf(),i*randf()))
 		color_arr.push_back(Color(randf(),randf(),randf(),randf()))
 		i-=1
 
@@ -98,6 +101,7 @@ func _test(inside_tree_node:Node)->void:
 	_print_result("PackedStringArray",string_arr)
 	_print_result("PackedVector2Array",vector2_arr)
 	_print_result("PackedVector3Array",vector3_arr)
+	_print_result("PackedVector4Array",vector4_arr)
 	_print_result("PackedColorArray",color_arr)
 
 	# 类型化数组
@@ -133,6 +137,7 @@ func _test(inside_tree_node:Node)->void:
 	var typed_arr_string_arr :Array[PackedStringArray] = []
 	var typed_arr_vector2_arr :Array[PackedVector2Array] = []
 	var typed_arr_vector3_arr :Array[PackedVector3Array] = []
+	var typed_arr_vector4_arr :Array[PackedVector4Array] = []
 	var typed_arr_color_arr :Array[PackedColorArray] = []
 
 	_print_result("Empty Array[bool]", typed_arr_bool)
@@ -167,6 +172,7 @@ func _test(inside_tree_node:Node)->void:
 	_print_result("Empty Array[PackedStringArray]", typed_arr_string_arr)
 	_print_result("Empty Array[PackedVector2Array]", typed_arr_vector2_arr)
 	_print_result("Empty Array[PackedVector3Array]", typed_arr_vector3_arr)
+	_print_result("Empty Array[PackedVector4Array]", typed_arr_vector4_arr)
 	_print_result("Empty Array[PackedColorArray]", typed_arr_color_arr)
 
 	i = 4096
@@ -204,6 +210,7 @@ func _test(inside_tree_node:Node)->void:
 			typed_arr_string_arr.push_back(PackedStringArray())
 			typed_arr_vector2_arr.push_back(PackedVector2Array())
 			typed_arr_vector3_arr.push_back(PackedVector3Array())
+			typed_arr_vector4_arr.push_back(PackedVector4Array())
 			typed_arr_color_arr.push_back(PackedColorArray())
 		else:
 			typed_arr_array.push_back([randi(), "asd", rand_vec4(), {"asd":randf()}])
@@ -216,6 +223,7 @@ func _test(inside_tree_node:Node)->void:
 			typed_arr_string_arr.push_back(PackedStringArray(["", "a1s56d4", "", "asdasd"]))
 			typed_arr_vector2_arr.push_back(PackedVector2Array([rand_vec2(),rand_vec2(),rand_vec2(),rand_vec2()]))
 			typed_arr_vector3_arr.push_back(PackedVector3Array([rand_vec3(),rand_vec3(),rand_vec3(),rand_vec3()]))
+			typed_arr_vector4_arr.push_back(PackedVector4Array([rand_vec4(),rand_vec4(),rand_vec4(),rand_vec4()]))
 			typed_arr_color_arr.push_back(PackedColorArray([rand_color(), rand_color(), rand_color(), rand_color(), rand_color()]))
 		i-=1
 
@@ -251,6 +259,7 @@ func _test(inside_tree_node:Node)->void:
 	_print_result("Array[PackedStringArray]", typed_arr_string_arr)
 	_print_result("Array[PackedVector2Array]", typed_arr_vector2_arr)
 	_print_result("Array[PackedVector3Array]", typed_arr_vector3_arr)
+	_print_result("Array[PackedVector4Array]", typed_arr_vector4_arr)
 	_print_result("Array[PackedColorArray]", typed_arr_color_arr)
 	return
 
