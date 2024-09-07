@@ -83,6 +83,7 @@ enum DType : uint8_t {
 	PACKED_VECTOR2_ARRAY,
 	PACKED_VECTOR3_ARRAY,
 	PACKED_COLOR_ARRAY,
+	PACKED_VECTOR4_ARRAY,
 
 	VARIANT_MAX,
 
@@ -792,6 +793,9 @@ _INLINE_ void cal_size_variant(const Variant &p_val, integral_t &r_len, const ui
 		case Variant::PACKED_VECTOR3_ARRAY: {
 			cal_size<little_endin>(p_val.operator godot::PackedVector3Array(), r_len);
 		} break;
+		case DType::PACKED_VECTOR4_ARRAY: {
+			cal_size<little_endin>(p_val.operator godot::PackedVector4Array(), r_len);
+		} break;
 		case DType::PACKED_COLOR_ARRAY: {
 			cal_size_color_arr<little_endin, 0>(p_val.operator godot::PackedColorArray(), r_len);
 		} break;
@@ -945,6 +949,9 @@ _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8
 		} break;
 		case Variant::PACKED_VECTOR3_ARRAY: {
 			encode<little_endin>(p_buf, p_val.operator godot::PackedVector3Array());
+		} break;
+		case Variant::PACKED_VECTOR4_ARRAY: {
+			encode<little_endin>(p_buf, p_val.operator godot::PackedVector4Array());
 		} break;
 		case Variant::PACKED_COLOR_ARRAY: {
 			encode_color_arr<little_endin, 0>(p_buf, p_val.operator godot::PackedColorArray());
@@ -1100,6 +1107,9 @@ _INLINE_ void encode_variant(buffer_t *&p_buf, const Variant &p_val, const uint8
 		} break;
 		case Variant::PACKED_VECTOR3_ARRAY: {
 			encode<little_endin>(p_buf, p_val.operator godot::PackedVector3Array(), r_len);
+		} break;
+		case Variant::PACKED_VECTOR4_ARRAY: {
+			encode<little_endin>(p_buf, p_val.operator godot::PackedVector4Array(), r_len);
 		} break;
 		case Variant::PACKED_COLOR_ARRAY: {
 			encode_color_arr<little_endin, 0>(p_buf, p_val.operator godot::PackedColorArray(), r_len);
@@ -1373,6 +1383,15 @@ _INLINE_ void decode_variant(buffer_t *&p_buf, Variant &p_val, const uint8_t &ty
 						p_val = v;
 					}
 				} break;
+				case DType::PACKED_VECTOR4_ARRAY: {
+					if (empty) {
+						p_val = godot::PackedVector4Array();
+					} else {
+						godot::PackedVector4Array v;
+						decode<little_endin>(p_buf, v);
+						p_val = v;
+					}
+				} break;
 				case DType::PACKED_COLOR_ARRAY: {
 					if (empty) {
 						p_val = godot::PackedColorArray();
@@ -1492,6 +1511,13 @@ _INLINE_ void cal_size(const Variant &p_val, integral_t &r_len) {
 		} break;
 		case Variant::PACKED_VECTOR3_ARRAY: {
 			auto arr = p_val.operator godot::PackedVector3Array();
+			if (arr.is_empty()) {
+				return;
+			}
+			cal_size<little_endin>(arr, r_len);
+		} break;
+		case Variant::PACKED_VECTOR4_ARRAY: {
+			auto arr = p_val.operator godot::PackedVector4Array();
 			if (arr.is_empty()) {
 				return;
 			}
@@ -1672,6 +1698,15 @@ _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val) {
 			encode_type<little_endin>(p_buf, DType::PACKED_VECTOR3_ARRAY);
 			encode<little_endin>(p_buf, arr);
 		} break;
+		case Variant::PACKED_VECTOR4_ARRAY: {
+			auto arr = p_val.operator godot::PackedVector4Array();
+			if (arr.is_empty()) {
+				encode_type<little_endin>(p_buf, DType::PACKED_VECTOR4_ARRAY | 0x80);
+				return;
+			}
+			encode_type<little_endin>(p_buf, DType::PACKED_VECTOR4_ARRAY);
+			encode<little_endin>(p_buf, arr);
+		} break;
 		case Variant::PACKED_STRING_ARRAY: {
 			auto arr = p_val.operator godot::PackedStringArray();
 			if (arr.is_empty()) {
@@ -1838,6 +1873,15 @@ _INLINE_ void encode(buffer_t *&p_buf, const Variant &p_val, integral_t &r_len) 
 				return;
 			}
 			encode_type<little_endin>(p_buf, DType::PACKED_VECTOR3_ARRAY, r_len);
+			encode<little_endin>(p_buf, arr, r_len);
+		} break;
+		case Variant::PACKED_VECTOR4_ARRAY: {
+			auto arr = p_val.operator godot::PackedVector4Array();
+			if (arr.is_empty()) {
+				encode_type<little_endin>(p_buf, DType::PACKED_VECTOR4_ARRAY | 0x80, r_len);
+				return;
+			}
+			encode_type<little_endin>(p_buf, DType::PACKED_VECTOR4_ARRAY, r_len);
 			encode<little_endin>(p_buf, arr, r_len);
 		} break;
 		case Variant::PACKED_STRING_ARRAY: {

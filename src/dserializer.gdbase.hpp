@@ -67,7 +67,8 @@ concept GodotFixedElementLenthArray = !Number<T> &&
 		(GodotPackedIntArray<T> ||
 				std::same_as<T, PackedByteArray> || std::same_as<T, PackedFloat32Array> ||
 				std::same_as<T, PackedFloat64Array> || std::same_as<T, PackedVector2Array> ||
-				std::same_as<T, PackedVector3Array> || std::same_as<T, PackedColorArray>);
+				std::same_as<T, PackedVector3Array> || std::same_as<T, PackedVector4Array> ||
+				std::same_as<T, PackedColorArray>);
 #define godot_fixed_element_length_array_t GodotFixedElementLenthArray auto
 
 #else // HAS_CXX20
@@ -106,7 +107,8 @@ using GodotPackedIntArray = T;
 			std::is_same_v<T, PackedInt32Array> || std::is_same_v<T, PackedInt64Array> ||     \
 			std::is_same_v<T, PackedByteArray> || std::is_same_v<T, PackedFloat32Array> ||    \
 			std::is_same_v<T, PackedFloat64Array> || std::is_same_v<T, PackedVector2Array> || \
-			std::is_same_v<T, PackedVector3Array> || std::is_same_v<T, PackedColorArray>> *_##T = nullptr
+			std::is_same_v<T, PackedVector3Array> || std::is_same_v<T, PackedVector4Array> || \
+			std::is_same_v<T, PackedColorArray>> *_##T = nullptr
 template <typename T, IS_GODOT_FIXED_ELEMENT_LENGTH_ARRAY_T(T)>
 using GodotFixedElementLengthArray = T;
 #define godot_fixed_element_length_array_t GodotFixedElementLengthArray<TGodotFixedElementLengthArray>
