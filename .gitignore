@@ -31,6 +31,8 @@ CMakeLists.txt
 *.pdb
 *.obj
 
+__pycache__
+
 # Project specific
 /dist/addons/com.daylily_zeleen.godot_universal_serializer2/README.md
 /dist/addons/com.daylily_zeleen.godot_universal_serializer2/README_zh_cn.md

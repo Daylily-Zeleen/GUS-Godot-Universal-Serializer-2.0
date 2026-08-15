@@ -9,11 +9,11 @@ from os.path import join as path_join
 
 def main():
     args = "scons"
-    debug_and_relaese = True
+    has_target = False
     for arg in sys.argv:
         if arg == "-h" or arg == "--help":
             os.system("scons -h")
-            print('\nIf you have not specify "target" argument, this tool will build both debug and relaese.')
+            print('\nIf you have not specify "target" argument, this tool will build template_release.')
             return
 
         if arg.startswith("python"):
@@ -27,46 +27,44 @@ def main():
         args += " " + arg
 
         if arg.startswith("target"):
-            debug_and_relaese = False
+            has_target = True
+
+    # Default to template_release if the user did not specify a target.
+    if not has_target:
+        args += " target=template_release"
+
+    # Use the build profile to speed up binding generation.
+    args += " build_profile=build_profile.json"
 
     bin_dir = "bin/"  # "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/"
     # Remove all last build files.
     for f in os.listdir(bin_dir):
         os.remove(path_join(bin_dir, f))
 
-    # Buiild.
-    if debug_and_relaese:
-        print("Building debug version...")
-        os.system(args + " target=template_debug")
-        print("")
-        print("Building release version...")
-        os.system(args + " target=template_release")
-    else:
-        print("Building...")
-        os.system(args)
+    # Build.
+    print("Building...")
+    os.system(args)
     print("Build finished, post processiong...")
 
     # == Post process ==
     # Copy dynamic library to dist dir.
     print("Copy dynamic library to dist dir.")
-    dynamic_lib_suffixs = [".so", ".dylib", ".wasm", ".dll"]
     dist_dir = "dist/addons/com.daylily_zeleen.godot_universal_serializer2/"
     dist_bin_dir = path_join(dist_dir, "bin")
 
     dev_libs = []
     for f in os.listdir("bin/"):
-        for suffix in dynamic_lib_suffixs:
-            if not f.endswith(suffix):
-                continue
-            path = path_join(bin_dir, f)
-            dist_path = path_join(dist_bin_dir, f)
-            if f.count(".dev."):
-                dev_libs.append(f)
+        if not f.startswith("libgus2."):
+            continue
+        path = path_join(bin_dir, f)
+        dist_path = path_join(dist_bin_dir, f)
+        if f.count(".dev."):
+            dev_libs.append(f)
+        else:
+            if os.path.isfile(path):
+                shutil.copyfile(path, dist_path)
             else:
-                if os.path.isfile(path):
-                    shutil.copyfile(path, dist_path)
-                else:
-                    shutil.copytree(path, dist_path)
+                shutil.copytree(path, dist_path)
 
     # Try dev libs as debug libs.
     if len(dev_libs) > 0:

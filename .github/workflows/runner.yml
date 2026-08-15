@@ -30,6 +30,6 @@ jobs:
     name: 🏁 Windows
     uses: ./.github/workflows/windows_builds.yml
 
-  #web-build:
-  #  name: 🌐 Web Builds
-  #  uses: ./.github/workflows/web_builds.yml
+  web-build:
+    name: 🌐 Web Builds
+    uses: ./.github/workflows/web_builds.yml

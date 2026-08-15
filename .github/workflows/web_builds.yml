@@ -15,9 +15,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [template_debug, template_release]
+        target: [template_release]
         arch: [wasm32]
-        shlibsuffix: [wasm]
+        threads: [yes, no]
+        include:
+          - threads: yes
+            shlibsuffix: wasm
+          - threads: no
+            shlibsuffix: nothreads.wasm
 
     steps:
       - uses: actions/checkout@v4
@@ -34,17 +39,18 @@ jobs:
         run: |
           emcc -v
 
-      - name: Build ${{ matrix.target }} ${{ matrix.arch }}
+      - name: Build ${{ matrix.target }} ${{ matrix.arch }} threads=${{ matrix.threads }}
         uses: ./.github/actions/build
         with:
-          sconsflags: ${{ env.SCONSFLAGS }}
+          sconsflags: ${{ env.SCONSFLAGS }} threads=${{ matrix.threads }}
           arch: ${{ matrix.arch }}
-          platform: javascript
+          platform: web
           target: ${{ matrix.target }}
+          build_profile: build_profile.json
 
-      - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
+      - name: Upload ${{ matrix.target }} ${{ matrix.arch }} threads=${{ matrix.threads }}
         uses: ./.github/actions/upload
         with:
-          platform: javascript
-          artifact_file_suffix: javascript.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
+          platform: web
+          artifact_file_suffix: web.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
 

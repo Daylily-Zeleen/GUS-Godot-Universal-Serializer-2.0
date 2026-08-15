@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [template_debug, template_release]
+        target: [template_release]
         arch: [x86_64]
         shlibsuffix: [so]
 
@@ -29,10 +29,11 @@ jobs:
           arch: ${{ matrix.arch }}
           platform: linux
           target: ${{ matrix.target }}
+          build_profile: build_profile.json
 
       - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/upload
         with:
           platform: linux
-          artifact_file_suffix: linux.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
+          artifact_file_suffix: linux.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
 

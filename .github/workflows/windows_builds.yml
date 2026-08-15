@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [template_debug, template_release]
+        target: [template_release]
         arch: [x86_32, x86_64]
         shlibsuffix: [dll]
 
@@ -31,9 +31,10 @@ jobs:
           arch: ${{ matrix.arch }}
           platform: windows
           target: ${{ matrix.target }}
+          build_profile: build_profile.json
 
       - name: Upload ${{ matrix.target }} ${{ matrix.arch }}
         uses: ./.github/actions/upload
         with:
           platform: windows
-          artifact_file_suffix: windows.${{ matrix.target }}.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
+          artifact_file_suffix: windows.${{ matrix.arch }}.${{ matrix.shlibsuffix }}

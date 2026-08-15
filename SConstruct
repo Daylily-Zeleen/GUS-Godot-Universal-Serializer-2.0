@@ -26,16 +26,38 @@ sources = Glob("src/*.cpp")
 #     env["CXXFLAGS"] = ["-std=c++2a"]
 
 
+# Build a suffix that does NOT include the target (template_debug/template_release),
+# so the produced library name is the same regardless of which target the user builds.
+suffix = ".{}".format(env["platform"])
+if env["dev_build"]:
+    suffix += ".dev"
+if env["precision"] == "double":
+    suffix += ".double"
+suffix += ".{}".format(env["arch"])
+if env["ios_simulator"]:
+    suffix += ".simulator"
+if not env["threads"]:
+    suffix += ".nothreads"
+
 if env["platform"] == "macos":
     library = env.SharedLibrary(
-        "dist/addons/com.daylily_zeleen.godot_universal_serializer2/bin/libgus2.{}.{}.framework/libgus2.{}.{}".format(
-            env["platform"], env["target"], env["platform"], env["target"]
-        ),
+        "bin/libgus2.macos.framework/libgus2.macos",
         source=sources,
     )
+elif env["platform"] == "ios":
+    if env["ios_simulator"]:
+        library = env.StaticLibrary(
+            "bin/libgus2.ios.simulator.a",
+            source=sources,
+        )
+    else:
+        library = env.StaticLibrary(
+            "bin/libgus2.ios.a",
+            source=sources,
+        )
 else:
     library = env.SharedLibrary(
-        "bin/libgus2{}{}".format(env["suffix"], env["SHLIBSUFFIX"]),
+        "bin/libgus2{}{}".format(suffix, env["SHLIBSUFFIX"]),
         source=sources,
     )
 
