@@ -27,3 +27,4 @@ jobs:
         with:
           platform: ios
           artifact_file_suffix: ios.xcframework/
+          artifact_name: GUS2-ios

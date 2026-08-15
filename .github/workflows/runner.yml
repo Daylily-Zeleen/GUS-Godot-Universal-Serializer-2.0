@@ -33,3 +33,8 @@ jobs:
   web-build:
     name: 🌐 Web Builds
     uses: ./.github/workflows/web_builds.yml
+
+  merge-artifacts:
+    name: 📦 Merge Artifacts
+    needs: [android-build, ios-build, linux-build, macos-build, windows-build, web-build]
+    uses: ./.github/workflows/merge.yml

@@ -8,6 +8,9 @@ inputs:
   artifact_file_suffix:
     default: ''
     description: Target artifact file suffix.
+  artifact_name:
+    default: 'Godot Universal Serializer 2'
+    description: Artifact name. Must be unique per platform under upload-artifact v4+ (artifacts are no longer merged).
 
 runs:
   using: composite
@@ -32,7 +35,7 @@ runs:
     - name: Upload Artifact
       uses: actions/upload-artifact@v7
       with:
-        name: Godot Universal Serializer 2
+        name: ${{ inputs.artifact_name }}
         path: |
           ${{ github.workspace }}/dist/**
         retention-days: 14

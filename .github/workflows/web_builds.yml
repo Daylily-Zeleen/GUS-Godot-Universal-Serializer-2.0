@@ -53,4 +53,5 @@ jobs:
         with:
           platform: web
           artifact_file_suffix: web.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
+          artifact_name: GUS2-web-${{ matrix.arch }}-threads-${{ matrix.threads }}
 

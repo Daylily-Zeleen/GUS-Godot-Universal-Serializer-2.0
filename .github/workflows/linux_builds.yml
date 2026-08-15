@@ -36,4 +36,5 @@ jobs:
         with:
           platform: linux
           artifact_file_suffix: linux.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
+          artifact_name: GUS2-linux-${{ matrix.arch }}
 

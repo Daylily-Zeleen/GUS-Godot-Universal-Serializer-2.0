@@ -49,3 +49,4 @@ jobs:
         with:
           platform: macos
           artifact_file_suffix: macos.framework/
+          artifact_name: GUS2-macos-${{ matrix.arch }}

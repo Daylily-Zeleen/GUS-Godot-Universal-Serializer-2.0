@@ -38,3 +38,4 @@ jobs:
         with:
           platform: windows
           artifact_file_suffix: windows.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
+          artifact_name: GUS2-windows-${{ matrix.arch }}

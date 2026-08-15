@@ -48,3 +48,4 @@ jobs:
         with:
           platform: android
           artifact_file_suffix: android.${{ matrix.arch }}.${{ matrix.shlibsuffix }}
+          artifact_name: GUS2-android-${{ matrix.arch }}

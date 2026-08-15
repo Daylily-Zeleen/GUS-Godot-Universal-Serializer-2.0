@@ -1,0 +1,43 @@
+name: 📦 Merge Artifacts
+on:
+  workflow_call:
+
+# Global Settings
+env:
+  ARTIFACT_PREFIX: GUS2-
+
+jobs:
+  merge:
+    runs-on: ubuntu-22.04
+    name: Merge all platform artifacts into one package
+    steps:
+      - name: Download all platform artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: merged
+          pattern: ${{ env.ARTIFACT_PREFIX }}*
+
+      - name: Merge into a single dist tree
+        shell: bash
+        run: |
+          set -e
+          mkdir -p dist
+          # Each downloaded artifact is a folder named after the artifact (e.g. GUS2-windows-x86_64).
+          # Its contents are the dist/ tree (addons/..., README.md, ...). Merge them all together.
+          for d in merged/${{ env.ARTIFACT_PREFIX }}*; do
+            if [ -d "$d/dist" ]; then
+              cp -r "$d/dist/." dist/
+            elif [ -d "$d" ]; then
+              cp -r "$d/." dist/
+            fi
+          done
+          echo "Merged contents:"
+          ls -R dist | head -50
+
+      - name: Upload merged package
+        uses: actions/upload-artifact@v7
+        with:
+          name: Godot Universal Serializer 2
+          path: |
+            dist/**
+          retention-days: 14
