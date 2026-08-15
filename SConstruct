@@ -40,10 +40,16 @@ if not env["threads"]:
     suffix += ".nothreads"
 
 if env["platform"] == "macos":
+    framework_path = "bin/libgus2.macos.framework"
     library = env.SharedLibrary(
-        "bin/libgus2.macos.framework/libgus2.macos",
+        framework_path + "/libgus2.macos",
         source=sources,
     )
+
+    # Build the framework with -dynamiclib so the macOS linker automatically
+    # generates the required Resources/Info.plist (this is how godot-cpp's
+    # example framework gets its Info.plist - no manual plist is written).
+    env.Append(LINKFLAGS=["-dynamiclib"])
 elif env["platform"] == "ios":
     if env["ios_simulator"]:
         library = env.StaticLibrary(
