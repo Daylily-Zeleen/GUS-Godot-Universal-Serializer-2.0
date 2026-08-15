@@ -1,5 +1,6 @@
 {
 	"enabled_classes": [
-		"Object"
+		"Object",
+		"OS"
 	]
 }
