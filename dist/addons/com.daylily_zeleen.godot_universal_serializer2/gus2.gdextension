@@ -1,6 +1,6 @@
 [infomation]
 name = "GUS - Godot Universal Serializer 2"
-version = "v2.2.0"
+version = "v2.3.0-dev"
 decription = "A DragonBones plugin for Godot."
 author = "忘忧の (Daylily Zeleen)"
 email = "daylily-zeleen@foxmail.com"
@@ -11,7 +11,7 @@ others = "诚接Godot游戏开发，欢迎邮件联系。/ Receive game developm
 [configuration]
 
 entry_symbol = "gus_library_init"
-compatibility_minimum = 4.1
+compatibility_minimum = 4.3
 
 [libraries]
 
