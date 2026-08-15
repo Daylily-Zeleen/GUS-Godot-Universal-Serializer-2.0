@@ -30,7 +30,7 @@ runs:
         cp LICENSE dist/addons/com.daylily_zeleen.godot_universal_serializer2/LICENSE
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
         name: Godot Universal Serializer 2
         path: |

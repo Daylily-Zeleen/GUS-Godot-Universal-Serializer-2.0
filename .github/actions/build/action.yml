@@ -22,7 +22,7 @@ runs:
   using: composite
   steps:
     - name: Cache .scons_cache
-      uses: actions/cache@v3
+      uses: actions/cache@v6
       with:
         path: |
           ${{ github.workspace }}/.scons-cache/

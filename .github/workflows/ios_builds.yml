@@ -11,7 +11,7 @@ jobs:
     runs-on: "macos-latest"
     name: iOS Build xcframework
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: true
       - name: Setup python and scons
@@ -20,7 +20,7 @@ jobs:
       - name: Build iOS xcframework
         shell: sh
         run: |
-          ./misc/build_ios.sh
+          bash misc/build_ios.sh
 
       - name: Upload iOS xcframework
         uses: ./.github/actions/upload
