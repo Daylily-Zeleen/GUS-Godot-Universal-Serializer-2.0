@@ -59,8 +59,7 @@ jobs:
           check "$BIN/libgus2.linux.x86_64.so"
           check "$BIN/libgus2.android.x86_64.so"
           check "$BIN/libgus2.android.arm64.so"
-          check "$BIN/libgus2.ios.xcframework"
-          check "$BIN/libgodot-cpp.ios.xcframework"
+          check "$BIN/libgus2.ios.dylib"
           check "$BIN/libgus2.web.wasm32.wasm"
           check "$BIN/libgus2.web.wasm32.nothreads.wasm"
           if [ "$missing" -ne 0 ]; then

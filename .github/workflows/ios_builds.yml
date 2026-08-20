@@ -26,5 +26,5 @@ jobs:
         uses: ./.github/actions/upload
         with:
           platform: ios
-          artifact_file_suffix: ios.xcframework/
+          artifact_file_suffix: ios.dylib
           artifact_name: GUS2-ios

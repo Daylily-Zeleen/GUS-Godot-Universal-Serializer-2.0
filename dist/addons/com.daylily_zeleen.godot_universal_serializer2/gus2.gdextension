@@ -21,12 +21,6 @@ windows.x86_64 = "bin/libgus2.windows.x86_64.dll"
 linux.x86_64 = "bin/libgus2.linux.x86_64.so"
 android.x86_64 = "bin/libgus2.android.x86_64.so"
 android.arm64 = "bin/libgus2.android.arm64.so"
-ios = "bin/libgus2.ios.xcframework"
+ios = "bin/libgus2.ios.dylib"
 web.threads.wasm32 = "bin/libgus2.web.wasm32.wasm"
 web.wasm32 = "bin/libgus2.web.wasm32.nothreads.wasm"
-
-[dependencies]
-
-ios = {
-	"bin/libgodot-cpp.ios.xcframework": ""
-}

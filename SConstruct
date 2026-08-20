@@ -45,16 +45,10 @@ if env["platform"] == "macos":
         source=sources,
     )
 elif env["platform"] == "ios":
-    if env["ios_simulator"]:
-        library = env.StaticLibrary(
-            "bin/libgus2.ios.simulator.a",
-            source=sources,
-        )
-    else:
-        library = env.StaticLibrary(
-            "bin/libgus2.ios.a",
-            source=sources,
-        )
+    library = env.SharedLibrary(
+        "bin/libgus2.ios",
+        source=sources,
+    )
 else:
     library = env.SharedLibrary(
         "bin/libgus2{}{}".format(suffix, env["SHLIBSUFFIX"]),
