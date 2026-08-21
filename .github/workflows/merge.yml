@@ -16,7 +16,7 @@ jobs:
     name: Merge all platform artifacts into one package
     steps:
       - name: Download all platform artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: merged
           pattern: ${{ env.ARTIFACT_PREFIX }}*
