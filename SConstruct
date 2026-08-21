@@ -46,7 +46,7 @@ if env["platform"] == "macos":
     )
 elif env["platform"] == "ios":
     library = env.SharedLibrary(
-        "bin/libgus2.ios",
+        f"bin/libgus2.ios{env["SHLIBSUFFIX"]}",
         source=sources,
     )
 else:
